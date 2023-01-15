@@ -21,7 +21,13 @@ int main(int argc, char *argv[]) {
 
 	RenderWindow window("Phantom Keys");
 
+	Player* player = new Player(&window);
+	vector<GameObject*> entities;
+	entities.push_back(player);
+
 	Area* ruins = new Area(window, "./res/Ruins/Ruins.tmx");
+
+	ruins->placePlayer(player);
 
 	while (gameRunning) {
 		auto start = chrono::steady_clock().now();
@@ -36,6 +42,19 @@ int main(int argc, char *argv[]) {
 			}
 			SDL_Keycode kc = event.key.keysym.sym;
 			if (event.type == SDL_KEYDOWN) {
+				if (kc == SDLK_w) {
+					player->input.up = true;
+				}
+				if (kc == SDLK_s) {
+					player->input.down = true;
+				}
+				if (kc == SDLK_a) {
+					player->input.left = true;
+				}
+				if (kc == SDLK_d) {
+					player->input.right = true;
+				}
+				/*
 				if (kc == SDLK_w) {
 					cout << "up\n";
 					window.y -= 100;
@@ -64,8 +83,33 @@ int main(int argc, char *argv[]) {
 					cout << "temp\n";
 					window.temp = !window.temp;
 				}
+				*/
+			}
+			if (event.type == SDL_KEYUP) {
+				if (kc == SDLK_w) {
+					player->input.up = false;
+				}
+				if (kc == SDLK_s) {
+					player->input.down = false;
+				}
+				if (kc == SDLK_a) {
+					player->input.left = false;
+				}
+				if (kc == SDLK_d) {
+					player->input.right = false;
+				}
 			}
 		}
+
+		for (GameObject* go : entities) {
+			go->draw(&window, entities);
+		}
+
+		// cout << "player->x: " << player->x << " player->y: " << player->y << endl; 
+
+		// CAMERA
+		window.x = (window.x + player->x - RenderWindow::WIDTH / 2) / 2;
+		window.y = (window.y + player->y - RenderWindow::HEIGHT / 2) / 2;
 
 		window.display();
 

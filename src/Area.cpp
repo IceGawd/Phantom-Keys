@@ -22,7 +22,7 @@ Area::Area(RenderWindow& window, string path) {
 		cout << ts.getImagePath() << endl;
 
 		auto tilevector = ts.getTiles();
-		
+
 		Entity* temp = new Entity();
 		temp->setTexture(window.loadTexture(ts.getImagePath().c_str()));
 		temp->width = tileSize.x;
@@ -98,9 +98,9 @@ void Area::diagonalTileFinder(RenderWindow& window, const Layer::Ptr& layer) {
 
 					cout << "tileSize.x " << tileSize.x << " tileSize.y " << tileSize.y << endl;
 
-					SDL_Texture* diagonalTexture = window.getAreaTexture(imgPartRect, tilesetEntities[index]->texture.get());					
+					SDL_Texture* diagonalTexture = window.getAreaTexture(imgPartRect, tilesetEntities[index]->texture.get());
 					SDL_Texture* trueDiagonalTexture = SDL_CreateTexture(window.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, tileSize.x, tileSize.y);
-					
+
 					// /*
 
 					Uint32* pixels;
@@ -173,6 +173,7 @@ int Area::getIndexForID(int& ID) {
 void Area::renderLayer(RenderWindow& window, const Layer::Ptr& layer) {
 	auto area = map->getTileCount();
 	auto tileSize = map->getTileSize();
+	auto offset = layer->getOffset();
 
 	const vector<Tileset>& tilesets = map->getTilesets();
 	// cout << layer->getName() << endl;
@@ -187,8 +188,8 @@ void Area::renderLayer(RenderWindow& window, const Layer::Ptr& layer) {
 		IntRect renderBox;
 		int left = window.x / static_cast<int>(tileSize.x);
 		int top = window.y / static_cast<int>(tileSize.y);
-		int width = RenderWindow::WIDTH / static_cast<int>(tileSize.x) / window.zoom;
-		int height = RenderWindow::HEIGHT / static_cast<int>(tileSize.y) / window.zoom;
+		int width = RenderWindow::WIDTH / static_cast<int>(tileSize.x) / window.zoom + 1;
+		int height = RenderWindow::HEIGHT / static_cast<int>(tileSize.y) / window.zoom + 1;
 
 		// cout << left << endl;
 
@@ -218,8 +219,8 @@ void Area::renderLayer(RenderWindow& window, const Layer::Ptr& layer) {
 // */
 						// cout << "coords.x " << coords.x << " coords.y " << coords.y << endl;
 
-						tilesetEntities[index]->x = x * tileSize.x;
-						tilesetEntities[index]->y = y * tileSize.y;
+						tilesetEntities[index]->x = x * tileSize.x + offset.x;
+						tilesetEntities[index]->y = y * tileSize.y + offset.y;
 						tilesetEntities[index]->column = coords.x;
 						tilesetEntities[index]->row = coords.y;
 						tilesetEntities[index]->flip = tile.flipFlags;
@@ -253,8 +254,8 @@ void Area::renderLayer(RenderWindow& window, const Layer::Ptr& layer) {
 
 				const FloatRect& rect = object.getAABB();
 
-				tilesetEntities[index]->x = rect.left;
-				tilesetEntities[index]->y = rect.top - rect.height;
+				tilesetEntities[index]->x = rect.left + offset.x;
+				tilesetEntities[index]->y = rect.top - rect.height + offset.y;
 				tilesetEntities[index]->show_width = rect.width;
 				tilesetEntities[index]->show_height = rect.height;
 				tilesetEntities[index]->column = coords.x;
@@ -299,4 +300,32 @@ void Area::render(RenderWindow& window) {
 		}
 	}
 	// */
+}
+
+void Area::placePlayer(Player* player) {
+
+	const vector<Layer::Ptr>& layers = map->getLayers();
+
+	for (const Layer::Ptr& layer : layers) {
+		if (layer->getName() == "Sprite") {
+			auto offset = layer->getOffset();
+			// cout << "nice\n";
+			ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
+
+			auto objectvector = og.getObjects();
+
+			int x = objectvector[0].getAABB().left;
+			int y = objectvector[0].getAABB().top - objectvector[0].getAABB().height;
+			for (auto object : objectvector) {
+				if (x > object.getAABB().left) {
+					x = object.getAABB().left;
+				}
+				if (y > object.getAABB().top - object.getAABB().height) {
+					y = object.getAABB().top - object.getAABB().height;
+				}
+			}
+			player->x = x + offset.x;
+			player->y = y + offset.y;
+		}
+	}
 }

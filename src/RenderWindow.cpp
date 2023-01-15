@@ -9,7 +9,7 @@ RenderWindow::RenderWindow(const char* title) : window(NULL), renderer(NULL) {
 		cout << "Window failed to Init: " << SDL_GetError() << "\n"; 
 	}
 
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 	sans = TTF_OpenFont("res/gfx/zephyrea.ttf", 50);
 };
