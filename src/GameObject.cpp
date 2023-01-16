@@ -12,7 +12,7 @@ GameObject::GameObject(float px, float py, SDL_Texture* ptexture, int pw, int ph
 
 }
 
-bool GameObject::draw(RenderWindow* window, vector<GameObject*>& entities) {
+bool GameObject::draw(RenderWindow* window, World* world, vector<GameObject*>& entities) {
 	x += xvel;
 	y += yvel;
 	

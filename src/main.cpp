@@ -1,4 +1,4 @@
-#include "Area.hpp"
+#include "World.hpp"
 
 #include <chrono>
 
@@ -25,16 +25,14 @@ int main(int argc, char *argv[]) {
 	vector<GameObject*> entities;
 	entities.push_back(player);
 
-	Area* ruins = new Area(window, "./res/Ruins/Ruins.tmx");
-
-	ruins->placePlayer(player);
+	World* world = new World(window, player);
 
 	while (gameRunning) {
 		auto start = chrono::steady_clock().now();
 
 		// cout << "frame\n";
 		window.clear();
-		ruins->render(window);
+		world->current->render(window);
 
 		while (SDL_PollEvent(&event)) {
 			if (event.type == SDL_QUIT) {
@@ -102,7 +100,7 @@ int main(int argc, char *argv[]) {
 		}
 
 		for (GameObject* go : entities) {
-			go->draw(&window, entities);
+			go->draw(&window, world, entities);
 		}
 
 		// cout << "player->x: " << player->x << " player->y: " << player->y << endl; 

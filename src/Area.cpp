@@ -177,19 +177,20 @@ void Area::renderLayer(RenderWindow& window, const Layer::Ptr& layer) {
 
 	const vector<Tileset>& tilesets = map->getTilesets();
 	// cout << layer->getName() << endl;
+
 	if (layer->getType() == Layer::Type::Tile) {
 		// cout << "TILELAYER\n\n";
 		TileLayer& tl = layer->getLayerAs<TileLayer>();
-
-		auto tilevector = tl.getTiles();
-		int x = 0;
-		int y = 0;
 
 		IntRect renderBox;
 		int left = window.x / static_cast<int>(tileSize.x);
 		int top = window.y / static_cast<int>(tileSize.y);
 		int width = RenderWindow::WIDTH / static_cast<int>(tileSize.x) / window.zoom + 1;
 		int height = RenderWindow::HEIGHT / static_cast<int>(tileSize.y) / window.zoom + 1;
+
+		auto tilevector = tl.getTiles();
+		int x = 0;
+		int y = 0;
 
 		// cout << left << endl;
 
@@ -326,6 +327,46 @@ void Area::placePlayer(Player* player) {
 			}
 			player->x = x + offset.x;
 			player->y = y + offset.y;
+		}
+	}
+}
+
+void Area::collision(RenderWindow& window, Player* player) {
+	const vector<Layer::Ptr>& layers = map->getLayers();
+
+	for (const Layer::Ptr& layer : layers) {
+		if (layer->getName().find("Collision") != string::npos) {
+			// cout << "caosl\n";
+			ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
+			auto objectvector = og.getObjects();
+
+			for (auto object : objectvector) {
+				if (object.getShape() == Object::Shape::Rectangle) {
+					SDL_Rect actual = {0, 0, 0, 0};
+					SDL_Rect* intersect = &actual;
+
+					auto rect = object.getAABB();
+
+					SDL_Rect pobj = player->getRect();
+					SDL_Rect oobj = {static_cast<int>(rect.left), static_cast<int>(rect.top), static_cast<int>(rect.width), static_cast<int>(rect.height)};
+
+					SDL_Rect* pstar = &pobj;
+					SDL_Rect* ostar = &oobj;
+
+					if (SDL_IntersectRect(pstar, ostar, intersect) == SDL_TRUE) {
+						// cout << "itnerasd\n";
+						float xpercent = abs(1.0 * actual.w / player->xvel);
+						float ypercent = abs(1.0 * actual.h / player->yvel);
+						float minpercent = min(xpercent, ypercent);
+						if (minpercent > 1) {
+							minpercent = 1;
+						}
+						cout << minpercent << endl;
+						player->x -= player->xvel * minpercent;
+						player->y -= player->yvel * minpercent;						
+					}
+				}
+			}
 		}
 	}
 }

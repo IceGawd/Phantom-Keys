@@ -35,4 +35,5 @@ struct Area {
 	void diagonalTileFinder(RenderWindow& window, const Layer::Ptr& layer);
 	int getIndexForID(int& ID);
 	void placePlayer(Player* player);
+	void collision(RenderWindow& window, Player* player);
 };

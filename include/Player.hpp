@@ -10,6 +10,6 @@ struct Player : public GameObject {
 	Input input;
 
 	Player(RenderWindow* window);
-	virtual bool draw(RenderWindow* window, vector<GameObject*>& entities);
+	virtual bool draw(RenderWindow* window, World* world, vector<GameObject*>& entities);
 	void changeDirection(Input& input);
 };

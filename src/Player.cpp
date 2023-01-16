@@ -1,4 +1,5 @@
 #include "Player.hpp"
+#include "World.hpp"
 
 Player::Player(RenderWindow* window) {
 
@@ -16,9 +17,7 @@ Player::Player(RenderWindow* window) {
 	column = 3;
 }
 
-bool Player::draw(RenderWindow* window, vector<GameObject*>& entities) {
-	GameObject::draw(window, entities);
-
+bool Player::draw(RenderWindow* window, World* world, vector<GameObject*>& entities) {
 	double diagDirect = (input.diagonal()) ? 1 / sqrt(2) : 1;
 
 	if (input.up) {
@@ -91,6 +90,9 @@ bool Player::draw(RenderWindow* window, vector<GameObject*>& entities) {
 			column = 1 - column;
 		}
 	}
+
+	GameObject::draw(window, world, entities);
+	world->current->collision(*window, this);
 
 	previnput = input;
 

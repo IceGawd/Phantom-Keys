@@ -10,7 +10,7 @@
 #include "RenderWindow.hpp"
 #include "SpriteSheet.hpp"
 
-class World;
+struct World;
 
 using namespace std;
 
@@ -27,7 +27,7 @@ public:
 	SpriteSheet* next;
 	map<string, SpriteSheet> sheets;
 
-	virtual bool draw(RenderWindow* window, vector<GameObject*>& entities);
+	virtual bool draw(RenderWindow* window, World* world, vector<GameObject*>& entities);
 	void changeSpriteSheet(string newSheet);
 	virtual GameObject* createObject();
 };
