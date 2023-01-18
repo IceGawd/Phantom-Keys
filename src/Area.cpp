@@ -9,6 +9,41 @@ Vector2u getTilesetCoords(int columns, int id) {
 	return answer;
 }
 
+float angleBetween(Vector2f vec1, Vector2f vec2) {
+	Vector2f vec = vec1 - vec2;
+	if (vec.x == 0) {
+		if (vec.y >= 0) {
+			return M_PI / -2.0;
+		}
+		else {
+			return M_PI / 2.0;			
+		}
+	}
+	else if (vec.x > 0) {
+		return -atan(vec.y / vec.x);
+	}
+	else {
+		return M_PI - atan(vec.y / vec.x);
+	}
+}
+
+float magnitude(Vector2f vec) {
+	return sqrt(vec.x * vec.x + vec.y * vec.y);
+}
+
+MinMax getMinMax(Vector2f vec, const vector<Vector2f>& points) {
+	MinMax answer;
+	float point = vec.x * points[0].x + vec.y * points[0].y;
+	answer.min = point;
+	answer.max = point;
+	for (int x = 1; x < points.size(); x++) {
+		point = vec.x * points[x].x + vec.y * points[x].y;
+		answer.min = min(answer.min, point);
+		answer.max = max(answer.max, point);
+	}
+	return answer;
+}
+
 Area::Area(RenderWindow& window, string path) {
 	map = new Map();
 	map->load(path);
@@ -183,10 +218,10 @@ void Area::renderLayer(RenderWindow& window, const Layer::Ptr& layer) {
 		TileLayer& tl = layer->getLayerAs<TileLayer>();
 
 		IntRect renderBox;
-		int left = window.x / static_cast<int>(tileSize.x);
-		int top = window.y / static_cast<int>(tileSize.y);
-		int width = RenderWindow::WIDTH / static_cast<int>(tileSize.x) / window.zoom + 1;
-		int height = RenderWindow::HEIGHT / static_cast<int>(tileSize.y) / window.zoom + 1;
+		int left = window.x / int(tileSize.x);
+		int top = window.y / int(tileSize.y);
+		int width = RenderWindow::WIDTH / int(tileSize.x) / window.zoom + 1;
+		int height = RenderWindow::HEIGHT / int(tileSize.y) / window.zoom + 1;
 
 		auto tilevector = tl.getTiles();
 		int x = 0;
@@ -240,7 +275,7 @@ void Area::renderLayer(RenderWindow& window, const Layer::Ptr& layer) {
 		}
 		// cout << "\n";
 	}
-	if (layer->getType() == Layer::Type::Object) {
+	else if (layer->getType() == Layer::Type::Object) {
 		ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
 
 		auto objectvector = og.getObjects();
@@ -333,6 +368,7 @@ void Area::placePlayer(Player* player) {
 
 void Area::collision(RenderWindow& window, Player* player) {
 	const vector<Layer::Ptr>& layers = map->getLayers();
+	int iterations = int(log2(10 * (player->xvel * player->xvel + player->yvel * player->yvel))) + 1;
 
 	for (const Layer::Ptr& layer : layers) {
 		if (layer->getName().find("Collision") != string::npos) {
@@ -347,14 +383,15 @@ void Area::collision(RenderWindow& window, Player* player) {
 
 					auto rect = object.getAABB();
 
-					SDL_Rect pobj = player->getRect();
-					SDL_Rect oobj = {static_cast<int>(rect.left), static_cast<int>(rect.top), static_cast<int>(rect.width), static_cast<int>(rect.height)};
+					SDL_Rect pobj = player->getHitbox();
+					SDL_Rect oobj = {int(rect.left), int(rect.top), int(rect.width), int(rect.height)};
 
 					SDL_Rect* pstar = &pobj;
 					SDL_Rect* ostar = &oobj;
 
 					if (SDL_IntersectRect(pstar, ostar, intersect) == SDL_TRUE) {
 						// cout << "itnerasd\n";
+						/*
 						float xpercent = abs(1.0 * actual.w / player->xvel);
 						float ypercent = abs(1.0 * actual.h / player->yvel);
 						float minpercent = min(xpercent, ypercent);
@@ -363,8 +400,95 @@ void Area::collision(RenderWindow& window, Player* player) {
 						}
 						cout << minpercent << endl;
 						player->x -= player->xvel * minpercent;
-						player->y -= player->yvel * minpercent;						
+						player->y -= player->yvel * minpercent;
+						*/
+
+						if (actual.w < actual.h) {
+							if (actual.x > pobj.x) {
+								player->x -= actual.w;
+							}
+							else {
+								player->x += actual.w;
+							}
+						}
+						else {
+							if (actual.y > pobj.y) {
+								player->y -= actual.h;
+							}
+							else {
+								player->y += actual.h;
+							}
+						}
 					}
+				}
+				else if (object.getShape() == Object::Shape::Polygon) {
+					const vector<Vector2f>& points = object.getPoints();
+					vector<Vector2f> polygonPoints;
+					vector<Vector2f> playerPoints = player->getPoints();
+					Vector2f velocityVector = {player->xvel, player->yvel};
+
+					vector<float> anglesToCheck;
+					anglesToCheck.push_back(0);
+					anglesToCheck.push_back(M_PI / 2);
+
+					for (int x = 0; x < points.size() - 1; x++) {
+						Vector2f vec = points[x] - points[x + 1];
+						if (vec.x != 0) {
+							float angle = atan(vec.y / vec.x);
+							if (find(anglesToCheck.begin(), anglesToCheck.end(), angle) == anglesToCheck.end()) {
+								anglesToCheck.push_back(angle);
+							}
+						}
+					}
+					for (int x = 0; x < points.size(); x++) {
+						polygonPoints.push_back(points[x] + object.getPosition());
+					}
+
+					float behind = 1;
+					float parts = 0.5;
+					for (int x = 0; x < iterations; x++) {
+						bool seperated = false;
+						vector<MinMax> precalculatedPolygonMM;
+						for (int y = 0; y < anglesToCheck.size(); y++) {
+							float angle = anglesToCheck[y];
+							Vector2f vec;
+							vec.x = cos(angle);
+							vec.y = sin(angle);
+
+							MinMax polygonMM;
+							if (precalculatedPolygonMM.size() > y) {
+								polygonMM = precalculatedPolygonMM[y];
+							}
+							else {
+								polygonMM = getMinMax(vec, polygonPoints);
+								precalculatedPolygonMM.push_back(polygonMM);
+							}
+							MinMax playerMM = getMinMax(vec, playerPoints);
+
+							if ((polygonMM.max < playerMM.min) || (polygonMM.min > playerMM.max)) {
+								seperated = true;
+								break;
+							}
+						}
+
+						behind = seperated ? behind + parts : behind - parts;
+						if (behind > 1) {
+							break;
+						}
+						Vector2f edit = velocityVector * parts;
+						for (Vector2f& vec : playerPoints) {
+							vec = seperated ? vec + edit : vec - edit;
+						}
+						parts /= 2;
+					}
+					/*
+					if (behind < 1) {
+						player->x -= player->xvel * (1 - behind);
+						player->y -= player->yvel * (1 - behind);
+						player->xvel *= behind;
+						player->yvel *= behind;
+					}
+					*/
 				}
 			}
 		}

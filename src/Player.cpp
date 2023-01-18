@@ -116,3 +116,17 @@ void Player::changeDirection(Input& input) {
 		row = 4;
 	}
 }
+
+SDL_Rect Player::getHitbox() {
+	return {(int) x, (int) (y + 2 * show_height / 3), show_width, show_height / 3};
+}
+
+vector<Vector2f> Player::getPoints() {
+	SDL_Rect rect = getHitbox();
+	vector<Vector2f> points;
+	points.push_back({x, y});
+	points.push_back({x + show_width, y});
+	points.push_back({x, y + show_height});
+	points.push_back({x + show_width, y + show_height});
+	return points;
+}

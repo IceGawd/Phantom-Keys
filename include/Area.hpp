@@ -11,11 +11,15 @@
 #include <SDL2/SDL_image.h>
 
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 using namespace tmx;
 
-Vector2u getTilesetCoords(int columns, int id);
+struct MinMax {
+	float min;
+	float max;
+};
 
 struct DiagonalTile {
 	int index;
@@ -37,3 +41,8 @@ struct Area {
 	void placePlayer(Player* player);
 	void collision(RenderWindow& window, Player* player);
 };
+
+Vector2u getTilesetCoords(int columns, int id);
+float angleBetween(Vector2f vec1, Vector2f vec2);
+float magnitude(Vector2f vec);
+MinMax getMinMax(Vector2f vec, const vector<Vector2f>& points);
