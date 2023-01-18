@@ -44,6 +44,15 @@ MinMax getMinMax(Vector2f vec, const vector<Vector2f>& points) {
 	return answer;
 }
 
+void addUnique(Vector2f vec, vector<float>& anglesToCheck) {
+	if (vec.x != 0) {
+		float angle = M_PI / 2 + atan(vec.y / vec.x);
+		if (find(anglesToCheck.begin(), anglesToCheck.end(), angle) == anglesToCheck.end()) {
+			anglesToCheck.push_back(angle);
+		}
+	}
+}
+
 Area::Area(RenderWindow& window, string path) {
 	map = new Map();
 	map->load(path);
@@ -428,23 +437,20 @@ void Area::collision(RenderWindow& window, Player* player) {
 					Vector2f velocityVector = {player->xvel, player->yvel};
 
 					vector<float> anglesToCheck;
-					anglesToCheck.push_back(0);
 					anglesToCheck.push_back(M_PI / 2);
+					anglesToCheck.push_back(M_PI);
 
 					for (int x = 0; x < points.size() - 1; x++) {
-						Vector2f vec = points[x] - points[x + 1];
-						if (vec.x != 0) {
-							float angle = atan(vec.y / vec.x);
-							if (find(anglesToCheck.begin(), anglesToCheck.end(), angle) == anglesToCheck.end()) {
-								anglesToCheck.push_back(angle);
-							}
-						}
+						addUnique(points[x] - points[x + 1], anglesToCheck);
 					}
+					addUnique(points[0] - points[points.size() - 1], anglesToCheck);
+
 					for (int x = 0; x < points.size(); x++) {
 						polygonPoints.push_back(points[x] + object.getPosition());
 					}
 
 					float behind = 1;
+					float safeNonIntersect = 0;
 					float parts = 0.5;
 					for (int x = 0; x < iterations; x++) {
 						bool seperated = false;
@@ -470,8 +476,17 @@ void Area::collision(RenderWindow& window, Player* player) {
 								break;
 							}
 						}
+						/*
+						if (seperated) {
+							cout << "seperated\n";
+						}
+						else {
+							cout << "no\n";
+						}
+						*/
 
 						behind = seperated ? behind + parts : behind - parts;
+						safeNonIntersect = seperated ? behind : safeNonIntersect;
 						if (behind > 1) {
 							break;
 						}
@@ -481,14 +496,15 @@ void Area::collision(RenderWindow& window, Player* player) {
 						}
 						parts /= 2;
 					}
-					/*
-					if (behind < 1) {
-						player->x -= player->xvel * (1 - behind);
-						player->y -= player->yvel * (1 - behind);
-						player->xvel *= behind;
-						player->yvel *= behind;
+					// /*
+					// cout << behind << " " << safeNonIntersect << endl;
+					if (safeNonIntersect < 1) {
+						player->x -= player->xvel * (1 - safeNonIntersect);
+						player->y -= player->yvel * (1 - safeNonIntersect);
+						player->xvel *= safeNonIntersect;
+						player->yvel *= safeNonIntersect;
 					}
-					*/
+					// */
 				}
 			}
 		}

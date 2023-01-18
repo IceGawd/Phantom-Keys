@@ -124,9 +124,9 @@ SDL_Rect Player::getHitbox() {
 vector<Vector2f> Player::getPoints() {
 	SDL_Rect rect = getHitbox();
 	vector<Vector2f> points;
-	points.push_back({x, y});
-	points.push_back({x + show_width, y});
-	points.push_back({x, y + show_height});
-	points.push_back({x + show_width, y + show_height});
+	points.push_back({float(rect.x), float(rect.y)});
+	points.push_back({float(rect.x + rect.w), float(rect.y)});
+	points.push_back({float(rect.x), float(rect.y + rect.h)});
+	points.push_back({float(rect.x + rect.w), float(rect.y + rect.h)});
 	return points;
 }
