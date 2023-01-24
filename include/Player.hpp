@@ -8,6 +8,8 @@
 using namespace tmx;
 
 struct Player : public GameObject {
+	float prevx;
+	float prevy;
 	int speed;
 	float traction;
 	Input previnput;

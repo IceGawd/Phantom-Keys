@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="200" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="24" nextobjectid="169">
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="200" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="24" nextobjectid="206">
  <tileset firstgid="1" source="New Tilesets.tsx"/>
  <tileset firstgid="199" source="Asset.tsx"/>
  <layer id="14" name="Tile Layer 4" width="200" height="100">
@@ -659,9 +659,6 @@
  </objectgroup>
  <objectgroup id="18" name="Collisions Masks">
   <object id="12" x="575.5" y="807" width="254.5" height="88.7273"/>
-  <object id="18" x="510.75" y="863.75">
-   <polygon points="65.25,32.25 64,0.333333 1.58333,-0.333333"/>
-  </object>
   <object id="20" x="960.136" y="859.5" width="139.864" height="292.364"/>
   <object id="22" x="1024.32" y="1344" width="34.1818" height="65.5"/>
   <object id="23" x="1056.32" y="1280.09" width="39.1818" height="74.9091"/>
@@ -734,11 +731,38 @@
   <object id="119" x="3104" y="985.667" width="21" height="600.333"/>
   <object id="120" x="2133.67" y="997.667" width="974.667" height="26.125"/>
   <object id="121" x="2126" y="1009.33" width="17.8485" height="100.667"/>
-  <object id="161" x="448" y="803.333" width="126.667" height="60.6667"/>
   <object id="167" x="895.25" y="862.75">
    <polygon points="-65.25,32.25 -64.6667,1.66667 -2.25,1"/>
   </object>
   <object id="168" x="831" y="803" width="129.67" height="60.6667"/>
+  <object id="169" x="511.5" y="862">
+   <polygon points="0.75,0.5 1.375,-87.375 63.75,-55.75 64,33.25"/>
+  </object>
+  <object id="172" x="446.5" y="774.5" width="65.5" height="88.25"/>
+  <object id="173" x="2690.67" y="2815.33" width="508" height="28"/>
+  <object id="175" x="2719.33" y="2844.67" width="446.667" height="31.3333"/>
+  <object id="176" x="2784.67" y="2874.67" width="348.667" height="32.6667"/>
+  <object id="177" x="2820" y="2904" width="246.667" height="34.6667"/>
+  <object id="178" x="2852.67" y="2935.33" width="184.667" height="36"/>
+  <object id="179" x="3300" y="2917.33" width="25.3333" height="155.333"/>
+  <object id="180" x="3326" y="2946" width="28.6667" height="127.333"/>
+  <object id="181" x="3355.33" y="2979.33" width="30.6667" height="94"/>
+  <object id="182" x="3386.67" y="3010.67" width="34" height="64"/>
+  <object id="183" x="3268.67" y="3013.33" width="31.3333" height="58.6667"/>
+  <object id="184" x="3234.67" y="3040.67" width="248.667" height="32"/>
+  <object id="185" x="3464" y="2886.67" width="210" height="52.6667"/>
+  <object id="186" x="3492.67" y="2916" width="217.333" height="54.6667"/>
+  <object id="187" x="3560" y="2848" width="82" height="123.333"/>
+  <object id="188" x="3589.33" y="2967.33" width="121.333" height="37.3333"/>
+  <object id="190" x="4007.33" y="3044.67" width="114.667" height="23.3333"/>
+  <object id="191" x="4067.33" y="3012.67" width="88" height="29.3333"/>
+  <object id="192" x="4132" y="2976.67" width="23.3333" height="65.3333"/>
+  <object id="200" x="4227.33" y="2812.67" width="503.333" height="31.3333"/>
+  <object id="201" x="4257.33" y="2844.67" width="444.667" height="31.3333"/>
+  <object id="202" x="4384" y="2874" width="316.667" height="33.3333"/>
+  <object id="203" x="4449.33" y="2904" width="186" height="67.3333"/>
+  <object id="204" x="4485.33" y="2968.67" width="88" height="34"/>
+  <object id="205" x="4634.67" y="2904.67" width="34" height="34.6667"/>
  </objectgroup>
  <layer id="22" name="Cryopods and comps" width="200" height="100">
   <data encoding="csv">

@@ -10,46 +10,67 @@ Vector2u getTilesetCoords(int columns, int id) {
 }
 
 float angleBetween(Vector2f vec1, Vector2f vec2) {
-	Vector2f vec = vec1 - vec2;
-	if (vec.x == 0) {
-		if (vec.y >= 0) {
-			return M_PI / -2.0;
-		}
-		else {
-			return M_PI / 2.0;			
-		}
-	}
-	else if (vec.x > 0) {
-		return -atan(vec.y / vec.x);
-	}
-	else {
-		return M_PI - atan(vec.y / vec.x);
-	}
+	return acos(dotProduct(vec1, vec2) / (magnitude(vec1) * magnitude(vec2)));
 }
 
 float magnitude(Vector2f vec) {
 	return sqrt(vec.x * vec.x + vec.y * vec.y);
 }
 
+float dotProduct(Vector2f vec1, Vector2f vec2) {
+	return vec1.x * vec2.x + vec1.y * vec2.y;	
+}
+
+Vector2f vectorFromAngle(float angle) {
+	Vector2f vec;
+	vec.x = cos(angle);
+	vec.y = -sin(angle);
+	return vec;	
+}
+
 MinMax getMinMax(Vector2f vec, const vector<Vector2f>& points) {
+	// vec.y *= -1;
 	MinMax answer;
-	float point = vec.x * points[0].x + vec.y * points[0].y;
+	float point = dotProduct(vec, points[0]);
 	answer.min = point;
 	answer.max = point;
 	for (int x = 1; x < points.size(); x++) {
-		point = vec.x * points[x].x + vec.y * points[x].y;
+		point = dotProduct(vec, points[x]);
 		answer.min = min(answer.min, point);
 		answer.max = max(answer.max, point);
 	}
 	return answer;
 }
 
+// From 0 to 2pi
+float angleFromCoords(float x, float y) {
+	float angle;
+	if (x == 0) {
+		if (y >= 0) {
+			angle = 3.0 * M_PI / 2.0;
+		}
+		else {
+			angle = M_PI / 2.0;
+		}
+	}
+	else if (x > 0) {
+		angle = -atan(y / x);
+		if (angle < 0) {
+			angle += 2.0 * M_PI;
+		}
+	}
+	else {
+		angle = M_PI - atan(y / x);
+	}
+	return angle;
+}
+
 void addUnique(Vector2f vec, vector<float>& anglesToCheck) {
 	if (vec.x != 0) {
-		float angle = M_PI / 2 + atan(vec.y / vec.x);
+		float angle = M_PI / 2 - atan(vec.y / vec.x);
 		if (find(anglesToCheck.begin(), anglesToCheck.end(), angle) == anglesToCheck.end()) {
 			anglesToCheck.push_back(angle);
-		}
+		}		
 	}
 }
 
@@ -412,6 +433,9 @@ void Area::collision(RenderWindow& window, Player* player) {
 						player->y -= player->yvel * minpercent;
 						*/
 
+						// cout << "x: " << player->x << " y: " << player->y << " prevx: " << player->prevx << " prevy: " << player->prevy << " xvel: " << player->xvel << " yvel: " << player->yvel << endl;
+
+						// /*
 						if (actual.w < actual.h) {
 							if (actual.x > pobj.x) {
 								player->x -= actual.w;
@@ -428,6 +452,9 @@ void Area::collision(RenderWindow& window, Player* player) {
 								player->y += actual.h;
 							}
 						}
+						player->xvel = player->x - player->prevx;
+						player->yvel = player->y - player->prevy;
+						// */
 					}
 				}
 				else if (object.getShape() == Object::Shape::Polygon) {
@@ -445,66 +472,81 @@ void Area::collision(RenderWindow& window, Player* player) {
 					}
 					addUnique(points[0] - points[points.size() - 1], anglesToCheck);
 
+					bool allPointsOut = true;
 					for (int x = 0; x < points.size(); x++) {
 						polygonPoints.push_back(points[x] + object.getPosition());
+						if (window.x < polygonPoints[x].x && window.x + RenderWindow::WIDTH > polygonPoints[x].x && window.y < polygonPoints[x].y && window.y + RenderWindow::HEIGHT > polygonPoints[x].y) {
+							allPointsOut = false;
+						}
+						// cout << "x: " << polygonPoints[x].x << " y: " << polygonPoints[x].y << endl;
 					}
+					if (allPointsOut) {
+						continue;
+					}
+					// cout << "start\n";
 
-					float behind = 1;
-					float safeNonIntersect = 0;
-					float parts = 0.5;
-					for (int x = 0; x < iterations; x++) {
-						bool seperated = false;
-						vector<MinMax> precalculatedPolygonMM;
-						for (int y = 0; y < anglesToCheck.size(); y++) {
-							float angle = anglesToCheck[y];
-							Vector2f vec;
-							vec.x = cos(angle);
-							vec.y = sin(angle);
+					bool seperated = false;
+					float smallestAxis;
+					float smallestLength;
+					bool first = true;
+					for (int y = 0; y < anglesToCheck.size(); y++) {
+						float angle = anglesToCheck[y];
+						// cout << "angle: " << angle << " cos " << cos(angle) << " sin " << sin(angle) << endl;
+						Vector2f vec = vectorFromAngle(angle);
 
-							MinMax polygonMM;
-							if (precalculatedPolygonMM.size() > y) {
-								polygonMM = precalculatedPolygonMM[y];
-							}
-							else {
-								polygonMM = getMinMax(vec, polygonPoints);
-								precalculatedPolygonMM.push_back(polygonMM);
-							}
-							MinMax playerMM = getMinMax(vec, playerPoints);
+						MinMax polygonMM = getMinMax(vec, polygonPoints);
+						MinMax playerMM = getMinMax(vec, playerPoints);
 
-							if ((polygonMM.max < playerMM.min) || (polygonMM.min > playerMM.max)) {
-								seperated = true;
-								break;
-							}
-						}
-						/*
-						if (seperated) {
-							cout << "seperated\n";
-						}
-						else {
-							cout << "no\n";
-						}
-						*/
-
-						behind = seperated ? behind + parts : behind - parts;
-						safeNonIntersect = seperated ? behind : safeNonIntersect;
-						if (behind > 1) {
+						float length = min(polygonMM.max - playerMM.min, playerMM.max - polygonMM.min);
+						// cout << "mms: " << polygonMM.min << " " << polygonMM.max << " " << playerMM.min << " " << playerMM.max;
+						// cout << " length: " << length << endl;
+						if (length < 0) {
+							seperated = true;
 							break;
 						}
-						Vector2f edit = velocityVector * parts;
-						for (Vector2f& vec : playerPoints) {
-							vec = seperated ? vec + edit : vec - edit;
+						else if (first || length < smallestLength) {
+							smallestAxis = angle;
+							smallestLength = length;
+							first = false;
 						}
-						parts /= 2;
 					}
-					// /*
-					// cout << behind << " " << safeNonIntersect << endl;
-					if (safeNonIntersect < 1) {
-						player->x -= player->xvel * (1 - safeNonIntersect);
-						player->y -= player->yvel * (1 - safeNonIntersect);
-						player->xvel *= safeNonIntersect;
-						player->yvel *= safeNonIntersect;
+					if (!seperated) {
+						/*
+						cout << "polygon\n";
+						for (int x = 0; x < polygonPoints.size(); x++) {
+							cout << "x: " << polygonPoints[x].x << " y: " << polygonPoints[x].y << endl;
+						}
+						cout << "player\n";
+						for (int x = 0; x < playerPoints.size(); x++) {
+							cout << "x: " << playerPoints[x].x << " y: " << playerPoints[x].y << endl;
+						}
+						*/
+						/*
+						window.setColor(255, 0, 0, 255);
+						for (int x = 0; x < polygonPoints.size() - 1; x++) {
+							window.drawLine(polygonPoints[x].x, polygonPoints[x].y, polygonPoints[x + 1].x, polygonPoints[x + 1].y, false);
+						}
+						window.drawLine(polygonPoints[0].x, polygonPoints[0].y, polygonPoints[polygonPoints.size() - 1].x, polygonPoints[polygonPoints.size() - 1].y, false);
+						
+						window.setColor(0, 0, 255, 255);
+						for (int x = 0; x < playerPoints.size() - 1; x++) {
+							window.drawLine(playerPoints[x].x, playerPoints[x].y, playerPoints[x + 1].x, playerPoints[x + 1].y, false);
+						}
+						window.drawLine(playerPoints[0].x, playerPoints[0].y, playerPoints[playerPoints.size() - 1].x, playerPoints[playerPoints.size() - 1].y, false);
+						*/
+						// cout << "do smth\n";
+						// /*
+						// smallestLength += 0.1;
+						float angle = angleFromCoords(player->xvel, player->yvel);
+						// cout << "angle : " << angle << " smallestAxis: " << smallestAxis << " smallestLength: " << smallestLength;
+						smallestAxis = abs(angle - smallestAxis) < M_PI / 2 ? smallestAxis : smallestAxis + M_PI;
+						// cout << " next smallestAxis: " << smallestAxis << endl;
+						player->x -= smallestLength * cos(smallestAxis);
+						player->y += smallestLength * sin(smallestAxis);
+						player->xvel = player->x - player->prevx;
+						player->yvel = player->y - player->prevy;
+						// */
 					}
-					// */
 				}
 			}
 		}

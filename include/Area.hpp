@@ -45,4 +45,7 @@ struct Area {
 Vector2u getTilesetCoords(int columns, int id);
 float angleBetween(Vector2f vec1, Vector2f vec2);
 float magnitude(Vector2f vec);
+float dotProduct(Vector2f vec1, Vector2f vec2);
 MinMax getMinMax(Vector2f vec, const vector<Vector2f>& points);
+float angleFromCoords(float x, float y);
+void addUnique(Vector2f vec, vector<float>& anglesToCheck);

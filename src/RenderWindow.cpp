@@ -36,8 +36,13 @@ void RenderWindow::setColor(int r, int g, int b, int a) {
 	SDL_SetRenderDrawColor(renderer, r, g, b, a);
 }
 
-void RenderWindow::drawLine(int x1, int y1, int x2, int y2) {
-	SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
+void RenderWindow::drawLine(int x1, int y1, int x2, int y2, bool stationary) {
+	if (stationary) {
+		SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
+	}
+	else {
+		SDL_RenderDrawLine(renderer, x1 - x, y1 - y, x2 - x, y2 - y);		
+	}
 }
 
 SDL_Rect RenderWindow::getDestRect(Entity* entity, bool stationary) {

@@ -18,6 +18,9 @@ Player::Player(RenderWindow* window) {
 }
 
 bool Player::draw(RenderWindow* window, World* world, vector<GameObject*>& entities) {
+	prevx = x;
+	prevy = y;
+
 	double diagDirect = (input.diagonal()) ? 1 / sqrt(2) : 1;
 
 	if (input.up) {
@@ -126,7 +129,7 @@ vector<Vector2f> Player::getPoints() {
 	vector<Vector2f> points;
 	points.push_back({float(rect.x), float(rect.y)});
 	points.push_back({float(rect.x + rect.w), float(rect.y)});
-	points.push_back({float(rect.x), float(rect.y + rect.h)});
 	points.push_back({float(rect.x + rect.w), float(rect.y + rect.h)});
+	points.push_back({float(rect.x), float(rect.y + rect.h)});
 	return points;
 }
