@@ -235,7 +235,7 @@ int Area::getIndexForID(int& ID) {
 	return tilesets.size() - 1;
 }
 
-void Area::renderLayer(RenderWindow& window, const Layer::Ptr& layer) {
+void Area::renderLayer(RenderWindow& window, const Layer::Ptr& layer, IntRect intrect) {
 	auto area = map->getTileCount();
 	auto tileSize = map->getTileSize();
 	auto offset = layer->getOffset();
@@ -247,12 +247,6 @@ void Area::renderLayer(RenderWindow& window, const Layer::Ptr& layer) {
 		// cout << "TILELAYER\n\n";
 		TileLayer& tl = layer->getLayerAs<TileLayer>();
 
-		IntRect renderBox;
-		int left = window.x / int(tileSize.x);
-		int top = window.y / int(tileSize.y);
-		int width = RenderWindow::WIDTH / int(tileSize.x) / window.zoom + 1;
-		int height = RenderWindow::HEIGHT / int(tileSize.y) / window.zoom + 1;
-
 		auto tilevector = tl.getTiles();
 		int x = 0;
 		int y = 0;
@@ -260,7 +254,7 @@ void Area::renderLayer(RenderWindow& window, const Layer::Ptr& layer) {
 		// cout << left << endl;
 
 		for (auto tile : tilevector) {
-			if (x >= left && (x - left) <= width && y >= top && (y - top) <= height) {
+			if (x >= intrect.left && (x - intrect.left) <= intrect.width && y >= intrect.top && (y - intrect.top) <= intrect.height) {
 				// cout << tile.ID << " ";
 				if (tile.ID != 0) {
 					int ID = tile.ID;
@@ -338,7 +332,22 @@ void Area::renderLayer(RenderWindow& window, const Layer::Ptr& layer) {
 	}
 }
 
-void Area::render(RenderWindow& window) {
+void Area::subRender(const Layer::Ptr& layer, RenderWindow& window, IntRect rect) {
+	if (layer->getVisible()) {
+		if (layer->getType() == Layer::Type::Group) {
+			LayerGroup& lg = layer->getLayerAs<LayerGroup>();
+			const vector<Layer::Ptr>& layerception = lg.getLayers();
+			for (const Layer::Ptr& interlayer : layerception) {
+				renderLayer(window, interlayer, rect);
+			}
+		}
+		else {
+			renderLayer(window, layer, rect);
+		}
+	}
+}
+
+void Area::render(RenderWindow& window, Player* player, World* world, vector<GameObject*>& entities) {
 	/*
 	// cout << diagonalTileEntities[0].entity->width << " " << diagonalTileEntities[0].entity->height << endl;
 	int x = 0;
@@ -349,31 +358,68 @@ void Area::render(RenderWindow& window) {
 	}
 	*/
 	// /*
+	auto tileSize = map->getTileSize();
+
 	const vector<Layer::Ptr>& layers = map->getLayers();
 
-	for (const Layer::Ptr& layer : layers) {
-		if (layer->getVisible()) {
-			if (layer->getType() == Layer::Type::Group) {
-				LayerGroup& lg = layer->getLayerAs<LayerGroup>();
-				const vector<Layer::Ptr>& layerception = lg.getLayers();
-				for (const Layer::Ptr& interlayer : layerception) {
-					renderLayer(window, interlayer);
+	int left = window.x / int(tileSize.x);
+	int top = window.y / int(tileSize.y);
+	int width = RenderWindow::WIDTH / int(tileSize.x) / window.zoom + 1;
+	int height = RenderWindow::HEIGHT / int(tileSize.y) / window.zoom + 1;
+	IntRect irect = {left, top, width, height};
+	// IntRect bottomrect = {left, top + height - (height / 2 + 1), width, height / 2 + 1};
+	// IntRect toprect = {left, top, width, height - (height / 2 + 1)};
+
+	vector<int> preRenderIndexes;
+	SDL_Rect pobj = player->getRect();
+	SDL_Rect actual = {0, 0, 0, 0};
+	SDL_Rect* intersect = &actual;
+
+	for (int x = 0; x < playerIndex; x++) {
+		const Layer::Ptr& layer = layers[x];
+		subRender(layer, window, irect);
+	}
+	for (int x = playerIndex + 1; x < layers.size() - 1; x++) {
+		const Layer::Ptr& layer = layers[x];
+		const Layer::Ptr& perhaps = layers[x + 1];
+		if (perhaps->getName().find("BGFG") != string::npos) {
+			// cout << "BTG9910\n";
+			ObjectGroup& og = perhaps->getLayerAs<ObjectGroup>();
+			auto objectvector = og.getObjects();
+			for (auto object : objectvector) {
+				if (object.getShape() == Object::Shape::Rectangle) {
+					auto rect = object.getAABB();
+
+					SDL_Rect oobj = {int(rect.left), int(rect.top), int(rect.width), int(rect.height)};
+
+					if (SDL_IntersectRect(&pobj, &oobj, intersect) == SDL_TRUE) {
+						// cout << "yo\n";
+						subRender(layer, window, irect);
+						preRenderIndexes.push_back(x);
+						break;
+					}
 				}
 			}
-			else {
-				renderLayer(window, layer);
-			}
+			x++;
+		}
+	}
+	player->draw(&window, world, entities);
+	for (int x = playerIndex + 1; x < layers.size(); x++) {
+		if (find(preRenderIndexes.begin(), preRenderIndexes.end(), x) == preRenderIndexes.end()) {
+			const Layer::Ptr& layer = layers[x];
+			subRender(layer, window, irect);
 		}
 	}
 	// */
 }
 
 void Area::placePlayer(Player* player) {
-
 	const vector<Layer::Ptr>& layers = map->getLayers();
 
-	for (const Layer::Ptr& layer : layers) {
+	for (int x = 0; x < layers.size(); x++) {
+		const Layer::Ptr& layer = layers[x];
 		if (layer->getName() == "Sprite") {
+			playerIndex = x;
 			auto offset = layer->getOffset();
 			// cout << "nice\n";
 			ObjectGroup& og = layer->getLayerAs<ObjectGroup>();

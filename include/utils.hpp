@@ -1,4 +1,7 @@
+#pragma once
+
 #include <random>
+#include <vector>
 
 using namespace std;
 
@@ -15,3 +18,11 @@ float average(vector<T> levels);
 
 float quadratic(float a, float b, float c);
 float increase(float initial, float percent);
+
+enum Tag {
+	PIERCING, 
+	BLUDGEONING, 
+	SLASHING, 
+	UPWARD, 
+	FORWARD, 
+};

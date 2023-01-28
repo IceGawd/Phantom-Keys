@@ -2,6 +2,7 @@
 #include "World.hpp"
 
 Player::Player(RenderWindow* window) {
+	stats = Stats(5, 2, 4, 1, 3);
 
 	speed = 2;
 	traction = 0.7;

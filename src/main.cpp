@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
 
 	Player* player = new Player(&window);
 	vector<GameObject*> entities;
-	entities.push_back(player);
+	// entities.push_back(player);
 
 	World* world = new World(window, player);
 
@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
 
 		// cout << "frame\n";
 		window.clear();
-		world->current->render(window);
+		world->current->render(window, player, world, entities);
 
 		while (SDL_PollEvent(&event)) {
 			if (event.type == SDL_QUIT) {
@@ -115,6 +115,7 @@ int main(int argc, char *argv[]) {
 		chrono::duration<double> frameDone = end - start;
 
 		double delay = 1000 * ((1.0 / FPS) - frameDone.count());
+		// cout << "delay: " << delay << endl;
 		if (delay > 0) {
 			SDL_Delay(delay);
 		}

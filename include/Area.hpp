@@ -31,11 +31,13 @@ struct Area {
 	vector<Entity*> tilesetEntities;
 	vector<DiagonalTile> diagonalTileEntities;
 	Map* map;
+	int playerIndex = -1; // CAN ONLY NOT BE -1 IF PLACE PLAYER IS CALLED
 
 	Area(RenderWindow& window, string path);
 
-	void render(RenderWindow& window);
-	void renderLayer(RenderWindow& window, const Layer::Ptr& layer);
+	void subRender(const Layer::Ptr& layer, RenderWindow& window, IntRect rect);
+	void render(RenderWindow& window, Player* player, World* world, vector<GameObject*>& entities);
+	void renderLayer(RenderWindow& window, const Layer::Ptr& layer, IntRect intrect);
 	void diagonalTileFinder(RenderWindow& window, const Layer::Ptr& layer);
 	int getIndexForID(int& ID);
 	void placePlayer(Player* player);

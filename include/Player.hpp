@@ -2,12 +2,12 @@
 
 #include "tmxlite/Types.hpp"
 
-#include "GameObject.hpp"
+#include "Fightable.hpp"
 #include "Input.hpp"
 
 using namespace tmx;
 
-struct Player : public GameObject {
+struct Player : public Fightable {
 	float prevx;
 	float prevy;
 	int speed;
