@@ -452,6 +452,9 @@ void Area::collision(RenderWindow& window, Player* player) {
 			ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
 			auto objectvector = og.getObjects();
 
+			bool doItAgain = true;
+
+			doItAgain = false;
 			for (auto object : objectvector) {
 				if (object.getShape() == Object::Shape::Rectangle) {
 					SDL_Rect actual = {0, 0, 0, 0};
@@ -500,6 +503,8 @@ void Area::collision(RenderWindow& window, Player* player) {
 						}
 						player->xvel = player->x - player->prevx;
 						player->yvel = player->y - player->prevy;
+
+						doItAgain = true;
 						// */
 					}
 				}
@@ -582,15 +587,17 @@ void Area::collision(RenderWindow& window, Player* player) {
 						*/
 						// cout << "do smth\n";
 						// /*
-						// smallestLength += 0.1;
+						// smallestLength += 1;
 						float angle = angleFromCoords(player->xvel, player->yvel);
-						// cout << "angle : " << angle << " smallestAxis: " << smallestAxis << " smallestLength: " << smallestLength;
-						smallestAxis = abs(angle - smallestAxis) < M_PI / 2 ? smallestAxis : smallestAxis + M_PI;
-						// cout << " next smallestAxis: " << smallestAxis << endl;
+						cout << "angle : " << angle << " smallestAxis: " << smallestAxis << " smallestLength: " << smallestLength;
+						float angleDiff = min(abs(angle - smallestAxis), float(2 * M_PI - abs(angle - smallestAxis)));
+						smallestAxis = angleDiff < M_PI / 2 ? smallestAxis : smallestAxis + M_PI;
+						cout << " next smallestAxis: " << smallestAxis << endl;
 						player->x -= smallestLength * cos(smallestAxis);
 						player->y += smallestLength * sin(smallestAxis);
 						player->xvel = player->x - player->prevx;
 						player->yvel = player->y - player->prevy;
+						doItAgain = true;
 						// */
 					}
 				}
