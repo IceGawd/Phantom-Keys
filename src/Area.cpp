@@ -444,7 +444,8 @@ void Area::placePlayer(Player* player) {
 
 void Area::collision(RenderWindow& window, Player* player) {
 	const vector<Layer::Ptr>& layers = map->getLayers();
-	int iterations = int(log2(10 * (player->xvel * player->xvel + player->yvel * player->yvel))) + 1;
+
+	vector<Vector2f> mtvs; // Minimum Translation Vectors
 
 	for (const Layer::Ptr& layer : layers) {
 		if (layer->getName().find("Collision") != string::npos) {
@@ -452,9 +453,6 @@ void Area::collision(RenderWindow& window, Player* player) {
 			ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
 			auto objectvector = og.getObjects();
 
-			bool doItAgain = true;
-
-			doItAgain = false;
 			for (auto object : objectvector) {
 				if (object.getShape() == Object::Shape::Rectangle) {
 					SDL_Rect actual = {0, 0, 0, 0};
@@ -485,26 +483,26 @@ void Area::collision(RenderWindow& window, Player* player) {
 						// cout << "x: " << player->x << " y: " << player->y << " prevx: " << player->prevx << " prevy: " << player->prevy << " xvel: " << player->xvel << " yvel: " << player->yvel << endl;
 
 						// /*
+						Vector2f mtv;
 						if (actual.w < actual.h) {
 							if (actual.x > pobj.x) {
-								player->x -= actual.w;
+								mtv.x = -actual.w;
 							}
 							else {
-								player->x += actual.w;
+								mtv.x = actual.w;
 							}
 						}
 						else {
 							if (actual.y > pobj.y) {
-								player->y -= actual.h;
+								mtv.y = -actual.h;
 							}
 							else {
-								player->y += actual.h;
+								mtv.y = actual.h;
 							}
 						}
-						player->xvel = player->x - player->prevx;
-						player->yvel = player->y - player->prevy;
-
-						doItAgain = true;
+						mtvs.push_back(mtv);
+						// player->xvel = player->x - player->prevx;
+						// player->yvel = player->y - player->prevy;
 						// */
 					}
 				}
@@ -562,6 +560,7 @@ void Area::collision(RenderWindow& window, Player* player) {
 						}
 					}
 					if (!seperated) {
+						Vector2f mtv;
 						/*
 						cout << "polygon\n";
 						for (int x = 0; x < polygonPoints.size(); x++) {
@@ -593,15 +592,33 @@ void Area::collision(RenderWindow& window, Player* player) {
 						float angleDiff = min(abs(angle - smallestAxis), float(2 * M_PI - abs(angle - smallestAxis)));
 						smallestAxis = angleDiff < M_PI / 2 ? smallestAxis : smallestAxis + M_PI;
 						cout << " next smallestAxis: " << smallestAxis << endl;
-						player->x -= smallestLength * cos(smallestAxis);
-						player->y += smallestLength * sin(smallestAxis);
-						player->xvel = player->x - player->prevx;
-						player->yvel = player->y - player->prevy;
-						doItAgain = true;
+						mtv.x = -smallestLength * cos(smallestAxis);
+						mtv.y = smallestLength * sin(smallestAxis);
+						mtvs.push_back(mtv);
+						// player->xvel = player->x - player->prevx;
+						// player->yvel = player->y - player->prevy;
 						// */
 					}
 				}
 			}
 		}
+	}
+
+	if (mtvs.size() == 0) {
+		return;
+	}
+	else {
+		Vector2f min = mtvs[0];
+		for (int x = 1; x < mtvs.size(); x++) {
+			if (magnitude(min) < magnitude(mtvs[x])) {
+				min = mtvs[x];
+			}
+		}
+		player->x += min.x;
+		player->y += min.y;
+
+		player->xvel = player->x - player->prevx;
+		player->yvel = player->y - player->prevy;
+		// collision(window, player);
 	}
 }
