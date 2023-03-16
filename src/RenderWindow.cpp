@@ -59,7 +59,7 @@ SDL_Rect RenderWindow::getDestRect(Entity* entity, bool stationary) {
 	return dest;
 }
 
-void RenderWindow::render(Entity* entity, bool stationary) {
+void RenderWindow::render(Entity* entity, bool stationary, int centerx, int centery) {
 	if (entity->textureDraw) {
 //		cout << "X: " << entity->x << "Y: " << entity->y << endl;
 
@@ -85,8 +85,8 @@ void RenderWindow::render(Entity* entity, bool stationary) {
 		*/
 
 		SDL_Point center = SDL_Point();
-		center.x = src.w / 2;
-		center.y = src.h / 2;
+		center.x = (centerx == -1) ? src.w / 2 : centerx;
+		center.y = (centery == -1) ? src.h / 2 : centery;
 
 		// cout << "angle: " << 180 * entity->angle / M_PI << endl;
 		SDL_RendererFlip flip = SDL_FLIP_NONE;

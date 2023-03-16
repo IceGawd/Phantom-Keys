@@ -314,6 +314,8 @@ void Area::renderLayer(RenderWindow& window, const Layer::Ptr& layer, IntRect in
 
 				const FloatRect& rect = object.getAABB();
 
+				float angle = tilesetEntities[index]->angle = object.getRotation() * M_PI / 180;
+
 				tilesetEntities[index]->x = rect.left + offset.x;
 				tilesetEntities[index]->y = rect.top - rect.height + offset.y;
 				tilesetEntities[index]->show_width = rect.width;
@@ -321,9 +323,12 @@ void Area::renderLayer(RenderWindow& window, const Layer::Ptr& layer, IntRect in
 				tilesetEntities[index]->column = coords.x;
 				tilesetEntities[index]->row = coords.y;
 				tilesetEntities[index]->flip = object.getFlipFlags();
+				tilesetEntities[index]->angle = angle;
 				tilesetEntities[index]->setRect();
 
-				window.render(tilesetEntities[index]);
+				window.render(tilesetEntities[index], false, 0, rect.height);
+				// cout << "HAHAHA\n";
+				// window.drawText(to_string(object.getFlipFlags()), 0, 0, 255, 50, tilesetEntities[index]->x - window.x, tilesetEntities[index]->y - window.y, tileSize.x, tileSize.y);
 				tilesetEntities[index]->show_width = tileSize.x;
 				tilesetEntities[index]->show_height = tileSize.y;
 			}

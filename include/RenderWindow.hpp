@@ -27,7 +27,7 @@ public:
 	void cleanUp();
 	void clear();
 	SDL_Rect getDestRect(Entity* entity, bool stationary = false);
-	void render(Entity* entity, bool stationary = false);
+	void render(Entity* entity, bool stationary = false, int centerx = -1, int centery = -1);
 	void display();
 	void setColor(int r, int g, int b, int a);
 	void drawLine(int x1, int y1, int x2, int y2, bool stationary = true);
