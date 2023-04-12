@@ -6,6 +6,7 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
 	const int FPS = 60;
+	const int SCREENSCROLLPOWER = 100;
 	SDL_Event event;
 	bool gameRunning = true;
 
@@ -34,6 +35,19 @@ int main(int argc, char *argv[]) {
 		window.clear();
 		world->current->render(window, player, world, entities);
 
+		if (window.keyboard[SDL_SCANCODE_UP]) {
+			window.y -= SCREENSCROLLPOWER;
+		}
+		if (window.keyboard[SDL_SCANCODE_DOWN]) {
+			window.y += SCREENSCROLLPOWER;
+		}
+		if (window.keyboard[SDL_SCANCODE_LEFT]) {
+			window.x -= SCREENSCROLLPOWER;
+		}
+		if (window.keyboard[SDL_SCANCODE_RIGHT]) {
+			window.x += SCREENSCROLLPOWER;
+		}
+
 		while (SDL_PollEvent(&event)) {
 			if (event.type == SDL_QUIT) {
 				gameRunning = false;
@@ -53,22 +67,6 @@ int main(int argc, char *argv[]) {
 					player->input.right = true;
 				}
 				/*
-				if (kc == SDLK_w) {
-					cout << "up\n";
-					window.y -= 100;
-				}
-				if (kc == SDLK_s) {
-					cout << "down\n";
-					window.y += 100;
-				}
-				if (kc == SDLK_a) {
-					cout << "left\n";
-					window.x -= 100;
-				}
-				if (kc == SDLK_d) {
-					cout << "right\n";
-					window.x += 100;
-				}
 				if (kc == SDLK_o) {
 					cout << "zoomout\n";
 					window.zoom /= 2;

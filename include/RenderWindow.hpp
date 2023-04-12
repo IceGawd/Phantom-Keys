@@ -13,6 +13,8 @@ public:
 	const static int WIDTH = 1280;
 	const static int HEIGHT = 720;
 
+	const Uint8* keyboard;
+
 	bool temp = false;
 
 	SDL_Window* window;

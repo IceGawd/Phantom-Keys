@@ -183,7 +183,7 @@ void Area::diagonalTileFinder(RenderWindow& window, const Layer::Ptr& layer) {
 
 					/*
 					for (int xTemp = 0; xTemp < tileSize.x * tileSize.y; xTemp++) {
-						cout << pixels[xTemp] << " "; 
+						cout << pixels[xTemp] << " ";
 					}
 					cout << endl;
 
