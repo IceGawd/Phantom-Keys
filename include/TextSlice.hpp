@@ -18,6 +18,7 @@ struct TextSlice {
 	const int XMAX = 1200; 
 	static constexpr float WAVEDELTA = M_PI / 20.0;
 	const int MOVEMENTMOD = 5;
+	const int GHOSTWAVE = 10;
 	map<char, Mix_Chunk*>* sounds = nullptr;
 	string text;
 	SDL_Color color = {255, 255, 255, 255};
@@ -31,6 +32,10 @@ struct TextSlice {
 
 	bool shaky = false;
 	bool wavey = false;
+	bool ghost = false;
+	bool rainbow = false;
+	bool diagonal_rainbow = false;
+
 
 	float waveMod = 0;
 

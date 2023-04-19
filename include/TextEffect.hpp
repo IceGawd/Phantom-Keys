@@ -2,5 +2,7 @@ enum TextEffect {
 	SHAKY, 
 	HARD, 
 	WAVEY,
-	RAINBOW
+	RAINBOW, 
+	GHOST, 
+	DIAGONAL_RAINBOW, 
 };

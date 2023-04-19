@@ -49,7 +49,37 @@ int main(int argc, char *argv[]) {
 
 
 	World* world = new World(window, player);
-	TextSequence* ts = new TextSequence({TextBox(window, {TextSlice(window, "MWEE HEE HEE HEE YOU FOOL", {255, 0, 255, 255}, {SHAKY})}), TextBox(window, {TextSlice(window, "EAT A SANDWICH SKINNY. MWEE HEE HEE!!!", {255, 0, 255, 255}, {SHAKY, WAVEY})})}, &textNoise["Trumpet"]);
+
+	TextSequence* ts = new TextSequence({
+		TextBox(window, {
+			TextSlice(window, "Suck it samurai game Calder plays. ", {125, 125, 125, 255}, {DIAGONAL_RAINBOW}), 
+			TextSlice(window, "That game can suck my nuts. ", {255, 0, 255, 255}, {DIAGONAL_RAINBOW, WAVEY}), 
+			TextSlice(window, "JK JK Its really cool. ")
+		}), 
+		TextBox(window, {
+			TextSlice(window, "Ghost moment", {125, 125, 125, 255}, {GHOST}), 
+		}), 
+		TextBox(window, {
+			TextSlice(window, "Gay ghost moment", {125, 125, 125, 255}, {GHOST, RAINBOW}), 
+		}), 
+		TextBox(window, {
+			TextSlice(window, "Scary ghost moment", {125, 125, 125, 255}, {GHOST, SHAKY}), 
+		})
+	}, &textNoise["Flute"]);
+
+	/*
+	TextSequence* ts = new TextSequence({
+		TextBox(window, {
+			TextSlice(window, "ooooohh.....      ooooooohhhhhhhh... OOOOOHHH! ", {125, 125, 125, 255}, {DIAGONAL_RAINBOW, GHOST}), 
+			TextSlice(window, "MWEE HEE HEE HEE YOU FOOL", {255, 0, 255, 255}, {DIAGONAL_RAINBOW, SHAKY})
+		}), TextBox(window, {
+			TextSlice(window, "EAT A SANDWICH SKINNY. MWEE HEE HEE!!!", {255, 0, 255, 255}, {DIAGONAL_RAINBOW, WAVEY})
+		}), TextBox(window, {
+			TextSlice(window, "By the way im gay :) ", {255, 255, 255, 255}, {RAINBOW}), 
+			TextSlice(window, "Or bi but find out ;)", {255, 255, 255, 255}, {DIAGONAL_RAINBOW}), 
+		})
+	}, &textNoise["Trumpet"]);
+	*/
 	// TextSequence* ts = new TextSequence({TextBox(window, {TextSlice(window, "Hello every person type or thing, I need to make a long text to test out the scrolling features. ", {255, 255, 255, 255}, {WAVEY}), TextSlice(window, "Its ice god here", {0, 120, 200, 255}, {SHAKY})})}, &textNoise["Trumpet"]);
 
 	while (gameRunning) {

@@ -13,32 +13,19 @@ TextSlice::TextSlice(RenderWindow& window, string t, SDL_Color c, vector<TextEff
 bool TextSlice::draw(RenderWindow& window) {
 	// cout << "tts\n";
 	bool done = (surfaces.size() == text.length());
+
+	Uint8 r;
+	Uint8 g;
+	Uint8 b;
+	Uint8 a;
+
 	if (!done) {
 		frames++;
 		while (frames >= speed) {
 			char c = text.at(surfaces.size());
-			SDL_Surface* surf = TTF_RenderText_Solid(window.zephyrea, string(1, c).c_str(), color);
-			
-			/*
-			SDL_LockSurface(surf);
-			Uint32* pixels = (Uint32*) surf->pixels;
-			pixels[x] = pixels[x + 1];
-
-			/*
-			for (int x = 0; x < surf->w * surf->h / 2; x++) {
-				Uint8 r;
-				Uint8 g;
-				Uint8 b;				
-				Uint8 a;
-				// SDL_GetRGBA(x, surf->format, &r, &g, &b, &a);
-				// cout << "pixels[x]: " << pixels[x] << " r: " << (int) r << " g: " << (int) g << " b: " << (int) b << " a: " << (int) a << endl;
-				pixels[x] = pixels[x + 1];
-			}
-			// surf->pixels = pixels;
-			SDL_UnlockSurface(surf);
-			*/
-
+			SDL_Surface* surf = TTF_RenderText_Blended(window.zephyrea, string(1, c).c_str(), color);
 			Entity* ent = new Entity(x, y, SDL_CreateTextureFromSurface(window.renderer, surf));
+
 			char lookFor = tolower(c);
 			// bool finished = Mix_ChannelFinished(7);
 			sound++;
@@ -73,6 +60,8 @@ bool TextSlice::draw(RenderWindow& window) {
 		Entity* ent = letters[x];
 		float prevx = ent->x;
 		float prevy = ent->y;
+		SDL_Surface* surf = surfaces[x];
+		Uint32* pixels = (Uint32*) surf->pixels;
 
 		if (shaky) {
 			ent->x += (2 * MOVEMENTMOD * random()) - MOVEMENTMOD;
@@ -82,6 +71,38 @@ bool TextSlice::draw(RenderWindow& window) {
 			// cout << MOVEMENTMOD * sin(waveMod + x * WAVEDELTA) << endl;
 			ent->y += MOVEMENTMOD * sin(waveMod + (ent->x - XMIN) * 2.0 * M_PI / XMAX);
 		}
+		if (ghost) {
+			for (int index = 0; index < surf->w * surf->h; index++) {
+				SDL_GetRGBA(pixels[index], surf->format, &r, &g, &b, &a);
+				if (a > 0) {
+					pixels[index] = SDL_MapRGBA(surf->format, r, g, b, (Uint8) (255 * (GHOSTWAVE * sin(waveMod) + 50 / 2) / 100));
+				}
+			}
+		}
+		if (rainbow) {
+			for (int index = 0; index < surf->w * surf->h; index++) {
+				SDL_GetRGBA(pixels[index], surf->format, &r, &g, &b, &a);
+				r = (Uint8) (122.5 * sin(waveMod) + 122.5);
+				g = (Uint8) (122.5 * sin(waveMod + 2 * M_PI / 3) + 122.5);
+				b = (Uint8) (122.5 * sin(waveMod + 4 * M_PI / 3) + 122.5);
+				pixels[index] = SDL_MapRGBA(surf->format, r, g, b, a);
+			}
+		}
+		if (diagonal_rainbow) {
+			float entDist = ent->x + ent->y;
+			for (int y = 0; y < surf->h; y++) {
+				for (int x = 0; x < surf->w; x++) {
+					int index = y * surf->w + x;
+					float mod = waveMod + (entDist + y + x) * M_PI / 180;
+					SDL_GetRGBA(pixels[index], surf->format, &r, &g, &b, &a);
+					r = (Uint8) (122.5 * sin(mod) + 122.5);
+					g = (Uint8) (122.5 * sin(mod + 2 * M_PI / 3) + 122.5);
+					b = (Uint8) (122.5 * sin(mod + 4 * M_PI / 3) + 122.5);
+					pixels[index] = SDL_MapRGBA(surf->format, r, g, b, a);
+				}
+			}
+		}
+		SDL_UpdateTexture(ent->texture.get(), NULL, pixels, surf->pitch);
 
 		window.render(ent, true);
 
@@ -100,6 +121,18 @@ void TextSlice::setEffects(vector<TextEffect> e) {
 		if (te == WAVEY) {
 			cout << "wav\n";
 			wavey = true;
+		}
+		if (te == GHOST) {
+			cout << "gosos\n";
+			ghost = true;
+		}
+		if (te == RAINBOW) {
+			cout << "rainbo\n";
+			rainbow = true;
+		}
+		if (te == DIAGONAL_RAINBOW) {
+			cout << "diga\n";
+			diagonal_rainbow = true;
 		}
 	}
 }
