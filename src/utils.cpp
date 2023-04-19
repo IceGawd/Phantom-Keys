@@ -1,7 +1,7 @@
 #include "utils.hpp"
 
 float random(){
-	return (int) rand() / RAND_MAX;
+	return (float) rand() / RAND_MAX;
 }
 
 float rand(float std, float m) {

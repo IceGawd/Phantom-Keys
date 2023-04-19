@@ -6,11 +6,13 @@
 
 using namespace std;
 
-struct TextBox {
+struct TextBox : public Entity {
+	int curX = 0;
+	int curY = 0;
 	vector<TextSlice> text;
-	int curIndex = 0;
+	int curIndex = 1;
 	bool prevHeld = true;
 
-	TextBox(vector<TextSlice> t);
+	TextBox(RenderWindow& window, vector<TextSlice> t);
 	bool draw(RenderWindow& window);
 };

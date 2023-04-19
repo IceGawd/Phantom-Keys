@@ -11,7 +11,7 @@ RenderWindow::RenderWindow(const char* title) : window(NULL), renderer(NULL) {
 
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-	sans = TTF_OpenFont("res/gfx/zephyrea.ttf", 50);
+	zephyrea = TTF_OpenFont("res/gfx/zephyrea.ttf", 50);
 
 	keyboard = SDL_GetKeyboardState(NULL);
 };
@@ -145,7 +145,7 @@ void RenderWindow::drawText(string text, unsigned char r, unsigned char g, unsig
 //	cout << 1.5 << endl;
 //	cout << SDL_GetError() << endl;
 //	cout << TTF_GetError() << endl;
-	SDL_Surface* surfaceMessage = TTF_RenderText_Solid(sans, text.c_str(), color); 
+	SDL_Surface* surfaceMessage = TTF_RenderText_Solid(zephyrea, text.c_str(), color); 
 //	cout << 2 << endl;
 
 	// now you can convert it into a texture

@@ -16,10 +16,11 @@ public:
 	const Uint8* keyboard;
 
 	bool temp = false;
+	bool playerInput = true;
 
 	SDL_Window* window;
 	SDL_Renderer* renderer;
-	TTF_Font* sans;
+	TTF_Font* zephyrea;
 	int x = 0;
 	int y = 0;
 	float zoom = 1.0;

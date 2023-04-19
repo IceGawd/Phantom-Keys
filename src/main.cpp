@@ -1,8 +1,20 @@
 #include "World.hpp"
+#include "TextSequence.hpp"
 
 #include <chrono>
 
 using namespace std;
+
+map<char, Mix_Chunk*> getChunks(string s) {
+	map<char, Mix_Chunk*> answer;
+	string path = "res/Sounds/SFX/UI/Text/" + s + "/";
+	char letter = 'a';
+	for (int x = 0; x < 26; x++) {
+		answer[letter] = Mix_LoadWAV((path + string(1, letter) + ".wav").c_str());
+		letter += 1;
+	}
+	return answer;
+}
 
 int main(int argc, char *argv[]) {
 	const int FPS = 60;
@@ -10,6 +22,7 @@ int main(int argc, char *argv[]) {
 	SDL_Event event;
 	bool gameRunning = true;
 
+	srand((unsigned) time(NULL));
 	if (SDL_Init( SDL_INIT_VIDEO | SDL_INIT_AUDIO ) < 0) {
 		cout << "SDL could not initialize! SDL Error: " << SDL_GetError() << "\n";
 	}
@@ -19,6 +32,9 @@ int main(int argc, char *argv[]) {
 	if(TTF_Init() == -1) {
 	    cout << "TTF_Init: " << TTF_GetError() << endl;
 	}
+	if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 8, 2048) < 0) {
+		cout << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << "\n";
+	}
 
 	RenderWindow window("Phantom Keys");
 
@@ -26,7 +42,15 @@ int main(int argc, char *argv[]) {
 	vector<GameObject*> entities;
 	// entities.push_back(player);
 
+	map<string, map<char, Mix_Chunk*>> textNoise = {
+		{"Flute", getChunks("Flute")}, 
+		{"Trumpet", getChunks("Trumpet")}, 
+	};
+
+
 	World* world = new World(window, player);
+	TextSequence* ts = new TextSequence({TextBox(window, {TextSlice(window, "MWEE HEE HEE HEE YOU FOOL", {255, 0, 255, 255}, {SHAKY})}), TextBox(window, {TextSlice(window, "EAT A SANDWICH SKINNY. MWEE HEE HEE!!!", {255, 0, 255, 255}, {SHAKY, WAVEY})})}, &textNoise["Trumpet"]);
+	// TextSequence* ts = new TextSequence({TextBox(window, {TextSlice(window, "Hello every person type or thing, I need to make a long text to test out the scrolling features. ", {255, 255, 255, 255}, {WAVEY}), TextSlice(window, "Its ice god here", {0, 120, 200, 255}, {SHAKY})})}, &textNoise["Trumpet"]);
 
 	while (gameRunning) {
 		auto start = chrono::steady_clock().now();
@@ -99,6 +123,13 @@ int main(int argc, char *argv[]) {
 
 		for (GameObject* go : entities) {
 			go->draw(&window, world, entities);
+		}
+		if (ts != nullptr) {
+			// cout << "elc\n";
+			window.playerInput = ts->draw(window);
+			if (window.playerInput) {
+				ts = nullptr;
+			}
 		}
 
 		// cout << "player->x: " << player->x << " player->y: " << player->y << endl; 
