@@ -1,9 +1,9 @@
 #include "Move.hpp"
 
-Move::Move(bool p, float d) : physical(p), damage(d), mana(0) {
+Move::Move(string n, float d, int m, bool p, bool se, int a, vector<Tag> t, bool tet, int h) : ap(a), name(n), physical(p), damage(d), mana(m), selectEnemy(se), tags(t), targetEnemyTeam(tet), hits(h) {
 
 }
 
-Move::Move(bool p, float d, int m) : physical(p), damage(d), mana(m) {
+void Move::dealDamage(Fightable attacker, Fightable defender) {
 
 }

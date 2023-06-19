@@ -22,7 +22,8 @@ bool TextSlice::draw(RenderWindow& window) {
 	if (!done) {
 		frames++;
 		while (frames >= speed) {
-			char c = text.at(surfaces.size());
+			int ss = surfaces.size();
+			char c = text.at(ss);
 			SDL_Surface* surf = TTF_RenderText_Blended(window.zephyrea, string(1, c).c_str(), color);
 			Entity* ent = new Entity(x, y, SDL_CreateTextureFromSurface(window.renderer, surf));
 
@@ -30,8 +31,12 @@ bool TextSlice::draw(RenderWindow& window) {
 			// bool finished = Mix_ChannelFinished(7);
 			sound++;
 			// cout << finished << endl;
-			if (sounds->find(lookFor) != sounds->end() && sound >= 4) {
-				sound = 0;
+			if (sounds->find(lookFor) != sounds->end() && ((sound >= 3.25) || (ss == 0 || text.at(ss - 1) == ' '))) {
+				// cout << c << endl;
+				sound -= 3.25;
+				if (sound <= 0) {
+					sound = 0;
+				}
 				// cout << "works??\n";
 				Mix_PlayChannel(7, sounds->at(lookFor), 0);
 				// Mix_Chunk* temp = Mix_LoadWAV("res/Sounds/SFX/UI/Text/Text Reveal.wav");
@@ -42,6 +47,7 @@ bool TextSlice::draw(RenderWindow& window) {
 			letters.push_back(ent);
 
 			x += ent->width;
+			// cout << ent->width << endl;
 			if (x > XMAX && ((surfaces.size() == text.length()) || (text.at(surfaces.size())) != ' ')) {
 				y += ent->height;
 				x = XMIN;
@@ -82,9 +88,9 @@ bool TextSlice::draw(RenderWindow& window) {
 		if (rainbow) {
 			for (int index = 0; index < surf->w * surf->h; index++) {
 				SDL_GetRGBA(pixels[index], surf->format, &r, &g, &b, &a);
-				r = (Uint8) (122.5 * sin(waveMod) + 122.5);
-				g = (Uint8) (122.5 * sin(waveMod + 2 * M_PI / 3) + 122.5);
-				b = (Uint8) (122.5 * sin(waveMod + 4 * M_PI / 3) + 122.5);
+				r = (Uint8) (127.5 * sin(waveMod) + 127.5);
+				g = (Uint8) (127.5 * sin(waveMod + 2 * M_PI / 3) + 127.5);
+				b = (Uint8) (127.5 * sin(waveMod + 4 * M_PI / 3) + 127.5);
 				pixels[index] = SDL_MapRGBA(surf->format, r, g, b, a);
 			}
 		}
@@ -95,9 +101,9 @@ bool TextSlice::draw(RenderWindow& window) {
 					int index = y * surf->w + x;
 					float mod = waveMod + (entDist + y + x) * M_PI / 180;
 					SDL_GetRGBA(pixels[index], surf->format, &r, &g, &b, &a);
-					r = (Uint8) (122.5 * sin(mod) + 122.5);
-					g = (Uint8) (122.5 * sin(mod + 2 * M_PI / 3) + 122.5);
-					b = (Uint8) (122.5 * sin(mod + 4 * M_PI / 3) + 122.5);
+					r = (Uint8) (127.5 * sin(mod) + 127.5);
+					g = (Uint8) (127.5 * sin(mod + 2 * M_PI / 3) + 127.5);
+					b = (Uint8) (127.5 * sin(mod + 4 * M_PI / 3) + 127.5);
 					pixels[index] = SDL_MapRGBA(surf->format, r, g, b, a);
 				}
 			}

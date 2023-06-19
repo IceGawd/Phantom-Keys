@@ -7,8 +7,7 @@
 using namespace std;
 
 struct TextBox : public Entity {
-	int curX = 0;
-	int curY = 0;
+	const float zoom = 4;
 	vector<TextSlice> text;
 	int curIndex = 1;
 	bool prevHeld = true;

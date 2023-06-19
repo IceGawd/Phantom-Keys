@@ -1,12 +1,15 @@
 #pragma once
 
 #include "Stats.hpp"
-#include "GameObject.hpp"
-#include "Move.hpp"
+#include "Collideable.hpp"
 
-struct Fightable : public GameObject {
+class Move;
+class Buff;
+
+struct Fightable : public Collideable {
 	Stats stats;
-	vector<Move> moves;
+	vector<Move*> moves;
+	vector<Buff*> activeBuffs;
 
 	Fightable();
 };

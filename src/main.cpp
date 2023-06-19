@@ -1,5 +1,6 @@
 #include "World.hpp"
 #include "TextSequence.hpp"
+#include "Enemy.hpp"
 
 #include <chrono>
 
@@ -18,7 +19,6 @@ map<char, Mix_Chunk*> getChunks(string s) {
 
 int main(int argc, char *argv[]) {
 	const int FPS = 60;
-	const int SCREENSCROLLPOWER = 100;
 	SDL_Event event;
 	bool gameRunning = true;
 
@@ -39,33 +39,80 @@ int main(int argc, char *argv[]) {
 	RenderWindow window("Phantom Keys");
 
 	Player* player = new Player(&window);
-	vector<GameObject*> entities;
-	// entities.push_back(player);
+	vector<GameObject*> overworldEntities;
+	vector<GameObject*> battleEntities;
+
+	vector<Fightable*> playerTeam;
+	vector<Fightable*> enemyTeam;
+	// overworldEntities.push_back(player); // PLAYER IS DRAWN IN AREA RENDER
 
 	map<string, map<char, Mix_Chunk*>> textNoise = {
 		{"Flute", getChunks("Flute")}, 
 		{"Trumpet", getChunks("Trumpet")}, 
 	};
 
+	map<string, Move*> moves = {
+		{"Scratch", new Move("Scratch", 10, 0, true, true, 1, {SLASHING})}, 
+		{"Ram", new Move("Ram", 30, 0, true, false, 2, {BLUDGEONING, FORWARD})}, 
+		{"16th Notes", new Move("16th Notes", 10, 25, false, false, 2, {FORCE, FORWARD}, true, 4)}, 
+		{"Vibrato", new Move("Vibrato", 20, 10, false, true, 1, {VIBRATING})}
+	};
+
+	/*
+	map<string, EnemyType*> enemyTypes = {
+		{"Tuba Snail", new EnemyType("Tuba Snail", Stats(2, 3, 2, 1, 1), {moves.find("Legato")})}
+	};
+	// */
+
 
 	World* world = new World(window, player);
-
+	TextSequence* ts = nullptr;
+	/*
 	TextSequence* ts = new TextSequence({
 		TextBox(window, {
 			TextSlice(window, "Suck it samurai game Calder plays. ", {125, 125, 125, 255}, {DIAGONAL_RAINBOW}), 
-			TextSlice(window, "That game can suck my nuts. ", {255, 0, 255, 255}, {DIAGONAL_RAINBOW, WAVEY}), 
-			TextSlice(window, "JK JK Its really cool. ")
+			TextSlice(window, "That game can  suck my nuts. ", {255, 0, 255, 255}, {DIAGONAL_RAINBOW, WAVEY}), 
+			TextSlice(window, "JK JK Its really cool. "), 
+		}), 
+		TextBox(window, {
+			TextSlice(window, "Anyways, in between my bouts of ", {255, 255, 255, 255}), 			
+			TextSlice(window, "college stress ", {255, 0, 0, 255}, {SHAKY}), 			
+			TextSlice(window, "as my ", {255, 255, 255, 255}), 
+			TextSlice(window, "acceptances ", {0, 255, 0, 255}), 
+			TextSlice(window, "started rolling in, I programmed   ", {255, 255, 255, 255}), 
+			TextSlice(window, "text stuff.", {255, 255, 255, 255}, {WAVEY}), 
+		}), 
+		TextBox(window, {
+			TextSlice(window, "abcdefghijklmnopqrstuvwxyz", {125, 125, 125, 255}, {DIAGONAL_RAINBOW}), 
+		}), 
+		TextBox(window, {
+			TextSlice(window, "perfect pitch people perfect pitch people perfect  pitch people perfect pitch people ", {125, 125, 125, 255}, {WAVEY}), 
+		}), 
+		TextBox(window, {
+			TextSlice(window, "It was ", {255, 255, 255, 255}), 
+			TextSlice(window, "really cool", {125, 125, 125, 255}, {DIAGONAL_RAINBOW, WAVEY}), 
+			TextSlice(window, ".", {125, 125, 125, 255}), 
 		}), 
 		TextBox(window, {
 			TextSlice(window, "Ghost moment", {125, 125, 125, 255}, {GHOST}), 
 		}), 
 		TextBox(window, {
-			TextSlice(window, "Gay ghost moment", {125, 125, 125, 255}, {GHOST, RAINBOW}), 
+			TextSlice(window, "Gay ghost moment", {125, 125, 125, 255}, {RAINBOW}), 
 		}), 
 		TextBox(window, {
 			TextSlice(window, "Scary ghost moment", {125, 125, 125, 255}, {GHOST, SHAKY}), 
+		}), 
+		TextBox(window, {
+			TextSlice(window, "Ghost Ghost Ghost Ghost Ghost", {125, 125, 125, 255}, {GHOST}), 
+		}), 
+		TextBox(window, {
+			TextSlice(window, "The One PIEEEEEEEEEEEECE", {0, 0, 255, 255}, {SHAKY}), 
+		}), 
+		TextBox(window, {
+			TextSlice(window, "THE ONE PIECE IS ", {255, 255, 255, 255}, {WAVEY}), 
+			TextSlice(window, "REEEEEEEEEEEEAL", {255, 255, 255, 255}, {DIAGONAL_RAINBOW, WAVEY}), 
 		})
-	}, &textNoise["Flute"]);
+	}, &textNoise["Trumpet"]);
 
 	/*
 	TextSequence* ts = new TextSequence({
@@ -87,20 +134,6 @@ int main(int argc, char *argv[]) {
 
 		// cout << "frame\n";
 		window.clear();
-		world->current->render(window, player, world, entities);
-
-		if (window.keyboard[SDL_SCANCODE_UP]) {
-			window.y -= SCREENSCROLLPOWER;
-		}
-		if (window.keyboard[SDL_SCANCODE_DOWN]) {
-			window.y += SCREENSCROLLPOWER;
-		}
-		if (window.keyboard[SDL_SCANCODE_LEFT]) {
-			window.x -= SCREENSCROLLPOWER;
-		}
-		if (window.keyboard[SDL_SCANCODE_RIGHT]) {
-			window.x += SCREENSCROLLPOWER;
-		}
 
 		while (SDL_PollEvent(&event)) {
 			if (event.type == SDL_QUIT) {
@@ -151,9 +184,22 @@ int main(int argc, char *argv[]) {
 			}
 		}
 
-		for (GameObject* go : entities) {
-			go->draw(&window, world, entities);
+		if (window.gamestate == OVERWORLD) {
+			world->current->render(window, player, world, overworldEntities);
+			for (GameObject* go : overworldEntities) {
+				go->draw(&window, world, overworldEntities);
+			}
+
+			// CAMERA
+			window.x = (window.x + player->x - RenderWindow::WIDTH / 2) / 2;
+			window.y = (window.y + player->y - RenderWindow::HEIGHT / 2) / 2;
 		}
+		else if (window.gamestate == CUTSCENE) {
+			for (GameObject* go : battleEntities) {
+				go->draw(&window, world, battleEntities);
+			}			
+		}
+
 		if (ts != nullptr) {
 			// cout << "elc\n";
 			window.playerInput = ts->draw(window);
@@ -163,10 +209,6 @@ int main(int argc, char *argv[]) {
 		}
 
 		// cout << "player->x: " << player->x << " player->y: " << player->y << endl; 
-
-		// CAMERA
-		window.x = (window.x + player->x - RenderWindow::WIDTH / 2) / 2;
-		window.y = (window.y + player->y - RenderWindow::HEIGHT / 2) / 2;
 
 		window.display();
 

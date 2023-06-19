@@ -19,10 +19,23 @@ float average(vector<T> levels);
 float quadratic(float a, float b, float c);
 float increase(float initial, float percent);
 
+enum Gamestate {
+	OVERWORLD, 
+	BATTLE, 
+	CUTSCENE
+};
+
 enum Tag {
 	PIERCING, 
 	BLUDGEONING, 
 	SLASHING, 
 	UPWARD, 
 	FORWARD, 
+	FIRE, 
+	ICE, 
+	FORCE, 
+	ELECTRICITY, 
+	DARK, 
+	LIGHT, 
+	VIBRATING, 
 };

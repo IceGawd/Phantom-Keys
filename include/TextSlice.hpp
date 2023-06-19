@@ -13,11 +13,11 @@
 #include "TextEffect.hpp"
 #include "utils.hpp"
 
+
+// MEM LEAK
 struct TextSlice {
-	const int XMIN = 50;
-	const int XMAX = 1200; 
-	static constexpr float WAVEDELTA = M_PI / 20.0;
-	const int MOVEMENTMOD = 5;
+	static constexpr float WAVEDELTA = M_PI / 18.0;
+	const int MOVEMENTMOD = 3;
 	const int GHOSTWAVE = 10;
 	map<char, Mix_Chunk*>* sounds = nullptr;
 	string text;
@@ -26,8 +26,10 @@ struct TextSlice {
 	vector<Entity*> letters;
 	float speed = 1;
 	float frames = 0;
-	int sound = 0;
-	int x = XMIN;
+	float sound = 0;
+	int XMIN = 0;
+	int XMAX = 900; 
+	int x = 0;
 	int y = 0;
 
 	bool shaky = false;

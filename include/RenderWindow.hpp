@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "Entity.hpp"
+#include "utils.hpp"
 
 using namespace std;
 
@@ -17,6 +18,7 @@ public:
 
 	bool temp = false;
 	bool playerInput = true;
+	Gamestate gamestate = OVERWORLD;
 
 	SDL_Window* window;
 	SDL_Renderer* renderer;

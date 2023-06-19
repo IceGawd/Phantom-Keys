@@ -447,7 +447,7 @@ void Area::placePlayer(Player* player) {
 	}
 }
 
-void Area::collision(RenderWindow& window, Player* player) {
+void Area::collision(RenderWindow& window, Collideable* player) {
 	const vector<Layer::Ptr>& layers = map->getLayers();
 
 	vector<Vector2f> mtvs; // Minimum Translation Vectors

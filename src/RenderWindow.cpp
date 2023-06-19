@@ -11,7 +11,7 @@ RenderWindow::RenderWindow(const char* title) : window(NULL), renderer(NULL) {
 
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-	zephyrea = TTF_OpenFont("res/gfx/zephyrea.ttf", 50);
+	zephyrea = TTF_OpenFont("res/gfx/zephyrea.ttf", 36);
 
 	keyboard = SDL_GetKeyboardState(NULL);
 };

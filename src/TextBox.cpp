@@ -1,16 +1,23 @@
 #include "TextBox.hpp"
 
 TextBox::TextBox(RenderWindow& window, vector<TextSlice> t) : text(t) {
+	const int ADJUSTMENT = 50;
+
 	setTexture(window.loadTexture("res/gfx/TextBox.png"));
 	fullPicSize();
-	show_width = window.WIDTH;
-	show_height = height * window.WIDTH / width;
-	x = 0;
-	y = window.HEIGHT - show_height;
-	curY = y + 50;
+	cout << zoom << endl;
+	show_width = zoom * width;
+	show_height = zoom * height;
+	cout << show_width << endl;
+	x = (window.WIDTH - show_width) / 2;
+	y = window.HEIGHT - show_height - 35;
+	cout << x << endl;
 	setRect();
 	for (TextSlice& ts : text) {
-		ts.y = curY;
+		ts.XMIN = x + ADJUSTMENT;
+		ts.XMAX = x + show_width - ADJUSTMENT;
+		ts.x = ts.XMIN;
+		ts.y = y + 15;
 	}
 }
 
