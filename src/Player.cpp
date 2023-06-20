@@ -10,10 +10,7 @@ Player::Player(RenderWindow* window) {
 	sheets["overworld"] = SpriteSheet(window->loadTexture("res/gfx/Overworld/Keyboard.png"), 4, 5, 10);
 
 	changeSpriteSheet("overworld");
-
-	show_width = width;
-	show_height = height;
-
+	
 	row = 0;
 	column = 3;
 }

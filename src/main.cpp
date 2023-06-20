@@ -58,14 +58,24 @@ int main(int argc, char *argv[]) {
 		{"Vibrato", new Move("Vibrato", 20, 10, false, true, 1, {VIBRATING})}
 	};
 
-	/*
+	// /*
 	map<string, EnemyType*> enemyTypes = {
-		{"Tuba Snail", new EnemyType("Tuba Snail", Stats(2, 3, 2, 1, 1), {moves.find("Legato")})}
+		{"Tuba Snail", new EnemyType(
+			"Tuba Snail", 
+			Stats(2, 3, 2, 1, 1), 
+			{moves.find("Scratch")->second, moves.find("Ram")->second, moves.find("16th Notes")->second, moves.find("Vibrato")->second}, 
+			3, 2, 0.1, 0.01, ACCELERATING, 200, 500, true, 
+			"res/gfx/Enemies/TubaSnail.png", 7, 1)
+		}
 	};
 	// */
 
+	vector<EnemyType*> etVec;
+	for (auto it = enemyTypes.begin(); it != enemyTypes.end(); ++it) {
+		etVec.push_back(it->second);
+	}
 
-	World* world = new World(window, player);
+	World* world = new World(window, player, etVec);
 	TextSequence* ts = nullptr;
 	/*
 	TextSequence* ts = new TextSequence({
@@ -194,7 +204,7 @@ int main(int argc, char *argv[]) {
 			window.x = (window.x + player->x - RenderWindow::WIDTH / 2) / 2;
 			window.y = (window.y + player->y - RenderWindow::HEIGHT / 2) / 2;
 		}
-		else if (window.gamestate == CUTSCENE) {
+		else if (window.gamestate == BATTLE) {
 			for (GameObject* go : battleEntities) {
 				go->draw(&window, world, battleEntities);
 			}			

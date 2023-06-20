@@ -21,6 +21,9 @@ struct EnemyType {
 	int sightradius; // Radius from home where player will get noticed
 	int homeradius; // Radius from home where enemy is comfortable going
 	bool homeloyalty; // Will the enemy change home after chasing player out of home zone or no?
+	string path;
+	int width;
+	int height;
 
-	EnemyType(string n, Stats s, vector<Move*> m, float ms, float ps, float mas, float pas, MOVEMENT_TYPE movementtype, int sr, int hr, bool h);
+	EnemyType(string n, Stats s, vector<Move*> m, float ms, float ps, float mas, float pas, MOVEMENT_TYPE movementtype, int sr, int hr, bool h, string p, int wid, int hei);
 };

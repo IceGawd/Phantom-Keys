@@ -42,29 +42,6 @@ MinMax getMinMax(Vector2f vec, const vector<Vector2f>& points) {
 	return answer;
 }
 
-// From 0 to 2pi
-float angleFromCoords(float x, float y) {
-	float angle;
-	if (x == 0) {
-		if (y >= 0) {
-			angle = 3.0 * M_PI / 2.0;
-		}
-		else {
-			angle = M_PI / 2.0;
-		}
-	}
-	else if (x > 0) {
-		angle = -atan(y / x);
-		if (angle < 0) {
-			angle += 2.0 * M_PI;
-		}
-	}
-	else {
-		angle = M_PI - atan(y / x);
-	}
-	return angle;
-}
-
 void addUnique(Vector2f vec, vector<float>& anglesToCheck) {
 	if (vec.x != 0) {
 		float angle = M_PI / 2 - atan(vec.y / vec.x);
@@ -74,7 +51,7 @@ void addUnique(Vector2f vec, vector<float>& anglesToCheck) {
 	}
 }
 
-Area::Area(RenderWindow& window, string path) {
+Area::Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes) {
 	map = new Map();
 	map->load(path);
 
@@ -120,6 +97,26 @@ Area::Area(RenderWindow& window, string path) {
 			}
 			else {
 				diagonalTileFinder(window, layer);
+			}
+		}
+		if (layer->getName().find("Spawn") != string::npos) {
+			cout << "spawn\n";
+			vector<EnemyType*> types;
+			for (EnemyType* et : enemyTypes) {
+				if (layer->getName().find(et->name) != string::npos) {
+					cout << et->name << "\n";
+					types.push_back(et);
+				}
+			}
+			ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
+			auto objectvector = og.getObjects();
+
+			for (auto object : objectvector) {
+				if (object.getShape() == Object::Shape::Rectangle) {
+					auto rect = object.getAABB();
+					SDL_Rect oobj = {int(rect.left), int(rect.top), int(rect.width), int(rect.height)};
+					spawnzones.push_back(SpawnZone(oobj, types));					
+				}
 			}
 		}
 	}
@@ -363,6 +360,10 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 	}
 	*/
 	// /*
+	for (SpawnZone& sz : spawnzones) {
+		sz.spawnEnemies(&window, player, entities);
+	}
+
 	auto tileSize = map->getTileSize();
 
 	const vector<Layer::Ptr>& layers = map->getLayers();

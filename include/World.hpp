@@ -6,6 +6,6 @@ struct World {
 	Area* current;
 	map<string, Area*> areas;
 
-	World(RenderWindow& window, Player* player);
+	World(RenderWindow& window, Player* player, vector<EnemyType*> enemyTypes);
 	void switchArea(string s, Player* player);
 };

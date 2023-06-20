@@ -44,3 +44,30 @@ float quadratic(float a, float b, float c) {
 float increase(float initial, float percent) {
 	return initial + percent * (1 - initial);
 }
+
+float distanceFrom(float x, float y) {
+	return sqrt(x * x + y * y);
+}
+
+// From 0 to 2pi
+float angleFromCoords(float x, float y) {
+	float angle;
+	if (x == 0) {
+		if (y >= 0) {
+			angle = 3.0 * M_PI / 2.0;
+		}
+		else {
+			angle = M_PI / 2.0;
+		}
+	}
+	else if (x > 0) {
+		angle = -atan(y / x);
+		if (angle < 0) {
+			angle += 2.0 * M_PI;
+		}
+	}
+	else {
+		angle = M_PI - atan(y / x);
+	}
+	return angle;
+}

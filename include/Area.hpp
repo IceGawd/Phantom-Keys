@@ -35,7 +35,7 @@ struct Area {
 	Map* map;
 	int playerIndex = -1; // CAN ONLY NOT BE -1 IF PLACE PLAYER IS CALLED
 
-	Area(RenderWindow& window, string path);
+	Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes);
 
 	void subRender(const Layer::Ptr& layer, RenderWindow& window, IntRect rect);
 	void render(RenderWindow& window, Player* player, World* world, vector<GameObject*>& entities);
@@ -51,5 +51,4 @@ float angleBetween(Vector2f vec1, Vector2f vec2);
 float magnitude(Vector2f vec);
 float dotProduct(Vector2f vec1, Vector2f vec2);
 MinMax getMinMax(Vector2f vec, const vector<Vector2f>& points);
-float angleFromCoords(float x, float y);
 void addUnique(Vector2f vec, vector<float>& anglesToCheck);

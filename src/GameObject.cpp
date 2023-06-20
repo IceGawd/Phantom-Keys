@@ -32,6 +32,8 @@ void GameObject::changeSpriteSheet(string newSheet) {
 
 	width = p.x / next->xFrames;
 	height = p.y / next->yFrames;
+	show_width = width;
+	show_height = height;
 
 	setRect();
 }

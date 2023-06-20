@@ -1,6 +1,6 @@
 #include "EnemyType.hpp"
 
-EnemyType::EnemyType(string n, Stats s, vector<Move*> m, float ms, float ps, float mas, float pas, MOVEMENT_TYPE movementtype, int sr, int hr, bool h) {
+EnemyType::EnemyType(string n, Stats s, vector<Move*> m, float ms, float ps, float mas, float pas, MOVEMENT_TYPE movementtype, int sr, int hr, bool h, string p, int wid, int hei) {
 	name = n;
 	stats = s;
 	moves = m;
@@ -12,4 +12,7 @@ EnemyType::EnemyType(string n, Stats s, vector<Move*> m, float ms, float ps, flo
 	sightradius = sr;
 	homeradius = hr;
 	homeloyalty = h;
+	path = p;
+	width = wid;
+	height = hei;
 }

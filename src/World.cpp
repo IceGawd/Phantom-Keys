@@ -1,7 +1,7 @@
 #include "World.hpp"
 
-World::World(RenderWindow& window, Player* player) {
-	areas["ruins"] = new Area(window, "./res/Ruins/Ruins.tmx");
+World::World(RenderWindow& window, Player* player, vector<EnemyType*> enemyTypes) {
+	areas["ruins"] = new Area(window, "./res/Ruins/Ruins.tmx", enemyTypes);
 
 	switchArea("ruins", player);
 }

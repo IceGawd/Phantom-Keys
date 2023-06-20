@@ -1,5 +1,9 @@
 #pragma once
 
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
+
 #include <random>
 #include <vector>
 
@@ -18,6 +22,9 @@ float average(vector<T> levels);
 
 float quadratic(float a, float b, float c);
 float increase(float initial, float percent);
+
+float distanceFrom(float x, float y);
+float angleFromCoords(float x, float y);
 
 enum Gamestate {
 	OVERWORLD, 
