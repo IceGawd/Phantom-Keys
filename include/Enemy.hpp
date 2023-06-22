@@ -4,9 +4,12 @@
 #include "Player.hpp"
 #include "EnemyType.hpp"
 
+class SpawnZone;
+
 struct Enemy : public Fightable {
 	Player* player; // Player to chase
 	EnemyType* et;
+	SpawnZone* zone;
 	bool passive = true;
 	float speed = 0;
 	float movement_angle = 0;

@@ -29,13 +29,14 @@ struct DiagonalTile {
 };
 
 struct Area {
+	Entity* battleBackground;
 	vector<SpawnZone> spawnzones;
 	vector<Entity*> tilesetEntities;
 	vector<DiagonalTile> diagonalTileEntities;
 	Map* map;
 	int playerIndex = -1; // CAN ONLY NOT BE -1 IF PLACE PLAYER IS CALLED
 
-	Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes);
+	Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes, string bg);
 
 	void subRender(const Layer::Ptr& layer, RenderWindow& window, IntRect rect);
 	void render(RenderWindow& window, Player* player, World* world, vector<GameObject*>& entities);

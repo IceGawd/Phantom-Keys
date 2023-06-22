@@ -67,17 +67,11 @@ SDL_Rect Entity::getRect() {
 }
 
 float Entity::distance(Entity* e) {
-	double xDiff = pow(x - e->x, 2);
-	double yDiff = pow(y - e->y, 2);
-	// cout << "xDiff: " << xDiff << endl;
-	// cout << "yDiff: " << yDiff << endl;
-	return sqrt(xDiff + yDiff);
+	return distanceFrom(x - e->x + (show_width - e->show_width) / 2, y - e->y + (show_height - e->show_height) / 2);
 }
 
 float Entity::angleBetween(Entity* e) {
-//	float xDiff = 0;
-//	float yDiff = 0;
-	return angleFromCoords(x - e->x, y - e->y);
+	return angleFromCoords(x - e->x + (show_width - e->show_width) / 2, y - e->y + (show_height - e->show_height) / 2);
 }
 
 void Entity::customDraw(RenderWindow* window) {

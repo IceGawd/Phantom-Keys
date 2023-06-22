@@ -51,7 +51,11 @@ void addUnique(Vector2f vec, vector<float>& anglesToCheck) {
 	}
 }
 
-Area::Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes) {
+Area::Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes, string bg) {
+	battleBackground = new Entity(0, 0, window.loadTexture(bg.c_str()));
+	battleBackground->show_width = RenderWindow::WIDTH;
+	battleBackground->show_height = RenderWindow::HEIGHT;
+
 	map = new Map();
 	map->load(path);
 

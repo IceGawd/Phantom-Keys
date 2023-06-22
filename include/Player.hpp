@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Fightable.hpp"
+#include "PartyMember.hpp"
 #include "Input.hpp"
 
 using namespace tmx;
 
-struct Player : public Fightable {
+struct Player : public PartyMember {
 	int speed;
 	float traction;
 	Input previnput;

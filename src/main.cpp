@@ -3,6 +3,7 @@
 #include "Enemy.hpp"
 
 #include <chrono>
+#include <queue>
 
 using namespace std;
 
@@ -43,8 +44,10 @@ int main(int argc, char *argv[]) {
 	vector<GameObject*> battleEntities;
 
 	vector<Fightable*> playerTeam;
-	vector<Fightable*> enemyTeam;
+	vector<Enemy*> enemyTeam;
+	queue<Fightable*> turnOrder;
 	// overworldEntities.push_back(player); // PLAYER IS DRAWN IN AREA RENDER
+	playerTeam.push_back(player);
 
 	map<string, map<char, Mix_Chunk*>> textNoise = {
 		{"Flute", getChunks("Flute")}, 
@@ -197,17 +200,89 @@ int main(int argc, char *argv[]) {
 		if (window.gamestate == OVERWORLD) {
 			world->current->render(window, player, world, overworldEntities);
 			for (GameObject* go : overworldEntities) {
-				go->draw(&window, world, overworldEntities);
+				if (go->draw(&window, world, overworldEntities) && window.gamestate == BATTLE) {
+					player->changeSpriteSheet("battleidle");
+
+					Enemy* battling = (Enemy*) go;
+					int enemies = 1;
+					while (enemies != 3 && random() > 0.5) {
+						enemies++;
+					}
+					enemyTeam.clear();
+					battleEntities.clear();
+
+					// Select Enemies
+					if (enemies >= battling->zone->dudes.size()) {
+						enemyTeam = battling->zone->dudes;
+					}
+					else {
+						enemyTeam.push_back(battling);
+						enemies--;
+
+						while (enemies != 0) {
+							Enemy* toAdd = nullptr;
+							for (Enemy* d : battling->zone->dudes) {
+								if ((find(enemyTeam.begin(), enemyTeam.end(), d) != enemyTeam.end()) && ((toAdd == nullptr) || (player->distance(toAdd) > player->distance(d)))) {
+									toAdd = d;
+								}
+							}
+							enemyTeam.push_back(toAdd);
+							enemies--;
+						}
+					}
+					// Turn Order
+					int total = 0;
+					vector<Fightable*> tempOrder;
+					int temp = 0;
+					for (Fightable* f : enemyTeam) {
+						tempOrder.push_back(f);
+						total += f->stats.agility;
+						f->battleX = 1000;
+						f->battleY = 200 * (temp + 1);
+						f->flip = 0;
+						temp++;
+					}
+					temp = 0;
+					for (Fightable* f : playerTeam) {
+						tempOrder.push_back(f);
+						total += f->stats.agility;
+						f->battleX = 100;
+						f->battleY = 200 * (temp + 1);
+						temp++;
+					}
+
+					while (tempOrder.size() > 0) {
+						int val = random() * total;
+						Fightable* toAdd;
+						int x = -1;
+						while (val >= 0) {
+							x++;
+							toAdd = tempOrder[x];
+							val -= toAdd->stats.agility;
+						}
+						tempOrder.erase(tempOrder.begin() + x);
+						total -= toAdd->stats.agility;
+						turnOrder.push(toAdd);
+					}
+					break;
+				}
 			}
 
 			// CAMERA
-			window.x = (window.x + player->x - RenderWindow::WIDTH / 2) / 2;
-			window.y = (window.y + player->y - RenderWindow::HEIGHT / 2) / 2;
+			window.x = player->x - RenderWindow::WIDTH / 2;
+			window.y = player->y - RenderWindow::HEIGHT / 2;
 		}
 		else if (window.gamestate == BATTLE) {
+			window.render(world->current->battleBackground, true);
 			for (GameObject* go : battleEntities) {
 				go->draw(&window, world, battleEntities);
-			}			
+			}
+			for (Enemy* go : enemyTeam) {
+				go->battle(&window);
+			}
+			for (Fightable* go : playerTeam) {
+				go->battle(&window);
+			}
 		}
 
 		if (ts != nullptr) {

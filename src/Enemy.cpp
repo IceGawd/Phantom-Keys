@@ -12,7 +12,8 @@ Enemy::Enemy(RenderWindow* window, EnemyType* e, int x, int y, Player* p) : et(e
 	sheets["overworld"] = SpriteSheet(window->loadTexture(et->path.c_str()), et->width, et->height, 10);
 	changeSpriteSheet("overworld");
 
-	y -= show_height;
+	this->y -= show_height;
+	stats = e->stats;
 }
 
 bool Enemy::draw(RenderWindow* window, World* world, vector<GameObject*>& entities) {
@@ -20,7 +21,7 @@ bool Enemy::draw(RenderWindow* window, World* world, vector<GameObject*>& entiti
 	// /*
 	Collideable::draw(window, world, entities);
 
-	float playerDist = distanceFrom(player->x - x - show_width / 2, player->y - y - show_height / 2);
+	float playerDist = player->distance(this);
 	float homeDist = distanceFrom(homex - x - show_width / 2, homey - y - show_height / 2);
 
 	// cout << "x: " << x << " y: " << y << endl;
@@ -82,7 +83,6 @@ bool Enemy::draw(RenderWindow* window, World* world, vector<GameObject*>& entiti
 	// Fun randomness to spice up the AI
 	speed += (float) ((random() - 0.5) / (et->max_speed * 10));
 	angle_speed += (float) ((random() - 0.5) / (et->max_angle_speed * 10));
-	// */
 	// Speed checks
 	if (speed > et->max_speed) {
 		speed = et->max_speed;
@@ -129,6 +129,15 @@ bool Enemy::draw(RenderWindow* window, World* world, vector<GameObject*>& entiti
 	// */
 	setRect();
 	window->render(this);
+
+	SDL_Rect a = getRect();
+	SDL_Rect b = player->getRect();
+	SDL_Rect i;
+
+	if (SDL_IntersectRect(&a, &b, &i) == SDL_TRUE && playerDist < (min(player->show_height, player->show_width) + min(show_height, show_width)) / 2) {
+		window->gamestate = BATTLE;
+		return true;
+	}
 
 	return false;
 }

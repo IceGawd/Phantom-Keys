@@ -11,5 +11,10 @@ struct Fightable : public Collideable {
 	vector<Move*> moves;
 	vector<Buff*> activeBuffs;
 
+	int battleX;
+	int battleY;
+
 	Fightable();
+
+	virtual void battle(RenderWindow* window, Fightable* turn);
 };
