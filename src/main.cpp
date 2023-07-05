@@ -200,6 +200,8 @@ int main(int argc, char *argv[]) {
 		if (window.gamestate == OVERWORLD) {
 			world->current->render(window, player, world, overworldEntities);
 			for (GameObject* go : overworldEntities) {
+				// go->draw(&window, world, overworldEntities);
+				// /*
 				if (go->draw(&window, world, overworldEntities) && window.gamestate == BATTLE) {
 					player->changeSpriteSheet("battleidle");
 
@@ -266,6 +268,7 @@ int main(int argc, char *argv[]) {
 					}
 					break;
 				}
+				// */
 			}
 
 			// CAMERA
@@ -278,10 +281,10 @@ int main(int argc, char *argv[]) {
 				go->draw(&window, world, battleEntities);
 			}
 			for (Enemy* go : enemyTeam) {
-				go->battle(&window);
+				go->battle(&window, turnOrder.front());
 			}
 			for (Fightable* go : playerTeam) {
-				go->battle(&window);
+				go->battle(&window, turnOrder.front());
 			}
 		}
 
