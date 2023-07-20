@@ -21,5 +21,5 @@ struct Move {
 
 	Move(string n, float d, int m, bool p, bool se, int a, vector<Tag> t, bool tet = true, int h = 1);
 
-	virtual void dealDamage(Fightable attacker, Fightable defender);
+	virtual void dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defender);
 }; 

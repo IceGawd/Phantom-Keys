@@ -1,4 +1,6 @@
 #include "utils.hpp"
+#include "Fightable.hpp"
+#include "Enemy.hpp"
 
 float random(){
 	return (float) rand() / RAND_MAX;
@@ -23,18 +25,31 @@ float RationalApproximation(float t) {
     return t - ((c[2]*t + c[1])*t + c[0]) / (((d[2]*t + d[1])*t + d[0])*t + 1.0);
 }
 
-template <typename T>
-float weighted(vector<T> levels) {
-	return 0.39 * pow(levels.size(), 0.79) + 1.15 * average(levels);
+float weighted(vector<Fightable*> party) {
+	return 0.39 * pow(party.size(), 0.79) + 1.15 * average(party);
 }
 
-template <typename T>
-float average(vector<T> levels) {
-	float answer = 0;
-	for (T level : levels) {
-		answer += level;
+float weighted(vector<Enemy*> party) {
+	vector<Fightable*> ugh;
+	for (Enemy* e : party) {
+		ugh.push_back((Fightable*) e);
 	}
-	return answer / levels.size();
+	return weighted(ugh);
+}
+
+
+float average(vector<Fightable*> party) {
+	float answer = 0;
+	for (Fightable* member : party) {
+		answer += member->stats.getLevel();
+	}
+	return answer / party.size();
+}
+
+int diffSum(int a, int b) {
+	int accuracy = a - b; // -x to x
+	int evasion = a + b; // 0 to 2x
+	return accuracy / evasion; // -1 to 1
 }
 
 float quadratic(float a, float b, float c) {

@@ -4,10 +4,11 @@ Stats::Stats() {
 
 }
 
-Stats::Stats(int s, int v, int m, int a, int l) : st(s), vi(v), ma(m), ag(a), lu(l) {
+Stats::Stats(int s, int v, int m, int a, int l, int ap) : st(s), vi(v), ma(m), ag(a), lu(l), ap_max(ap) {
 	setStats(true);
 	hp = hpMax;
 	mana = manaMax;
+	apMax = ap_max;
 	resetStats();
 }
 
@@ -28,7 +29,15 @@ void Stats::resetStats() {
 	vitality = vi;
 	magic = ma;
 	agility = ag;
-	luck = lu;	
+	luck = lu;
+
+	accuracybonus = 1000;
+	evasionbonus = 1000;
+	damagebonus = 1;
+	rangebonus = 1;
+	damagetaken = 1;
+	critchancebonus = 1;
+	critincrease = 2;
 }
 
 void Stats::setStats(bool override) {

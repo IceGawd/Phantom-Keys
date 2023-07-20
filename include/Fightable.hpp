@@ -16,5 +16,5 @@ struct Fightable : public Collideable {
 
 	Fightable();
 
-	virtual void battle(RenderWindow* window, Fightable* turn);
+	virtual bool battle(RenderWindow* window, Fightable* turn);
 };

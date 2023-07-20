@@ -9,16 +9,18 @@
 
 using namespace std;
 
+class Fightable;
+class Enemy;
+
 float random();
 float rand(float std, float m);
 float invNorm(float x);
 float RationalApproximation(float t);
+float weighted(vector<Fightable*> levels);
+float weighted(vector<Enemy*> levels);
+float average(vector<Fightable*> levels);
 
-template <typename T>
-float weighted(vector<T> levels);
-
-template <typename T>
-float average(vector<T> levels);
+int diffSum(int a, int b);
 
 float quadratic(float a, float b, float c);
 float increase(float initial, float percent);

@@ -1,5 +1,6 @@
 #include "Enemy.hpp"
 #include "World.hpp"
+#include "Move.hpp"
 
 Enemy::Enemy(RenderWindow* window, EnemyType* e, int x, int y, Player* p) : et(e), homex(x), homey(y), player(p) {
 	this->x = x;
@@ -140,4 +141,16 @@ bool Enemy::draw(RenderWindow* window, World* world, vector<GameObject*>& entiti
 	}
 
 	return false;
+}
+
+bool Enemy::battle(RenderWindow* window, Fightable* turn) {
+	bool finished = false;
+	if (turn == this) {
+		moves[(int) (moves.size() * random())]->dealDamage(window, this, window->playerTeam[(int) (window->playerTeam.size() * random())]);
+		finished = true;
+	}
+
+	Fightable::battle(window, turn);
+
+	return finished;
 }

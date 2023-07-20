@@ -3,9 +3,14 @@
 #include <string>
 #include <math.h>
 #include <iostream>
+#include <vector>
+#include <queue>
 
 #include "Entity.hpp"
 #include "utils.hpp"
+
+class Fightable;
+class Enemy;
 
 using namespace std;
 
@@ -19,6 +24,9 @@ public:
 	bool temp = false;
 	bool playerInput = true;
 	Gamestate gamestate = OVERWORLD;
+	vector<Fightable*> playerTeam;
+	vector<Enemy*> enemyTeam;
+	queue<Fightable*> turnOrder;
 
 	SDL_Window* window;
 	SDL_Renderer* renderer;

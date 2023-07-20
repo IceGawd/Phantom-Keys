@@ -11,7 +11,7 @@ struct Player : public PartyMember {
 	Input previnput;
 	Input input;
 
-	Player(RenderWindow* window);
+	Player(RenderWindow* window, vector<Move*> m);
 	virtual bool draw(RenderWindow* window, World* world, vector<GameObject*>& entities);
 	void changeDirection(Input& input);
 };

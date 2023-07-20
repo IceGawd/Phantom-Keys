@@ -4,7 +4,7 @@ Fightable::Fightable() {
 	
 }
 
-void Fightable::battle(RenderWindow* window, Fightable* turn) {
+bool Fightable::battle(RenderWindow* window, Fightable* turn) {
 	frames += 1;
 	if (frames >= next->frames) {
 		frames = 0;
@@ -26,4 +26,6 @@ void Fightable::battle(RenderWindow* window, Fightable* turn) {
 
 	x = tempx;
 	y = tempy;
+
+	return false;
 }

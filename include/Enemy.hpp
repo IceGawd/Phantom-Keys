@@ -19,4 +19,5 @@ struct Enemy : public Fightable {
 
 	Enemy(RenderWindow* window, EnemyType* e, int x, int y, Player* p);
 	virtual bool draw(RenderWindow* window, World* world, vector<GameObject*>& entities);
+	virtual bool battle(RenderWindow* window, Fightable* turn);
 };

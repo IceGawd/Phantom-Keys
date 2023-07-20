@@ -39,16 +39,6 @@ int main(int argc, char *argv[]) {
 
 	RenderWindow window("Phantom Keys");
 
-	Player* player = new Player(&window);
-	vector<GameObject*> overworldEntities;
-	vector<GameObject*> battleEntities;
-
-	vector<Fightable*> playerTeam;
-	vector<Enemy*> enemyTeam;
-	queue<Fightable*> turnOrder;
-	// overworldEntities.push_back(player); // PLAYER IS DRAWN IN AREA RENDER
-	playerTeam.push_back(player);
-
 	map<string, map<char, Mix_Chunk*>> textNoise = {
 		{"Flute", getChunks("Flute")}, 
 		{"Trumpet", getChunks("Trumpet")}, 
@@ -65,7 +55,7 @@ int main(int argc, char *argv[]) {
 	map<string, EnemyType*> enemyTypes = {
 		{"Tuba Snail", new EnemyType(
 			"Tuba Snail", 
-			Stats(2, 3, 2, 1, 1), 
+			Stats(2, 3, 2, 1, 1, 2), 
 			{moves.find("Scratch")->second, moves.find("Ram")->second, moves.find("16th Notes")->second, moves.find("Vibrato")->second}, 
 			3, 2, 0.1, 0.01, ACCELERATING, 200, 500, true, 
 			"res/gfx/Enemies/TubaSnail.png", 7, 1)
@@ -77,6 +67,13 @@ int main(int argc, char *argv[]) {
 	for (auto it = enemyTypes.begin(); it != enemyTypes.end(); ++it) {
 		etVec.push_back(it->second);
 	}
+
+	Player* player = new Player(&window, {moves.find("Ram")->second});
+	vector<GameObject*> overworldEntities;
+	vector<GameObject*> battleEntities;
+
+	overworldEntities.push_back(player); // PLAYER WAS DRAWN IN AREA RENDER (NOW EVERYTHING IS DRAWN THERE)
+	window.playerTeam.push_back(player);
 
 	World* world = new World(window, player, etVec);
 	TextSequence* ts = nullptr;
@@ -199,76 +196,9 @@ int main(int argc, char *argv[]) {
 
 		if (window.gamestate == OVERWORLD) {
 			world->current->render(window, player, world, overworldEntities);
-			for (GameObject* go : overworldEntities) {
-				// go->draw(&window, world, overworldEntities);
-				// /*
-				if (go->draw(&window, world, overworldEntities) && window.gamestate == BATTLE) {
-					player->changeSpriteSheet("battleidle");
 
-					Enemy* battling = (Enemy*) go;
-					int enemies = 1;
-					while (enemies != 3 && random() > 0.5) {
-						enemies++;
-					}
-					enemyTeam.clear();
-					battleEntities.clear();
-
-					// Select Enemies
-					if (enemies >= battling->zone->dudes.size()) {
-						enemyTeam = battling->zone->dudes;
-					}
-					else {
-						enemyTeam.push_back(battling);
-						enemies--;
-
-						while (enemies != 0) {
-							Enemy* toAdd = nullptr;
-							for (Enemy* d : battling->zone->dudes) {
-								if ((find(enemyTeam.begin(), enemyTeam.end(), d) != enemyTeam.end()) && ((toAdd == nullptr) || (player->distance(toAdd) > player->distance(d)))) {
-									toAdd = d;
-								}
-							}
-							enemyTeam.push_back(toAdd);
-							enemies--;
-						}
-					}
-					// Turn Order
-					int total = 0;
-					vector<Fightable*> tempOrder;
-					int temp = 0;
-					for (Fightable* f : enemyTeam) {
-						tempOrder.push_back(f);
-						total += f->stats.agility;
-						f->battleX = 1000;
-						f->battleY = 200 * (temp + 1);
-						f->flip = 0;
-						temp++;
-					}
-					temp = 0;
-					for (Fightable* f : playerTeam) {
-						tempOrder.push_back(f);
-						total += f->stats.agility;
-						f->battleX = 100;
-						f->battleY = 200 * (temp + 1);
-						temp++;
-					}
-
-					while (tempOrder.size() > 0) {
-						int val = random() * total;
-						Fightable* toAdd;
-						int x = -1;
-						while (val >= 0) {
-							x++;
-							toAdd = tempOrder[x];
-							val -= toAdd->stats.agility;
-						}
-						tempOrder.erase(tempOrder.begin() + x);
-						total -= toAdd->stats.agility;
-						turnOrder.push(toAdd);
-					}
-					break;
-				}
-				// */
+			if (window.gamestate == BATTLE) {
+				battleEntities.clear();
 			}
 
 			// CAMERA
@@ -280,11 +210,18 @@ int main(int argc, char *argv[]) {
 			for (GameObject* go : battleEntities) {
 				go->draw(&window, world, battleEntities);
 			}
-			for (Enemy* go : enemyTeam) {
-				go->battle(&window, turnOrder.front());
+			bool done = false;
+			Fightable* myTurn = window.turnOrder.front();
+			for (Enemy* go : window.enemyTeam) {
+				done = done || go->battle(&window, myTurn);
 			}
-			for (Fightable* go : playerTeam) {
-				go->battle(&window, turnOrder.front());
+			for (Fightable* go : window.playerTeam) {
+				done = done || go->battle(&window, myTurn);
+			}
+
+			if (done) {
+				window.turnOrder.pop();
+				window.turnOrder.push(myTurn);
 			}
 		}
 

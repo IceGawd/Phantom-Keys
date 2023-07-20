@@ -413,7 +413,78 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 			x++;
 		}
 	}
-	player->draw(&window, world, entities);
+
+	for (GameObject* go : entities) {
+		// go->draw(&window, world, entities);
+		// /*
+		if (go->draw(&window, world, entities) && window.gamestate == BATTLE) {
+			player->changeSpriteSheet("battleidle");
+
+			Enemy* battling = (Enemy*) go;
+			int enemies = 1;
+			while (enemies != 3 && random() > 0.5) {
+				enemies++;
+			}
+			window.enemyTeam.clear();
+
+			// Select Enemies
+			if (enemies >= battling->zone->dudes.size()) {
+				window.enemyTeam = battling->zone->dudes;
+			}
+			else {
+				window.enemyTeam.push_back(battling);
+				enemies--;
+
+				while (enemies != 0) {
+					Enemy* toAdd = nullptr;
+					for (Enemy* d : battling->zone->dudes) {
+						if ((find(window.enemyTeam.begin(), window.enemyTeam.end(), d) != window.enemyTeam.end()) && ((toAdd == nullptr) || (player->distance(toAdd) > player->distance(d)))) {
+							toAdd = d;
+						}
+					}
+					window.enemyTeam.push_back(toAdd);
+					enemies--;
+				}
+			}
+			// Turn Order
+			int total = 0;
+			vector<Fightable*> tempOrder;
+			int temp = 0;
+			for (Fightable* f : window.enemyTeam) {
+				tempOrder.push_back(f);
+				total += f->stats.agility;
+				f->battleX = 1000;
+				f->battleY = 200 * (temp + 1);
+				f->flip = 0;
+				temp++;
+			}
+			temp = 0;
+			for (Fightable* f : window.playerTeam) {
+				tempOrder.push_back(f);
+				total += f->stats.agility;
+				f->battleX = 100;
+				f->battleY = 200 * (temp + 1);
+				temp++;
+			}
+
+			while (tempOrder.size() > 0) {
+				int val = random() * total;
+				Fightable* toAdd;
+				int x = -1;
+				while (val >= 0) {
+					x++;
+					toAdd = tempOrder[x];
+					val -= toAdd->stats.agility;
+				}
+				tempOrder.erase(tempOrder.begin() + x);
+				total -= toAdd->stats.agility;
+				window.turnOrder.push(toAdd);
+			}
+			break;
+		}
+		// */
+	}
+
 	for (int x = playerIndex + 1; x < layers.size(); x++) {
 		if (find(preRenderIndexes.begin(), preRenderIndexes.end(), x) == preRenderIndexes.end()) {
 			const Layer::Ptr& layer = layers[x];

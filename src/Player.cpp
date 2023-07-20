@@ -1,8 +1,8 @@
 #include "Player.hpp"
 #include "World.hpp"
 
-Player::Player(RenderWindow* window) {
-	stats = Stats(5, 2, 4, 1, 3);
+Player::Player(RenderWindow* window, vector<Move*> m) {
+	stats = Stats(5, 2, 4, 1, 3, 2);
 
 	speed = 2;
 	traction = 0.7;
@@ -14,6 +14,8 @@ Player::Player(RenderWindow* window) {
 	
 	row = 0;
 	column = 3;
+
+	moves = m;
 }
 
 bool Player::draw(RenderWindow* window, World* world, vector<GameObject*>& entities) {
