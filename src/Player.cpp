@@ -2,7 +2,7 @@
 #include "World.hpp"
 
 Player::Player(RenderWindow* window, vector<Move*> m) {
-	stats = Stats(5, 2, 4, 1, 3, 2);
+	stats = Stats(6, 2, 4, 1, 3, 2);
 
 	speed = 2;
 	traction = 0.7;

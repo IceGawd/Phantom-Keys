@@ -18,10 +18,11 @@ void Move::dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defe
 
 	if (hitting) {
 		double index = (weighted(window->playerTeam) - weighted(window->enemyTeam) + 196) / 1571;
-		double bonus = 0.9;
+		double bonus = 0.2;
 		int critAccountedDamage = damage;
 		double actualCritChance = increase(0.04 * attacker->stats.critchancebonus, attacker->stats.luck / 2000.0);
 		if (random() < actualCritChance) {
+			cout << "Critical hit!\n";
 			critAccountedDamage *= attacker->stats.critincrease;
 		}
 
@@ -32,14 +33,18 @@ void Move::dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defe
 		}
 
 		double deviation = (bonus + (attacker->stats.luck / 2000.0)) * power * critAccountedDamage;
+		cout << "deviation: " << deviation << endl;
 
 		int damagedone = (int) (rand(index * attacker->stats.damagebonus, deviation * attacker->stats.rangebonus) * defender->stats.damagetaken + 1);
+		cout << "Damage done: " << damagedone << endl;
 		defender->stats.hp -= damagedone;
 		if (physical) { // Not true, ranged weapons dont recoil
 			int recoil = (int) (critAccountedDamage * defender->stats.vitality / 9.0);
+			cout << "Recoil: " << recoil << endl;
 			attacker->stats.hp -= recoil;
 		}
-//		    _dtm.ShowDamage(_defender, damagedone);
-//			_dtm.ShowDamage(attacker, recoil);
 	}
+	else {
+		cout << "Miss!\n";
+	} 
 }

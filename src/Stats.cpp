@@ -21,7 +21,7 @@ int Stats::getStatTotal() {
 }
 
 int Stats::getLevel() {
-	return round(quadratic(1, 1, 4 - getStatTotal() / 2));
+	return round(quadratic(1, 1, (4 - getStatTotal()) / 2));
 }
 
 void Stats::resetStats() {

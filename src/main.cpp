@@ -1,6 +1,7 @@
 #include "World.hpp"
 #include "TextSequence.hpp"
 #include "Enemy.hpp"
+#include "BattleOptions.hpp"
 
 #include <chrono>
 #include <queue>
@@ -55,7 +56,7 @@ int main(int argc, char *argv[]) {
 	map<string, EnemyType*> enemyTypes = {
 		{"Tuba Snail", new EnemyType(
 			"Tuba Snail", 
-			Stats(2, 3, 2, 1, 1, 2), 
+			Stats(1, 2, 2, 1, 2, 2), 
 			{moves.find("Scratch")->second, moves.find("Ram")->second, moves.find("16th Notes")->second, moves.find("Vibrato")->second}, 
 			3, 2, 0.1, 0.01, ACCELERATING, 200, 500, true, 
 			"res/gfx/Enemies/TubaSnail.png", 7, 1)
@@ -77,6 +78,7 @@ int main(int argc, char *argv[]) {
 
 	World* world = new World(window, player, etVec);
 	TextSequence* ts = nullptr;
+	BattleOptions* bo = new BattleOptions(window);
 	/*
 	TextSequence* ts = new TextSequence({
 		TextBox(window, {
@@ -192,6 +194,10 @@ int main(int argc, char *argv[]) {
 					player->input.right = false;
 				}
 			}
+			if ((event.type == SDL_WINDOWEVENT) && (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)) {
+				window.resizeWindow();
+			} 
+
 		}
 
 		if (window.gamestate == OVERWORLD) {
@@ -202,8 +208,8 @@ int main(int argc, char *argv[]) {
 			}
 
 			// CAMERA
-			window.x = player->x - RenderWindow::WIDTH / 2;
-			window.y = player->y - RenderWindow::HEIGHT / 2;
+			window.x = player->x - (RenderWindow::WIDTH - player->show_width) / 2;
+			window.y = player->y - (RenderWindow::HEIGHT - player->show_height) / 2;
 		}
 		else if (window.gamestate == BATTLE) {
 			window.render(world->current->battleBackground, true);
@@ -212,14 +218,27 @@ int main(int argc, char *argv[]) {
 			}
 			bool done = false;
 			Fightable* myTurn = window.turnOrder.front();
+
+			bool playerTurn = false;
+			// cout << "a\n";
 			for (Enemy* go : window.enemyTeam) {
 				done = done || go->battle(&window, myTurn);
+				// cout << "b\n";
 			}
+			// cout << "c\n";
 			for (Fightable* go : window.playerTeam) {
 				done = done || go->battle(&window, myTurn);
+				playerTurn = playerTurn || (go == myTurn);
+				// cout << "d\n";
 			}
+			// cout << "e\n";
 
+			if (playerTurn) {
+				// cout << "f\n";
+				window.render(bo, true);
+			}
 			if (done) {
+				// cout << "g\n";
 				window.turnOrder.pop();
 				window.turnOrder.push(myTurn);
 			}

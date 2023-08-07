@@ -3,7 +3,7 @@
 using namespace std;
 
 RenderWindow::RenderWindow(const char* title) : window(NULL), renderer(NULL) {
-	window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_FULLSCREEN_DESKTOP);
 
 	if (window == NULL) {
 		cout << "Window failed to Init: " << SDL_GetError() << "\n"; 
@@ -14,7 +14,24 @@ RenderWindow::RenderWindow(const char* title) : window(NULL), renderer(NULL) {
 	zephyrea = TTF_OpenFont("res/gfx/zephyrea.ttf", 36);
 
 	keyboard = SDL_GetKeyboardState(NULL);
-};
+	resizeWindow();
+}
+
+void RenderWindow::resizeWindow() {
+	SDL_GetWindowSize(window, &actualWidth, &actualHeight);
+	double wScale = 1.0 * actualWidth / WIDTH;
+	double hScale = 1.0 * actualHeight / HEIGHT;
+
+	cout << "actualWidth: " << actualWidth << " actualHeight: " << actualHeight << endl;
+	cout << "wScale: " << wScale << " hScale: " << hScale << endl;
+
+	scaleMultiplier = min(wScale, hScale);
+	cout << "scaleMultiplier: " << scaleMultiplier << endl;
+	xOrigin = (actualWidth - (WIDTH * scaleMultiplier)) / 2; 
+	yOrigin = (actualHeight - (HEIGHT * scaleMultiplier)) / 2;
+
+	cout << "xOrigin: " << xOrigin << " yOrigin: " << yOrigin << endl;
+}
 
 void RenderWindow::cleanUp() {
 	SDL_DestroyWindow(window);
@@ -53,10 +70,12 @@ SDL_Rect RenderWindow::getDestRect(Entity* entity, bool stationary) {
 		dest = entity->getRect();
 	}
 	else {
-		dest.x = (int) ((entity->x - x) * zoom);
-		dest.y = (int) ((entity->y - y) * zoom);
-		dest.w = (int) (entity->show_width * zoom);
-		dest.h = (int) (entity->show_height * zoom);
+		double actualZoom = zoom * scaleMultiplier;
+		// cout << "actualZoom: " << actualZoom << endl;
+		dest.x = (int) ceil((entity->x - x) * actualZoom + xOrigin);
+		dest.y = (int) ceil((entity->y - y) * actualZoom + yOrigin);
+		dest.w = (int) ceil(entity->show_width * actualZoom);
+		dest.h = (int) ceil(entity->show_height * actualZoom);
 	}
 	return dest;
 }
@@ -119,6 +138,28 @@ void RenderWindow::render(Entity* entity, bool stationary, int centerx, int cent
 }
 
 void RenderWindow::display() {
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+	int w;
+	int h;
+	int r1x;
+	int r1y;
+	if (xOrigin == 0) {
+		w = actualWidth;
+		h = yOrigin;
+		r1x = 0;
+		r1y = actualHeight - h;
+	}
+	else {
+		w = xOrigin;
+		h = actualHeight;
+		r1x = actualWidth - w;
+		r1y = 0;
+	}
+	// cout << "w: " << w << " h: " << h << " r1x: " << r1x << " r1y: " << r1y << endl;
+	SDL_Rect r1 = {0, 0, w, h};
+	SDL_RenderFillRect(renderer, &r1);
+	r1 = {r1x, r1y, w, h};
+	SDL_RenderFillRect(renderer, &r1);
 	SDL_RenderPresent(renderer);
 }
 

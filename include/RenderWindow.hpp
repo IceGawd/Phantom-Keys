@@ -18,6 +18,11 @@ class RenderWindow {
 public:
 	const static int WIDTH = 1280;
 	const static int HEIGHT = 720;
+	int actualWidth = WIDTH;
+	int actualHeight = HEIGHT;
+	double scaleMultiplier = 1;
+	int xOrigin = 0;
+	int yOrigin = 0;
 
 	const Uint8* keyboard;
 
@@ -35,7 +40,8 @@ public:
 	int y = 0;
 	float zoom = 1.0;
 
-	RenderWindow(const char* title); 
+	RenderWindow(const char* title);
+	void resizeWindow();
 	SDL_Texture* loadTexture(const char* filePath);
 	void cleanUp();
 	void clear();

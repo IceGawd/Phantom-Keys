@@ -15,6 +15,7 @@ Enemy::Enemy(RenderWindow* window, EnemyType* e, int x, int y, Player* p) : et(e
 
 	this->y -= show_height;
 	stats = e->stats;
+	moves = e->moves;
 }
 
 bool Enemy::draw(RenderWindow* window, World* world, vector<GameObject*>& entities) {
@@ -146,7 +147,9 @@ bool Enemy::draw(RenderWindow* window, World* world, vector<GameObject*>& entiti
 bool Enemy::battle(RenderWindow* window, Fightable* turn) {
 	bool finished = false;
 	if (turn == this) {
-		moves[(int) (moves.size() * random())]->dealDamage(window, this, window->playerTeam[(int) (window->playerTeam.size() * random())]);
+		// cout << "myturn\n";
+		moves.at((int) (moves.size() * random()))->dealDamage(window, this, window->playerTeam.at((int) (window->playerTeam.size() * random())));
+		// cout << "donemove\n";
 		finished = true;
 	}
 
