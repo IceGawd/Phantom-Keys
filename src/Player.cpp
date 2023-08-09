@@ -92,7 +92,10 @@ bool Player::draw(RenderWindow* window, World* world, vector<GameObject*>& entit
 	while (frames >= next->frames) {
 		frames -= next->frames;
 		if (row != 0) {
-			column = 1 - column;
+			column++;
+			if (column == 4) {
+				column = 0;
+			}
 		}
 	}
 

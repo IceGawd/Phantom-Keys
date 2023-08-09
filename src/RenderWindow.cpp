@@ -3,7 +3,7 @@
 using namespace std;
 
 RenderWindow::RenderWindow(const char* title) : window(NULL), renderer(NULL) {
-	window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_FULLSCREEN_DESKTOP);
+	window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
 	if (window == NULL) {
 		cout << "Window failed to Init: " << SDL_GetError() << "\n"; 
@@ -23,14 +23,14 @@ void RenderWindow::resizeWindow() {
 	double hScale = 1.0 * actualHeight / HEIGHT;
 
 	cout << "actualWidth: " << actualWidth << " actualHeight: " << actualHeight << endl;
-	cout << "wScale: " << wScale << " hScale: " << hScale << endl;
+	// cout << "wScale: " << wScale << " hScale: " << hScale << endl;
 
 	scaleMultiplier = min(wScale, hScale);
-	cout << "scaleMultiplier: " << scaleMultiplier << endl;
-	xOrigin = (actualWidth - (WIDTH * scaleMultiplier)) / 2; 
+	// cout << "scaleMultiplier: " << scaleMultiplier << endl;
+	xOrigin = (actualWidth - (WIDTH * scaleMultiplier)) / 2;
 	yOrigin = (actualHeight - (HEIGHT * scaleMultiplier)) / 2;
 
-	cout << "xOrigin: " << xOrigin << " yOrigin: " << yOrigin << endl;
+	// cout << "xOrigin: " << xOrigin << " yOrigin: " << yOrigin << endl;
 }
 
 void RenderWindow::cleanUp() {
@@ -70,14 +70,22 @@ SDL_Rect RenderWindow::getDestRect(Entity* entity, bool stationary) {
 		dest = entity->getRect();
 	}
 	else {
-		double actualZoom = zoom * scaleMultiplier;
+		double actualZoom = zoom;
 		// cout << "actualZoom: " << actualZoom << endl;
-		dest.x = (int) ceil((entity->x - x) * actualZoom + xOrigin);
-		dest.y = (int) ceil((entity->y - y) * actualZoom + yOrigin);
-		dest.w = (int) ceil(entity->show_width * actualZoom);
-		dest.h = (int) ceil(entity->show_height * actualZoom);
+		dest.x = (int) ceil((entity->x - x) * zoom);
+		dest.y = (int) ceil((entity->y - y) * zoom);
+		dest.w = (int) ceil(entity->show_width * zoom);
+		dest.h = (int) ceil(entity->show_height * zoom);
 	}
+	scaleDestRect(dest);
 	return dest;
+}
+
+void RenderWindow::scaleDestRect(SDL_Rect& dest) {
+	dest.x = (int) ceil(dest.x * scaleMultiplier + xOrigin);
+	dest.y = (int) ceil(dest.y * scaleMultiplier + yOrigin);
+	dest.w = (int) ceil(dest.w * scaleMultiplier);
+	dest.h = (int) ceil(dest.h * scaleMultiplier);
 }
 
 void RenderWindow::render(Entity* entity, bool stationary, int centerx, int centery) {
@@ -108,6 +116,12 @@ void RenderWindow::render(Entity* entity, bool stationary, int centerx, int cent
 		SDL_Point center = SDL_Point();
 		center.x = (centerx == -1) ? src.w / 2 : centerx;
 		center.y = (centery == -1) ? src.h / 2 : centery;
+		if (!stationary) {
+			center.x *= zoom;
+			center.y *= zoom;
+		}
+		center.x *= scaleMultiplier;
+		center.y *= scaleMultiplier;
 
 		// cout << "angle: " << 180 * entity->angle / M_PI << endl;
 		SDL_RendererFlip flip = SDL_FLIP_NONE;
@@ -138,18 +152,19 @@ void RenderWindow::render(Entity* entity, bool stationary, int centerx, int cent
 }
 
 void RenderWindow::display() {
+	// /*
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	int w;
 	int h;
 	int r1x;
 	int r1y;
-	if (xOrigin == 0) {
+	if (xOrigin == 0) { // TOP AND BOTTOM
 		w = actualWidth;
 		h = yOrigin;
 		r1x = 0;
 		r1y = actualHeight - h;
 	}
-	else {
+	else { // LEFT AND RIGHT
 		w = xOrigin;
 		h = actualHeight;
 		r1x = actualWidth - w;
@@ -160,6 +175,7 @@ void RenderWindow::display() {
 	SDL_RenderFillRect(renderer, &r1);
 	r1 = {r1x, r1y, w, h};
 	SDL_RenderFillRect(renderer, &r1);
+	// */
 	SDL_RenderPresent(renderer);
 }
 
@@ -177,8 +193,7 @@ void RenderWindow::drawCircle(int x, int y, int radius) {
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
 }
 
-void RenderWindow::drawText(string text, unsigned char r, unsigned char g, unsigned char b, unsigned char a, int x, int y, int w, int h) {
-
+SDL_Surface* RenderWindow::getTextSurface(string text, unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
 	// as TTF_RenderText_Solid could only be used on
 	// SDL_Surface then you have to create the surface first
 //	cout << 1 << endl;
@@ -188,17 +203,26 @@ void RenderWindow::drawText(string text, unsigned char r, unsigned char g, unsig
 //	cout << TTF_GetError() << endl;
 	SDL_Surface* surfaceMessage = TTF_RenderText_Solid(zephyrea, text.c_str(), color); 
 //	cout << 2 << endl;
+	return surfaceMessage;
+}
 
-	// now you can convert it into a texture
+void RenderWindow::drawScaledTextInBox(string text, unsigned char r, unsigned char g, unsigned char b, unsigned char a, int x, int y, int w, int h) {
+	SDL_Surface* surfaceMessage = getTextSurface(text, r, g, b, a);
 	SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
-//	cout << 3 << endl;
+	double wScale = 1.0 * w / surfaceMessage->w;
+	double hScale = 1.0 * h / surfaceMessage->h;
+	double scalingSize = min(wScale, hScale);
+	// cout << "scaleMultiplier: " << scaleMultiplier << endl;
+	double hactual = surfaceMessage->h * scalingSize;
+	// cout << "w: " << w << " h: " << h << endl;
+	// cout << "hactual: " << hactual << endl;
+	SDL_Rect Message_rect = {x, (int) (y + (h - hactual) / 2), (int) (surfaceMessage->w * scalingSize), (int) (hactual)};
+	textRect(surfaceMessage, Message, Message_rect);
+}
 
-	SDL_Rect Message_rect; //create a rect
-	Message_rect.x = x;  //controls the rect's x coordinate 
-	Message_rect.y = y; // controls the rect's y coordinte
-	Message_rect.w = w; // controls the width of the rect
-	Message_rect.h = h; // controls the height of the rect
 
+void RenderWindow::textRect(SDL_Surface* surfaceMessage, SDL_Texture* Message, SDL_Rect Message_rect) {
+	scaleDestRect(Message_rect);
 	// (0,0) is on the top left of the window/screen,
 	// think a rect as the text's box,
 	// that way it would be very simple to understand
@@ -215,6 +239,20 @@ void RenderWindow::drawText(string text, unsigned char r, unsigned char g, unsig
 	// Don't forget to free your surface and texture
 	SDL_FreeSurface(surfaceMessage);
 	SDL_DestroyTexture(Message);
+}
+
+void RenderWindow::drawText(string text, unsigned char r, unsigned char g, unsigned char b, unsigned char a, int x, int y, int w, int h) {
+	SDL_Surface* surfaceMessage = getTextSurface(text, r, g, b, a);
+	// now you can convert it into a texture
+	SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
+//	cout << 3 << endl;
+
+	SDL_Rect Message_rect; //create a rect
+	Message_rect.x = x;  //controls the rect's x coordinate 
+	Message_rect.y = y; // controls the rect's y coordinte
+	Message_rect.w = w; // controls the width of the rect
+	Message_rect.h = h; // controls the height of the rect
+	textRect(surfaceMessage, Message, Message_rect);
 }
 
 SDL_Texture* RenderWindow::getAreaTexture(SDL_Rect& rect, SDL_Texture* source) {

@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
 		etVec.push_back(it->second);
 	}
 
-	Player* player = new Player(&window, {moves.find("Ram")->second});
+	Player* player = new Player(&window, {moves.find("Scratch")->second, moves.find("Ram")->second, moves.find("16th Notes")->second, moves.find("Vibrato")->second});
 	vector<GameObject*> overworldEntities;
 	vector<GameObject*> battleEntities;
 
@@ -196,8 +196,7 @@ int main(int argc, char *argv[]) {
 			}
 			if ((event.type == SDL_WINDOWEVENT) && (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)) {
 				window.resizeWindow();
-			} 
-
+			}
 		}
 
 		if (window.gamestate == OVERWORLD) {
@@ -235,12 +234,20 @@ int main(int argc, char *argv[]) {
 
 			if (playerTurn) {
 				// cout << "f\n";
+				if (bo->options.empty()) {
+					for (Move* m : myTurn->moves) {
+						bo->options.push_back(m->name);
+					}
+				}
 				window.render(bo, true);
 			}
 			if (done) {
 				// cout << "g\n";
 				window.turnOrder.pop();
 				window.turnOrder.push(myTurn);
+				if (playerTurn) {
+					bo->options.clear();
+				}
 			}
 		}
 

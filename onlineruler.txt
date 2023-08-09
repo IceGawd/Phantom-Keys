@@ -1,2 +1,4 @@
-First option - 26, 175
-Enemy option 276, 176
+First option - 26, 175 (22 pixels per) -> 182, 197
+Enemy option 276, 176 (33 pixels per)
+Note Select width - 15 pixel            Hello Bhaiya! Buenas noches, matashita! (Good night, see you tomorrow (Japanese))
+                                        Hello Shunnash! Bonjour, दोस्त (Hello, friend (Hindi))
