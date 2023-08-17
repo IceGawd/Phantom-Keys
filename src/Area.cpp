@@ -380,8 +380,12 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 	// IntRect bottomrect = {left, top + height - (height / 2 + 1), width, height / 2 + 1};
 	// IntRect toprect = {left, top, width, height - (height / 2 + 1)};
 
-	vector<int> preRenderIndexes;
-	SDL_Rect pobj = player->getRect();
+	vector<int> preRenderDudes;
+	for (GameObject* go : entities) {
+		preRenderDudes.push_back(-1);
+	}
+	vector<int> checkOut;
+
 	SDL_Rect actual = {0, 0, 0, 0};
 	SDL_Rect* intersect = &actual;
 
@@ -396,99 +400,132 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 			// cout << "BTG9910\n";
 			ObjectGroup& og = perhaps->getLayerAs<ObjectGroup>();
 			auto objectvector = og.getObjects();
-			for (auto object : objectvector) {
-				if (object.getShape() == Object::Shape::Rectangle) {
-					auto rect = object.getAABB();
+			bool checked = false;
+			for (int y = 0; y < entities.size(); y++) {
+				GameObject* go = entities[y];
+				for (auto object : objectvector) {
+					if (object.getShape() == Object::Shape::Rectangle) {
+						auto rect = object.getAABB();
 
-					SDL_Rect oobj = {int(rect.left), int(rect.top), int(rect.width), int(rect.height)};
-
-					if (SDL_IntersectRect(&pobj, &oobj, intersect) == SDL_TRUE) {
-						// cout << "yo\n";
-						subRender(layer, window, irect);
-						preRenderIndexes.push_back(x);
-						break;
+						SDL_Rect oobj = {int(rect.left), int(rect.top), int(rect.width), int(rect.height)};
+						SDL_Rect gobj = go->getRect();
+						if (SDL_IntersectRect(&gobj, &oobj, intersect) == SDL_TRUE) {
+							preRenderDudes[y] = x;
+							checked = true;
+							break;
+						}
 					}
 				}
+			}
+			if (checked) {
+				checkOut.push_back(x);
 			}
 			x++;
 		}
 	}
 
-	for (GameObject* go : entities) {
-		// go->draw(&window, world, entities);
-		// /*
-		if (go->draw(&window, world, entities) && window.gamestate == BATTLE) {
-			player->changeSpriteSheet("battleidle");
-
-			Enemy* battling = (Enemy*) go;
-			int enemies = 1;
-			while (enemies != 3 && random() > 0.5) {
-				enemies++;
+	GameObject* toBattle = nullptr;
+	for (int y = 0; y < entities.size(); y++) {
+		GameObject* go = entities[y];
+		if (preRenderDudes[y] == -1) {
+			if (go->draw(&window, world, entities)) {
+				toBattle = go;
 			}
-			window.enemyTeam.clear();
-
-			// Select Enemies
-			if (enemies >= battling->zone->dudes.size()) {
-				window.enemyTeam = battling->zone->dudes;
-			}
-			else {
-				window.enemyTeam.push_back(battling);
-				enemies--;
-
-				while (enemies != 0) {
-					Enemy* toAdd = nullptr;
-					for (Enemy* d : battling->zone->dudes) {
-						if ((find(window.enemyTeam.begin(), window.enemyTeam.end(), d) != window.enemyTeam.end()) && ((toAdd == nullptr) || (player->distance(toAdd) > player->distance(d)))) {
-							toAdd = d;
-						}
-					}
-					window.enemyTeam.push_back(toAdd);
-					enemies--;
-				}
-			}
-			// Turn Order
-			int total = 0;
-			vector<Fightable*> tempOrder;
-			int temp = 0;
-			for (Fightable* f : window.enemyTeam) {
-				tempOrder.push_back(f);
-				total += f->stats.agility;
-				f->battleX = 1000;
-				f->battleY = 200 * (temp + 1);
-				f->flip = 0;
-				temp++;
-			}
-			temp = 0;
-			for (Fightable* f : window.playerTeam) {
-				tempOrder.push_back(f);
-				total += f->stats.agility;
-				f->battleX = 100;
-				f->battleY = 200 * (temp + 1);
-				temp++;
-			}
-
-			while (tempOrder.size() > 0) {
-				int val = random() * total;
-				Fightable* toAdd;
-				int x = -1;
-				while (val >= 0) {
-					x++;
-					toAdd = tempOrder[x];
-					val -= toAdd->stats.agility;
-				}
-				tempOrder.erase(tempOrder.begin() + x);
-				total -= toAdd->stats.agility;
-				window.turnOrder.push(toAdd);
-			}
-			break;
 		}
-		// */
+	}
+
+
+	for (int x : checkOut) {
+		const Layer::Ptr& layer = layers[x];
+		subRender(layer, window, irect);
+		for (int y = 0; y < entities.size(); y++) {
+			GameObject* go = entities[y];
+			if (x == preRenderDudes[y]) {
+				if (go->draw(&window, world, entities)) {
+					toBattle = go;
+				}
+			}
+		}
 	}
 
 	for (int x = playerIndex + 1; x < layers.size(); x++) {
-		if (find(preRenderIndexes.begin(), preRenderIndexes.end(), x) == preRenderIndexes.end()) {
+		if (find(checkOut.begin(), checkOut.end(), x) == checkOut.end()) {
 			const Layer::Ptr& layer = layers[x];
 			subRender(layer, window, irect);
+		}
+	}
+	// */
+
+	// /* BATTLE
+	if (toBattle != nullptr && window.gamestate == BATTLE) {
+		window.turnstate = CHOOSEMOVE;
+		window.savedX = window.x;
+		window.savedY = window.y;
+		window.savedZoom = window.zoom;
+		window.x = 0;
+		window.y = 0;
+		window.zoom = 1.0;
+		player->changeSpriteSheet("battleidle");
+
+		Enemy* battling = (Enemy*) toBattle;
+		int enemies = 1;
+		while (enemies != 3 && random() > 0.5) {
+			enemies++;
+		}
+		window.enemyTeam.clear();
+
+		// Select Enemies
+		if (enemies >= battling->zone->dudes.size()) {
+			window.enemyTeam = battling->zone->dudes;
+		}
+		else {
+			window.enemyTeam.push_back(battling);
+			enemies--;
+
+			while (enemies != 0) {
+				Enemy* toAdd = nullptr;
+				for (Enemy* d : battling->zone->dudes) {
+					if ((find(window.enemyTeam.begin(), window.enemyTeam.end(), d) != window.enemyTeam.end()) && ((toAdd == nullptr) || (player->distance(toAdd) > player->distance(d)))) {
+						toAdd = d;
+					}
+				}
+				window.enemyTeam.push_back(toAdd);
+				enemies--;
+			}
+		}
+		// Turn Order
+		int total = 0;
+		vector<Fightable*> tempOrder;
+		int temp = 0;
+		for (Fightable* f : window.enemyTeam) {
+			tempOrder.push_back(f);
+			total += f->stats.agility;
+			f->battleX = 1000;
+			f->battleY = 100 * (temp + 1);
+			f->flip = 0;
+			temp++;
+		}
+		temp = 0;
+		for (Fightable* f : window.playerTeam) {
+			tempOrder.push_back(f);
+			total += f->stats.agility;
+			f->battleX = 100;
+			f->battleY = 100 * (temp + 1);
+			temp++;
+		}
+
+		while (tempOrder.size() > 0) {
+			int val = random() * total;
+			Fightable* toAdd;
+			int x = -1;
+			while (val >= 0) {
+				x++;
+				toAdd = tempOrder[x];
+				val -= toAdd->stats.agility;
+			}
+			tempOrder.erase(tempOrder.begin() + x);
+			total -= toAdd->stats.agility;
+			window.turnOrder.push(toAdd);
 		}
 	}
 	// */

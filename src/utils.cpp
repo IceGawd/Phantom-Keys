@@ -1,6 +1,7 @@
 #include "utils.hpp"
 #include "Fightable.hpp"
 #include "Enemy.hpp"
+#include "RenderWindow.hpp"
 
 float random(){
 	return (float) rand() / RAND_MAX;
@@ -85,4 +86,16 @@ float angleFromCoords(float x, float y) {
 		angle = M_PI - atan(y / x);
 	}
 	return angle;
+}
+
+void arrowChange(RenderWindow* window, SDL_Scancode key, bool* direction, void (*foo)(void*), void* passingArgument) {
+	if (window->keyboard[key]) {
+		if (!(*direction)) {
+			foo(passingArgument);
+			*direction = true;
+		}
+	}
+	else {
+		*direction = false;
+	}
 }

@@ -3,7 +3,7 @@
 using namespace std;
 
 RenderWindow::RenderWindow(const char* title) : window(NULL), renderer(NULL) {
-	window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_FULLSCREEN_DESKTOP );
 
 	if (window == NULL) {
 		cout << "Window failed to Init: " << SDL_GetError() << "\n"; 
@@ -70,8 +70,6 @@ SDL_Rect RenderWindow::getDestRect(Entity* entity, bool stationary) {
 		dest = entity->getRect();
 	}
 	else {
-		double actualZoom = zoom;
-		// cout << "actualZoom: " << actualZoom << endl;
 		dest.x = (int) ceil((entity->x - x) * zoom);
 		dest.y = (int) ceil((entity->y - y) * zoom);
 		dest.w = (int) ceil(entity->show_width * zoom);

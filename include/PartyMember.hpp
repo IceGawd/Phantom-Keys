@@ -3,5 +3,6 @@
 #include "Fightable.hpp"
 
 struct PartyMember : public Fightable {
-	virtual bool battle(RenderWindow* window, Fightable* turn);
+	Move* moveEntered = nullptr;
+	virtual void battle(RenderWindow* window, Fightable* turn);
 };

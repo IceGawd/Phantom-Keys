@@ -1,10 +1,14 @@
 #include "PartyMember.hpp"
 #include "Move.hpp"
 
-bool PartyMember::battle(RenderWindow* window, Fightable* turn) {
+void PartyMember::battle(RenderWindow* window, Fightable* turn) {
 	if (turn == this) {
-		
-	}
+		if (moveEntered != nullptr) {
+			moveEntered->dealDamage(window, this, (Fightable*) window->enemyTeam.at((int) (window->enemyTeam.size() * random())));
+			moveEntered = nullptr;
+			window->turnstate = ENDTURN;
 
-	return Fightable::battle(window, turn);
+		}
+	}
+	Fightable::battle(window, turn);
 }

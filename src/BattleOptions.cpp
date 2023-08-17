@@ -20,26 +20,36 @@ BattleOptions::BattleOptions(RenderWindow& window) {
 	select->show_height = select->height * noteScale;
 }
 
-void BattleOptions::arrowChange(RenderWindow* window, SDL_Scancode key, bool* direction, int change) {
-	if (window->keyboard[key]) {
-		if (!(*direction)) {
-			selection += change;
-			*direction = true;
-		}
+void BattleOptions::customDraw(RenderWindow* window) {	
+	arrowChange(window, SDL_SCANCODE_W, &prevUp, &boDecrement, this);
+	arrowChange(window, SDL_SCANCODE_S, &prevDown, &boIncrement, this);
+	arrowChange(window, SDL_SCANCODE_RETURN, &prevEnter, &boSelect, this);
+	if (selection < 0) {
+		selection = 0;
 	}
-	else {
-		*direction = false;
+	if (selection == options.size()) {
+		selection = options.size() - 1;
 	}
-}
-
-void BattleOptions::customDraw(RenderWindow* window) {
-	arrowChange(window, SDL_SCANCODE_W, &prevUp, -1);
-	arrowChange(window, SDL_SCANCODE_S, &prevDown, 1);
 
 	select->y = topY + selection * 22 * scalingSize;
 	// cout << select->y << endl;
-	window->render(select, true);
+	window->render(select);
 	for (int x = 0; x < options.size(); x++) {
 		window->drawScaledTextInBox(options[x], 255, 255, 255, 255, 31 * scalingSize, y + (175 + 24 * x) * scalingSize, 156 * scalingSize, 20 * scalingSize);
 	}
+}
+
+void boIncrement(void* passingArgument) {
+	BattleOptions* bo = (BattleOptions*) passingArgument;
+	bo->selection++;
+}
+
+void boDecrement(void* passingArgument) {
+	BattleOptions* bo = (BattleOptions*) passingArgument;
+	bo->selection--;
+}
+
+void boSelect(void* passingArgument) {
+	BattleOptions* bo = (BattleOptions*) passingArgument;
+	bo->pm->moveEntered = bo->pm->moves.at(bo->selection);
 }

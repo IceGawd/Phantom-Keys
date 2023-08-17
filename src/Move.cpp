@@ -5,6 +5,7 @@ Move::Move(string n, float d, int m, bool p, bool se, int a, vector<Tag> t, bool
 }
 
 void Move::dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defender) {
+	cout << name << endl;
 	attacker->stats.ap -= ap;
 	
 	double agilityBased = diffSum(attacker->stats.agility, defender->stats.agility); // x is 2000

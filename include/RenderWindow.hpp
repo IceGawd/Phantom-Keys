@@ -29,6 +29,7 @@ public:
 	bool temp = false;
 	bool playerInput = true;
 	Gamestate gamestate = OVERWORLD;
+	Turnstate turnstate = CHOOSEMOVE;
 	vector<Fightable*> playerTeam;
 	vector<Enemy*> enemyTeam;
 	queue<Fightable*> turnOrder;
@@ -39,6 +40,10 @@ public:
 	int x = 0;
 	int y = 0;
 	float zoom = 1.0;
+
+	int savedX = 0;
+	int savedY = 0;
+	float savedZoom = 1.0;
 
 	RenderWindow(const char* title);
 	void resizeWindow();

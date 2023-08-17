@@ -2,6 +2,7 @@
 #include "TextSequence.hpp"
 #include "Enemy.hpp"
 #include "BattleOptions.hpp"
+#include "Selector.hpp"
 
 #include <chrono>
 #include <queue>
@@ -21,6 +22,7 @@ map<char, Mix_Chunk*> getChunks(string s) {
 
 int main(int argc, char *argv[]) {
 	const int FPS = 60;
+	int fastForward = 1;
 	SDL_Event event;
 	bool gameRunning = true;
 
@@ -79,6 +81,7 @@ int main(int argc, char *argv[]) {
 	World* world = new World(window, player, etVec);
 	TextSequence* ts = nullptr;
 	BattleOptions* bo = new BattleOptions(window);
+	Selector* selector = new Selector(window);
 	/*
 	TextSequence* ts = new TextSequence({
 		TextBox(window, {
@@ -144,125 +147,148 @@ int main(int argc, char *argv[]) {
 	while (gameRunning) {
 		auto start = chrono::steady_clock().now();
 
-		// cout << "frame\n";
-		window.clear();
+		for (int framesDone = 0; framesDone < fastForward; framesDone++) {
+			// cout << "frame\n";
+			window.clear();
 
-		while (SDL_PollEvent(&event)) {
-			if (event.type == SDL_QUIT) {
-				gameRunning = false;
-			}
-			SDL_Keycode kc = event.key.keysym.sym;
-			if (event.type == SDL_KEYDOWN) {
-				if (kc == SDLK_w) {
-					player->input.up = true;
+			while (SDL_PollEvent(&event)) {
+				if (event.type == SDL_QUIT) {
+					gameRunning = false;
 				}
-				if (kc == SDLK_s) {
-					player->input.down = true;
+				SDL_Keycode kc = event.key.keysym.sym;
+				if (event.type == SDL_KEYDOWN) {
+					if (kc == SDLK_w) {
+						player->input.up = true;
+					}
+					if (kc == SDLK_s) {
+						player->input.down = true;
+					}
+					if (kc == SDLK_a) {
+						player->input.left = true;
+					}
+					if (kc == SDLK_d) {
+						player->input.right = true;
+					}
+					/*
+					if (kc == SDLK_o) {
+						cout << "zoomout\n";
+						window.zoom /= 2;
+					}
+					if (kc == SDLK_p) {
+						cout << "zoomin\n";
+						window.zoom *= 2;
+					}
+					if (kc == SDLK_q) {
+						cout << "temp\n";
+						window.temp = !window.temp;
+					}
+					*/
 				}
-				if (kc == SDLK_a) {
-					player->input.left = true;
-				}
-				if (kc == SDLK_d) {
-					player->input.right = true;
-				}
-				/*
-				if (kc == SDLK_o) {
-					cout << "zoomout\n";
-					window.zoom /= 2;
-				}
-				if (kc == SDLK_p) {
-					cout << "zoomin\n";
-					window.zoom *= 2;
-				}
-				if (kc == SDLK_q) {
-					cout << "temp\n";
-					window.temp = !window.temp;
-				}
-				*/
-			}
-			if (event.type == SDL_KEYUP) {
-				if (kc == SDLK_w) {
-					player->input.up = false;
-				}
-				if (kc == SDLK_s) {
-					player->input.down = false;
-				}
-				if (kc == SDLK_a) {
-					player->input.left = false;
-				}
-				if (kc == SDLK_d) {
-					player->input.right = false;
-				}
-			}
-			if ((event.type == SDL_WINDOWEVENT) && (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)) {
-				window.resizeWindow();
-			}
-		}
-
-		if (window.gamestate == OVERWORLD) {
-			world->current->render(window, player, world, overworldEntities);
-
-			if (window.gamestate == BATTLE) {
-				battleEntities.clear();
-			}
-
-			// CAMERA
-			window.x = player->x - (RenderWindow::WIDTH - player->show_width) / 2;
-			window.y = player->y - (RenderWindow::HEIGHT - player->show_height) / 2;
-		}
-		else if (window.gamestate == BATTLE) {
-			window.render(world->current->battleBackground, true);
-			for (GameObject* go : battleEntities) {
-				go->draw(&window, world, battleEntities);
-			}
-			bool done = false;
-			Fightable* myTurn = window.turnOrder.front();
-
-			bool playerTurn = false;
-			// cout << "a\n";
-			for (Enemy* go : window.enemyTeam) {
-				done = done || go->battle(&window, myTurn);
-				// cout << "b\n";
-			}
-			// cout << "c\n";
-			for (Fightable* go : window.playerTeam) {
-				done = done || go->battle(&window, myTurn);
-				playerTurn = playerTurn || (go == myTurn);
-				// cout << "d\n";
-			}
-			// cout << "e\n";
-
-			if (playerTurn) {
-				// cout << "f\n";
-				if (bo->options.empty()) {
-					for (Move* m : myTurn->moves) {
-						bo->options.push_back(m->name);
+				if (event.type == SDL_KEYUP) {
+					if (kc == SDLK_w) {
+						player->input.up = false;
+					}
+					if (kc == SDLK_s) {
+						player->input.down = false;
+					}
+					if (kc == SDLK_a) {
+						player->input.left = false;
+					}
+					if (kc == SDLK_d) {
+						player->input.right = false;
+					}
+					if (kc == SDLK_BACKQUOTE) {
+						if (fastForward != 1) {
+							fastForward = 1;
+						}
+						else {
+							fastForward = 3;
+						}
 					}
 				}
-				window.render(bo, true);
-			}
-			if (done) {
-				// cout << "g\n";
-				window.turnOrder.pop();
-				window.turnOrder.push(myTurn);
-				if (playerTurn) {
-					bo->options.clear();
+				if ((event.type == SDL_WINDOWEVENT) && (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)) {
+					window.resizeWindow();
 				}
 			}
-		}
 
-		if (ts != nullptr) {
-			// cout << "elc\n";
-			window.playerInput = ts->draw(window);
-			if (window.playerInput) {
-				ts = nullptr;
+			if (window.gamestate == OVERWORLD) {
+				// CAMERA
+				window.x = player->x - (RenderWindow::WIDTH - player->show_width) / 2;
+				window.y = player->y - (RenderWindow::HEIGHT - player->show_height) / 2;
+
+				world->current->render(window, player, world, overworldEntities);
+
+				if (window.gamestate == BATTLE) {
+					battleEntities.clear();
+				}
 			}
-		}
+			else if (window.gamestate == BATTLE) {
+				window.render(world->current->battleBackground);
+				for (GameObject* go : battleEntities) {
+					go->draw(&window, world, battleEntities);
+				}
+				Fightable* myTurn = window.turnOrder.front();
 
-		// cout << "player->x: " << player->x << " player->y: " << player->y << endl; 
+				bool playerTurn = false;
+				// cout << "a\n";
+				for (Enemy* go : window.enemyTeam) {
+					go->battle(&window, myTurn);
+					// cout << "b\n";
+				}
+				// cout << "c\n";
+				for (Fightable* go : window.playerTeam) {
+					go->battle(&window, myTurn);
+					playerTurn = playerTurn || (go == myTurn);
+					// cout << "d\n";
+				}
+				// cout << "e\n";
+
+				if (playerTurn) {
+					// cout << "f\n";
+					if (window.turnstate == CHOOSEMOVE) {
+						if (bo->options.empty()) {
+							for (Move* m : myTurn->moves) {
+								bo->options.push_back(m->name);
+							}
+							bo->pm = (PartyMember*) (window.turnOrder.front());
+						}
+						window.render(bo);
+					}
+					else if (window.turnstate == SELECTENEMY) {
+						selector->render(&window);
+					}
+				}
+				if (window.turnstate == ENDTURN) {
+					// cout << "g\n";
+					for (Fightable* f : window.playerTeam) {
+						cout << "Fighter hp: " << f->stats.hp << endl;
+					}
+					for (Enemy* e : window.enemyTeam) {
+						cout << "Enemy hp: " << e->stats.hp << endl;						
+					}
+					window.turnstate = CHOOSEMOVE;
+					window.turnOrder.pop();
+					window.turnOrder.push(myTurn);
+					if (playerTurn) {
+						bo->options.clear();
+					}
+				}
+			}
+
+			if (ts != nullptr) {
+				// cout << "elc\n";
+				window.playerInput = ts->draw(window);
+				if (window.playerInput) {
+					ts = nullptr;
+				}
+			}
+
+			// cout << "player->x: " << player->x << " player->y: " << player->y << endl; 
+		}
 
 		window.display();
 
+		// /*
 		auto end = chrono::steady_clock().now();
 		chrono::duration<double> frameDone = end - start;
 
@@ -271,6 +297,7 @@ int main(int argc, char *argv[]) {
 		if (delay > 0) {
 			SDL_Delay(delay);
 		}
+		// */
 	}
 
 	return 0;

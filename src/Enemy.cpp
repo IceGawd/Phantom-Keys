@@ -99,13 +99,14 @@ bool Enemy::draw(RenderWindow* window, World* world, vector<GameObject*>& entiti
 	// Moving the enemy
 	movement_angle += angle_speed;
 	movement_angle = movement_angle - (2 * M_PI) * int(movement_angle / (2 * M_PI));
-	if (movement_angle > M_PI / 2 && movement_angle < 3 * M_PI / 2) {
+
+	if (movement_angle > 1.7 && movement_angle < 4.55) {
 		flip = 0;
 	}
-	else {
+	if (movement_angle < 1.4 || movement_angle > 4.85) {
 		flip = 8;
 	}
-
+	
 	xvel = cos(movement_angle) * speed;
 	yvel = -sin(movement_angle) * speed;
 	
@@ -138,22 +139,20 @@ bool Enemy::draw(RenderWindow* window, World* world, vector<GameObject*>& entiti
 
 	if (SDL_IntersectRect(&a, &b, &i) == SDL_TRUE && playerDist < (min(player->show_height, player->show_width) + min(show_height, show_width)) / 2) {
 		window->gamestate = BATTLE;
+		window->turnstate = CHOOSEMOVE;
 		return true;
 	}
 
 	return false;
 }
 
-bool Enemy::battle(RenderWindow* window, Fightable* turn) {
-	bool finished = false;
+void Enemy::battle(RenderWindow* window, Fightable* turn) {
 	if (turn == this) {
 		// cout << "myturn\n";
 		moves.at((int) (moves.size() * random()))->dealDamage(window, this, window->playerTeam.at((int) (window->playerTeam.size() * random())));
 		// cout << "donemove\n";
-		finished = true;
+		window->turnstate = ENDTURN;
 	}
 
 	Fightable::battle(window, turn);
-
-	return finished;
 }

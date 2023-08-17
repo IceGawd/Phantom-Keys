@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="200" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="34" nextobjectid="335">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="200" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="34" nextobjectid="335">
  <tileset firstgid="1" source="New Tilesets.tsx"/>
  <tileset firstgid="199" source="Asset.tsx"/>
  <layer id="14" name="Tile Layer 4" width="200" height="100">
@@ -758,6 +758,20 @@
   <object id="308" x="447.25" y="1165" width="32.5" height="32"/>
   <object id="309" x="447.25" y="1384.5" width="32.5" height="32"/>
  </objectgroup>
+ <objectgroup id="30" name="Cryopod Object">
+  <object id="144" gid="202" x="943" y="1975" width="32" height="32"/>
+  <object id="145" gid="1073742026" x="1013.5" y="1944" width="32" height="32" rotation="180"/>
+  <object id="139" gid="1073742028" x="1140" y="2134" width="32" height="32" rotation="180"/>
+  <object id="149" gid="202" x="1134" y="2167.5" width="32" height="32"/>
+  <object id="153" gid="203" x="1284" y="1816.67" width="32" height="32"/>
+ </objectgroup>
+ <objectgroup id="29" name="Cryopod Object BGFG" visible="0">
+  <object id="321" x="865.666" y="2156.66" width="411.333" height="32"/>
+  <object id="322" x="865.665" y="1961.34" width="411.333" height="32"/>
+  <object id="323" x="1280.33" y="1837.33" width="60.666" height="32"/>
+  <object id="324" x="1472.33" y="1833.34" width="63.3327" height="32"/>
+  <object id="325" x="1473" y="2065.99" width="63.3327" height="32"/>
+ </objectgroup>
  <layer id="26" name="Alt Pillars" width="200" height="100">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -874,20 +888,6 @@
   <object id="326" x="1282" y="1703.33" width="58.666" height="32"/>
   <object id="327" x="1473.33" y="1700.67" width="58.666" height="32"/>
  </objectgroup>
- <objectgroup id="30" name="Cryopod Object">
-  <object id="144" gid="202" x="943" y="1975" width="32" height="32"/>
-  <object id="145" gid="1073742026" x="1013.5" y="1944" width="32" height="32" rotation="180"/>
-  <object id="139" gid="1073742028" x="1140" y="2134" width="32" height="32" rotation="180"/>
-  <object id="149" gid="202" x="1134" y="2167.5" width="32" height="32"/>
-  <object id="153" gid="203" x="1284" y="1816.67" width="32" height="32"/>
- </objectgroup>
- <objectgroup id="29" name="Cryopod Object BGFG" visible="0">
-  <object id="321" x="865.666" y="2156.66" width="411.333" height="32"/>
-  <object id="322" x="865.665" y="1961.34" width="411.333" height="32"/>
-  <object id="323" x="1280.33" y="1837.33" width="60.666" height="32"/>
-  <object id="324" x="1472.33" y="1833.34" width="63.3327" height="32"/>
-  <object id="325" x="1473" y="2065.99" width="63.3327" height="32"/>
- </objectgroup>
  <objectgroup id="32" name="Pillar Object">
   <object id="129" gid="203" x="901.333" y="2070.67" width="32" height="32"/>
   <object id="140" gid="1073742028" x="1056" y="2039.33" width="32" height="32" rotation="180"/>
@@ -900,7 +900,7 @@
   <object id="331" x="1279.84" y="1701.99" width="58.666" height="32"/>
   <object id="332" x="1471.17" y="1699.34" width="58.666" height="32"/>
  </objectgroup>
- <objectgroup id="23" name="Objects">
+ <objectgroup id="23" name="Objects" visible="0">
   <object id="128" gid="203" x="1115.33" y="1945.33" width="32" height="32"/>
   <object id="130" gid="203" x="1229.33" y="2139.33" width="32" height="32"/>
   <object id="131" gid="1073742027" x="1521.33" y="2138" width="32" height="32" rotation="180"/>

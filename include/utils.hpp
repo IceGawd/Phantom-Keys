@@ -11,6 +11,7 @@ using namespace std;
 
 class Fightable;
 class Enemy;
+class RenderWindow;
 
 float random();
 float rand(float std, float m);
@@ -28,10 +29,20 @@ float increase(float initial, float percent);
 float distanceFrom(float x, float y);
 float angleFromCoords(float x, float y);
 
+void arrowChange(RenderWindow* window, SDL_Scancode key, bool* direction, void (*foo)(void*), void* passingArgument);
+
 enum Gamestate {
 	OVERWORLD, 
 	BATTLE, 
 	CUTSCENE
+};
+
+enum Turnstate {
+	CHOOSEMOVE, 
+	SELECTENEMY, 
+	ANIMATION, 
+	DAMAGE, 
+	ENDTURN
 };
 
 enum Tag {
@@ -40,7 +51,7 @@ enum Tag {
 	SLASHING, 
 	UPWARD, 
 	FORWARD, 
-	FIRE, 
+	FIRE, // Maybe call Incendiary?
 	ICE, 
 	FORCE, 
 	ELECTRICITY, 
