@@ -58,7 +58,7 @@ public:
 	void drawLine(int x1, int y1, int x2, int y2, bool stationary = true);
 	void drawCircle(int x, int y, int radius);
 	SDL_Surface* getTextSurface(string text, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
-	void drawScaledTextInBox(string text, unsigned char r, unsigned char g, unsigned char b, unsigned char a, int x, int y, int w, int h);
+	void drawScaledTextInBox(string text, unsigned char r, unsigned char g, unsigned char b, unsigned char a, int x, int y, int w, int h, bool centered);
 	void textRect(SDL_Surface* surfaceMessage, SDL_Texture* Message, SDL_Rect Message_rect);
 	void drawText(string text, unsigned char r, unsigned char g, unsigned char b, unsigned char a, int x, int y, int w, int h);
 	SDL_Texture* getAreaTexture(SDL_Rect& rect, SDL_Texture* source);

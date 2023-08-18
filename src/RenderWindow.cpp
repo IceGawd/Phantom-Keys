@@ -204,7 +204,7 @@ SDL_Surface* RenderWindow::getTextSurface(string text, unsigned char r, unsigned
 	return surfaceMessage;
 }
 
-void RenderWindow::drawScaledTextInBox(string text, unsigned char r, unsigned char g, unsigned char b, unsigned char a, int x, int y, int w, int h) {
+void RenderWindow::drawScaledTextInBox(string text, unsigned char r, unsigned char g, unsigned char b, unsigned char a, int x, int y, int w, int h, bool centered) {
 	SDL_Surface* surfaceMessage = getTextSurface(text, r, g, b, a);
 	SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
 	double wScale = 1.0 * w / surfaceMessage->w;
@@ -212,9 +212,15 @@ void RenderWindow::drawScaledTextInBox(string text, unsigned char r, unsigned ch
 	double scalingSize = min(wScale, hScale);
 	// cout << "scaleMultiplier: " << scaleMultiplier << endl;
 	double hactual = surfaceMessage->h * scalingSize;
+	double wactual = surfaceMessage->w * scalingSize;
 	// cout << "w: " << w << " h: " << h << endl;
 	// cout << "hactual: " << hactual << endl;
-	SDL_Rect Message_rect = {x, (int) (y + (h - hactual) / 2), (int) (surfaceMessage->w * scalingSize), (int) (hactual)};
+
+	if (centered) {
+		x += (w - wactual) / 2;
+	}
+
+	SDL_Rect Message_rect = {x, (int) (y + (h - hactual) / 2), (int) (wactual), (int) (hactual)};
 	textRect(surfaceMessage, Message, Message_rect);
 }
 

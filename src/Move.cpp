@@ -34,7 +34,7 @@ void Move::dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defe
 		}
 
 		double deviation = (bonus + (attacker->stats.luck / 2000.0)) * power * critAccountedDamage;
-		cout << "deviation: " << deviation << endl;
+		// cout << "deviation: " << deviation << endl;
 
 		int damagedone = (int) (rand(index * attacker->stats.damagebonus, deviation * attacker->stats.rangebonus) * defender->stats.damagetaken + 1);
 		cout << "Damage done: " << damagedone << endl;

@@ -458,7 +458,7 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 
 	// /* BATTLE
 	if (toBattle != nullptr && window.gamestate == BATTLE) {
-		window.turnstate = CHOOSEMOVE;
+		window.turnstate = static_cast<Turnstate>(0);
 		window.savedX = window.x;
 		window.savedY = window.y;
 		window.savedZoom = window.zoom;

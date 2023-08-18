@@ -245,14 +245,18 @@ int main(int argc, char *argv[]) {
 
 				if (playerTurn) {
 					// cout << "f\n";
-					if (window.turnstate == CHOOSEMOVE) {
+					if (window.turnstate == CHOOSEOPTION) {
 						if (bo->options.empty()) {
-							for (Move* m : myTurn->moves) {
-								bo->options.push_back(m->name);
-							}
-							bo->pm = (PartyMember*) (window.turnOrder.front());
+							bo->selection = 0;
+							bo->options.push_back("Fight");
+							bo->options.push_back("Item");
+							bo->options.push_back("Action");
 						}
-						window.render(bo);
+						bo->pm = (PartyMember*) (window.turnOrder.front());
+						bo->customDraw(&window);
+					}
+					else if (window.turnstate == CHOOSEMOVE) {
+						bo->customDraw(&window);
 					}
 					else if (window.turnstate == SELECTENEMY) {
 						selector->render(&window);
@@ -266,7 +270,7 @@ int main(int argc, char *argv[]) {
 					for (Enemy* e : window.enemyTeam) {
 						cout << "Enemy hp: " << e->stats.hp << endl;						
 					}
-					window.turnstate = CHOOSEMOVE;
+					window.turnstate = static_cast<Turnstate>(0);
 					window.turnOrder.pop();
 					window.turnOrder.push(myTurn);
 					if (playerTurn) {

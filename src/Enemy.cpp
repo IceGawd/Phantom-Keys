@@ -139,7 +139,6 @@ bool Enemy::draw(RenderWindow* window, World* world, vector<GameObject*>& entiti
 
 	if (SDL_IntersectRect(&a, &b, &i) == SDL_TRUE && playerDist < (min(player->show_height, player->show_width) + min(show_height, show_width)) / 2) {
 		window->gamestate = BATTLE;
-		window->turnstate = CHOOSEMOVE;
 		return true;
 	}
 
@@ -148,7 +147,7 @@ bool Enemy::draw(RenderWindow* window, World* world, vector<GameObject*>& entiti
 
 void Enemy::battle(RenderWindow* window, Fightable* turn) {
 	if (turn == this) {
-		// cout << "myturn\n";
+		cout << "Enemy Attacks!\n";
 		moves.at((int) (moves.size() * random()))->dealDamage(window, this, window->playerTeam.at((int) (window->playerTeam.size() * random())));
 		// cout << "donemove\n";
 		window->turnstate = ENDTURN;

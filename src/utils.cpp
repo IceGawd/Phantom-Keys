@@ -88,7 +88,7 @@ float angleFromCoords(float x, float y) {
 	return angle;
 }
 
-void arrowChange(RenderWindow* window, SDL_Scancode key, bool* direction, void (*foo)(void*), void* passingArgument) {
+void arrowChange(RenderWindow* window, SDL_Scancode key, bool* direction, void (*foo)(vector<void*>), vector<void*> passingArgument) {
 	if (window->keyboard[key]) {
 		if (!(*direction)) {
 			foo(passingArgument);

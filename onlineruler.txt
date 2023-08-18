@@ -1,4 +1,20 @@
+OLD
 First option - 26, 175 (22 pixels per) -> 182, 197
 Enemy option 276, 176 (33 pixels per)
 Note Select width - 15 pixel            Hello Bhaiya! Buenas noches, matashita! (Good night, see you tomorrow (Japanese))
                                         Hello Shunnash! Bonjour, दोस्त (Hello, friend (Hindi))
+
+
+NEW MENU
+Top main - 46, 5
+Bottom main - 436, 50
+Op1 top - 44, 60
+Op2 bottom - 170, 82
+2nd top x - 174
+
+NEW FIGHT
+O1 - (21, 6) -> (130, 27)
+O2 - (141, 6) -> (255, 27)
+O3 - (21, 32) -> (130, 54)
+Info - (280, 7) ->(457, 54)
+21 height, 109 width
