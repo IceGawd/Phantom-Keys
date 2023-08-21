@@ -219,13 +219,16 @@ int main(int argc, char *argv[]) {
 				world->current->render(window, player, world, overworldEntities);
 
 				if (window.gamestate == BATTLE) {
-					battleEntities.clear();
+					while (!battleEntities.empty()) {
+						delete battleEntities.at(0);
+					}
 				}
 			}
 			else if (window.gamestate == BATTLE) {
 				window.render(world->current->battleBackground);
 				for (GameObject* go : battleEntities) {
 					go->draw(&window, world, battleEntities);
+					battleEntities.erase(battleEntities.begin());
 				}
 				Fightable* myTurn = window.turnOrder.front();
 
@@ -264,18 +267,70 @@ int main(int argc, char *argv[]) {
 				}
 				if (window.turnstate == ENDTURN) {
 					// cout << "g\n";
+					selector->snap = true;
+					bool fighterLoss = true;
+					bool fighterWin = true;
 					for (Fightable* f : window.playerTeam) {
 						cout << "Fighter hp: " << f->stats.hp << endl;
+						fighterLoss = fighterLoss && (f->stats.hp <= 0);
 					}
 					for (Enemy* e : window.enemyTeam) {
 						cout << "Enemy hp: " << e->stats.hp << endl;						
+						fighterWin = fighterWin && (e->stats.hp <= 0);
 					}
-					window.turnstate = static_cast<Turnstate>(0);
-					window.turnOrder.pop();
-					window.turnOrder.push(myTurn);
-					if (playerTurn) {
-						bo->options.clear();
+					if (fighterLoss) {
+						cout << "YOU LOSE!\n";
+						gameRunning = false;
 					}
+					else if (fighterWin) {
+						cout << "YOU WIN!\n";
+						window.gamestate = OVERWORLD;
+						window.x = window.savedX;
+						window.y = window.savedY;
+						window.zoom = window.savedZoom;
+						player->changeSpriteSheet("overworld");
+						while (!window.enemyTeam.empty()) {
+							// cout << "again" << endl;
+							Enemy* e = window.enemyTeam.at(0);
+							// cout << "deleting " << e << endl;
+							overworldEntities.erase(remove(overworldEntities.begin(), overworldEntities.end(), e));
+							e->zone->dudes.erase(remove(e->zone->dudes.begin(), e->zone->dudes.end(), e));
+							e->zone->spawned--;
+							// cout << "pre delete call\n";
+							delete e;
+							// cout << "post delete call\n";
+							window.enemyTeam.erase(window.enemyTeam.begin());
+							// cout << "erase enemies\n";
+						}
+						// window.enemyTeam.clear();
+						// cout << "gone" << endl;
+					}
+					else {
+						window.turnstate = static_cast<Turnstate>(0);
+						if (playerTurn) {
+							bo->options.clear();
+						}
+						do {
+							window.turnOrder.pop();
+							window.turnOrder.push(myTurn);
+						} while (window.turnOrder.front()->stats.hp <= 0);
+					}
+				}
+				else {
+					// /*
+					for (int x = 0; x < window.enemyTeam.size(); x++) {
+						Enemy* e = window.enemyTeam.at(x);
+						if (e->stats.hp <= 0) {
+							// cout << "deleted " << e << endl;
+							overworldEntities.erase(remove(overworldEntities.begin(), overworldEntities.end(), e));
+							e->zone->dudes.erase(remove(e->zone->dudes.begin(), e->zone->dudes.end(), e));
+							e->zone->spawned--;
+							window.enemyTeam.erase(remove(window.enemyTeam.begin(), window.enemyTeam.end(), e));
+							delete e;
+							x--;
+						}
+					}
+					// */
 				}
 			}
 

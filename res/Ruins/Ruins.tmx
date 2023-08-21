@@ -1103,7 +1103,7 @@
   <object id="291" x="2820.17" y="1021.67" width="87.1667" height="34"/>
   <object id="292" x="2946.83" y="1023.67" width="89.1667" height="34"/>
  </objectgroup>
- <objectgroup id="33" name="Spawn Tuba Snail">
+ <objectgroup id="33" name="Spawn Tuba Snail" visible="0">
   <object id="333" x="1473" y="1218" width="670" height="159"/>
  </objectgroup>
 </map>

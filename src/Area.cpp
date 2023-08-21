@@ -458,7 +458,7 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 
 	// /* BATTLE
 	if (toBattle != nullptr && window.gamestate == BATTLE) {
-		window.turnstate = static_cast<Turnstate>(0);
+		window.turnstate = static_cast<Turnstate>(0); // If check turnstate exists, this (and other places where this is used) is wrong
 		window.savedX = window.x;
 		window.savedY = window.y;
 		window.savedZoom = window.zoom;
@@ -474,21 +474,28 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 		}
 		window.enemyTeam.clear();
 
+		while (!window.turnOrder.empty()) {
+			window.turnOrder.pop();
+		}
+
 		// Select Enemies
 		if (enemies >= battling->zone->dudes.size()) {
 			window.enemyTeam = battling->zone->dudes;
+			cout << "copy???\n";
 		}
 		else {
 			window.enemyTeam.push_back(battling);
+			cout << "added " << battling << endl;
 			enemies--;
 
 			while (enemies != 0) {
 				Enemy* toAdd = nullptr;
 				for (Enemy* d : battling->zone->dudes) {
-					if ((find(window.enemyTeam.begin(), window.enemyTeam.end(), d) != window.enemyTeam.end()) && ((toAdd == nullptr) || (player->distance(toAdd) > player->distance(d)))) {
+					if ((find(window.enemyTeam.begin(), window.enemyTeam.end(), d) == window.enemyTeam.end()) && ((toAdd == nullptr) || (player->distance(toAdd) > player->distance(d)))) {
 						toAdd = d;
 					}
 				}
+				cout << "added " << toAdd << endl;
 				window.enemyTeam.push_back(toAdd);
 				enemies--;
 			}

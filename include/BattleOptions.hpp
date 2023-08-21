@@ -15,11 +15,11 @@ struct BattleOptions {
 
 	vector<string> options;
 
-	bool prevUp = false;
-	bool prevLeft = false;
-	bool prevDown = false;
-	bool prevRight = false;
-	bool prevEnter = false;
+	bool prevUp = true;
+	bool prevLeft = true;
+	bool prevDown = true;
+	bool prevRight = true;
+	bool prevEnter = true;
 
 	BattleOptions(RenderWindow& window);
 	void makeMaxWidth(Entity*& object, double& scalingSize, SDL_Texture* texture);

@@ -11,7 +11,7 @@ RenderWindow::RenderWindow(const char* title) : window(NULL), renderer(NULL) {
 
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-	zephyrea = TTF_OpenFont("res/gfx/zephyrea.ttf", 36);
+	zephyrea = TTF_OpenFont("res/gfx/PixAntiqua.ttf", 36);
 
 	keyboard = SDL_GetKeyboardState(NULL);
 	resizeWindow();
@@ -171,7 +171,7 @@ void RenderWindow::display() {
 	// cout << "w: " << w << " h: " << h << " r1x: " << r1x << " r1y: " << r1y << endl;
 	SDL_Rect r1 = {0, 0, w, h};
 	SDL_RenderFillRect(renderer, &r1);
-	r1 = {r1x, r1y, w, h};
+	r1 = {r1x, r1y, w + 1, h};
 	SDL_RenderFillRect(renderer, &r1);
 	// */
 	SDL_RenderPresent(renderer);

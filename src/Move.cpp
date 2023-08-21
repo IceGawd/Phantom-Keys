@@ -47,5 +47,5 @@ void Move::dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defe
 	}
 	else {
 		cout << "Miss!\n";
-	} 
+	}
 }

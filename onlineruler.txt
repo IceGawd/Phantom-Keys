@@ -9,7 +9,7 @@ NEW MENU
 Top main - 46, 5
 Bottom main - 436, 50
 Op1 top - 44, 60
-Op2 bottom - 170, 82
+Op1 bottom - 170, 82
 2nd top x - 174
 
 NEW FIGHT
