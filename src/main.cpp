@@ -21,6 +21,27 @@ map<char, Mix_Chunk*> getChunks(string s) {
 	return answer;
 }
 
+void backout(vector<void*> passingArgument) {
+	RenderWindow* window = (RenderWindow*) (passingArgument[0]);
+	BattleOptions* bo = (BattleOptions*) (passingArgument[1]);
+	Selector* selector = (Selector*) (passingArgument[2]);
+	window->turnstate = (Turnstate) ((int) window->turnstate - 1);
+	bo->options.clear();
+	bo->prevEnter = true;
+	selector->snap = true;
+	selector->prevEnter = true;
+	if (window->turnstate == CHOOSEMOVE) {
+		bo->pm->moveEntered = nullptr;
+	}
+}
+
+void forward(vector<void*> passingArgument) {
+	RenderWindow* window = (RenderWindow*) (passingArgument[0]);
+	BattleOptions* bo = (BattleOptions*) (passingArgument[1]);
+	window->turnstate = (Turnstate) ((int) window->turnstate + 1);
+	bo->options.clear();
+}
+
 int main(int argc, char *argv[]) {
 	const int FPS = 60;
 	int fastForward = 1;
@@ -146,6 +167,8 @@ int main(int argc, char *argv[]) {
 	*/
 	// TextSequence* ts = new TextSequence({TextBox(window, {TextSlice(window, "Hello every person type or thing, I need to make a long text to test out the scrolling features. ", {255, 255, 255, 255}, {WAVEY}), TextSlice(window, "Its ice god here", {0, 120, 200, 255}, {SHAKY})})}, &textNoise["Trumpet"]);
 
+	bool prevBack = true;
+
 	while (gameRunning) {
 		auto start = chrono::steady_clock().now();
 
@@ -253,7 +276,19 @@ int main(int argc, char *argv[]) {
 
 				if (playerTurn) {
 					// cout << "f\n";
-					if (window.turnstate == CHOOSEOPTION) {
+					if ((int) window.turnstate <= 3 && (int) window.turnstate > 0) {
+						arrowChange(&window, window.cc.back, &prevBack, &backout, {&window, bo, selector});
+					}
+					if (window.turnstate == HEALTHCHECK) {
+						if (!bo->options.empty()) {
+							bo->options.clear();
+						}
+						bo->customDraw(&window);
+						selector->render(&window);
+						hb->represent(&window, selector->getSelected(&window));
+						arrowChange(&window, window.cc.back, &prevBack, &forward, {&window, bo});
+					}
+					else if (window.turnstate == CHOOSEOPTION) {
 						if (bo->options.empty()) {
 							bo->selection = 0;
 							bo->options.push_back("Fight");
@@ -265,6 +300,11 @@ int main(int argc, char *argv[]) {
 						hb->represent(&window, window.turnOrder.front());
 					}
 					else if (window.turnstate == CHOOSEMOVE) {
+						if (bo->options.empty()) {
+							for (Move* m : bo->pm->moves) {
+								bo->options.push_back(m->name);
+							}
+						}
 						bo->customDraw(&window);
 					}
 					else if (window.turnstate == SELECTENEMY) {

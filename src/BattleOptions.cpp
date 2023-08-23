@@ -62,7 +62,9 @@ void BattleOptions::customDraw(RenderWindow* window) {
 		}
 	}
 	// cout << "selection: " << selection << endl;
-	window->render(select);
+	if (!options.empty()) {
+		window->render(select);
+	}
 }
 
 void BattleOptions::selectionLimiting() {
@@ -114,9 +116,6 @@ void boMainOptionSelect(vector<void*> passingArgument) {
 	BattleOptions* bo = (BattleOptions*) (passingArgument[0]);
 	RenderWindow* window = (RenderWindow*) (passingArgument[1]);
 	bo->options.clear();
-	for (Move* m : bo->pm->moves) {
-		bo->options.push_back(m->name);
-	}
 	window->turnstate = CHOOSEMOVE;
 	bo->selection = 0;
 }

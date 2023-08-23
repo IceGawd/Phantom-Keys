@@ -8,18 +8,24 @@ Selector::Selector(RenderWindow& window) {
 }
 
 void Selector::render(RenderWindow* window) {
-	arrowChange(window, window->cc.up, &prevLeft, &sDecrement, {this});
-	arrowChange(window, window->cc.down, &prevRight, &sIncrement, {this});
-	arrowChange(window, window->cc.okay, &prevEnter, &sEnter, {this, window});
+	arrowChange(window, window->cc.up, &prevUp, &sDecrement, {this});
+	arrowChange(window, window->cc.down, &prevDown, &sIncrement, {this});
+	if (window->turnstate == HEALTHCHECK) {
+		arrowChange(window, window->cc.left, &prevLeft, &sParty, {this});
+		arrowChange(window, window->cc.right, &prevRight, &sEnemy, {this});
+	}
+	else {
+		arrowChange(window, window->cc.okay, &prevEnter, &sEnter, {this, window});
+		enemyPoint = true;
+	}
 
 	if (selection < 0) {
 		selection = 0;
 	}
-	if (selection >= window->enemyTeam.size()) {
-		selection = window->enemyTeam.size() - 1;
-	}
 
-	Enemy* selected = window->enemyTeam.at(selection);
+
+	Fightable* selected = getSelected(window);
+
 	xCenterAim = selected->battleX + (selected->sizeIncrease * selected->show_width - note->show_width) / 2;
 	yCenterAim = selected->battleY + (selected->sizeIncrease * selected->show_height - note->show_height) / 2;
 	radiusAim = (int) sqrt(pow((selected->sizeIncrease * selected->show_width + note->show_width) / 2, 2) + pow((selected->sizeIncrease * selected->show_height + note->show_height) / 2, 2));
@@ -51,6 +57,21 @@ void Selector::render(RenderWindow* window) {
 	}
 }
 
+Fightable* Selector::getSelected(RenderWindow* window) {
+	if (enemyPoint) {
+		if (selection >= window->enemyTeam.size()) {
+			selection = window->enemyTeam.size() - 1;
+		}
+		return window->enemyTeam.at(selection);
+	}
+	else {
+		if (selection >= window->playerTeam.size()) {
+			selection = window->playerTeam.size() - 1;
+		}
+		return window->playerTeam.at(selection);
+	}
+}
+
 void sDecrement(vector<void*> passingArgument) {
 	Selector* selector = (Selector*) (passingArgument[0]);
 	selector->selection--;
@@ -68,4 +89,14 @@ void sEnter(vector<void*> passingArgument) {
 	pm->doAttack(window, window->enemyTeam.at(selector->selection));
 	window->turnstate = ENDTURN;
 	selector->selection = 0;
+}
+
+void sParty(vector<void*> passingArgument) {
+	Selector* selector = (Selector*) (passingArgument[0]);
+	selector->enemyPoint = false;
+}
+
+void sEnemy(vector<void*> passingArgument) {
+	Selector* selector = (Selector*) (passingArgument[0]);
+	selector->enemyPoint = true;
 }
