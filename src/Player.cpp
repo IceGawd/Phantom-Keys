@@ -22,6 +22,11 @@ bool Player::draw(RenderWindow* window, World* world, vector<GameObject*>& entit
 	Collideable::draw(window, world, entities);
 
 	if (window->playerInput) {
+		arrowChange(window, window->cc.up, &input.up, nullptr, {});
+		arrowChange(window, window->cc.left, &input.left, nullptr, {});
+		arrowChange(window, window->cc.right, &input.right, nullptr, {});
+		arrowChange(window, window->cc.down, &input.down, nullptr, {});
+
 		double diagDirect = (input.diagonal()) ? 1 / sqrt(2) : 1;
 
 		if (input.up) {

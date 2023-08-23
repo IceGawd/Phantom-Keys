@@ -20,9 +20,9 @@ void BattleOptions::makeMaxWidth(Entity*& object, double& scalingSize, SDL_Textu
 
 void BattleOptions::customDraw(RenderWindow* window) {
 	if (window->turnstate == CHOOSEOPTION) {
-		arrowChange(window, SDL_SCANCODE_A, &prevLeft, &boDecrement, {this});
-		arrowChange(window, SDL_SCANCODE_D, &prevRight, &boIncrement, {this});
-		arrowChange(window, SDL_SCANCODE_RETURN, &prevEnter, &boMainOptionSelect, {this, window});
+		arrowChange(window, window->cc.left, &prevLeft, &boDecrement, {this});
+		arrowChange(window, window->cc.right, &prevRight, &boIncrement, {this});
+		arrowChange(window, window->cc.okay, &prevEnter, &boMainOptionSelect, {this, window});
 		selectionLimiting();
 
 		double noteScale = (22.0 / select->width) * scalingSizeMain;
@@ -39,11 +39,11 @@ void BattleOptions::customDraw(RenderWindow* window) {
 		// cout << endl;
 	}
 	if (window->turnstate == CHOOSEMOVE) {
-		arrowChange(window, SDL_SCANCODE_W, &prevUp, &boUp, {this});
-		arrowChange(window, SDL_SCANCODE_A, &prevLeft, &boDecrement, {this});
-		arrowChange(window, SDL_SCANCODE_S, &prevDown, &boDown, {this});
-		arrowChange(window, SDL_SCANCODE_D, &prevRight, &boIncrement, {this});
-		arrowChange(window, SDL_SCANCODE_RETURN, &prevEnter, &boSelect, {this});
+		arrowChange(window, window->cc.up, &prevUp, &boUp, {this});
+		arrowChange(window, window->cc.left, &prevLeft, &boDecrement, {this});
+		arrowChange(window, window->cc.down, &prevDown, &boDown, {this});
+		arrowChange(window, window->cc.right, &prevRight, &boIncrement, {this});
+		arrowChange(window, window->cc.okay, &prevEnter, &boSelect, {this});
 		selectionLimiting();
 
 		double noteScale = (20.0 / select->width) * scalingSizeFight;

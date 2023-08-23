@@ -8,9 +8,9 @@ Selector::Selector(RenderWindow& window) {
 }
 
 void Selector::render(RenderWindow* window) {
-	arrowChange(window, SDL_SCANCODE_W, &prevLeft, &sDecrement, {this});
-	arrowChange(window, SDL_SCANCODE_S, &prevRight, &sIncrement, {this});
-	arrowChange(window, SDL_SCANCODE_RETURN, &prevEnter, &sEnter, {this, window});
+	arrowChange(window, window->cc.up, &prevLeft, &sDecrement, {this});
+	arrowChange(window, window->cc.down, &prevRight, &sIncrement, {this});
+	arrowChange(window, window->cc.okay, &prevEnter, &sEnter, {this, window});
 
 	if (selection < 0) {
 		selection = 0;

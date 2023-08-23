@@ -29,7 +29,7 @@ float increase(float initial, float percent);
 float distanceFrom(float x, float y);
 float angleFromCoords(float x, float y);
 
-void arrowChange(RenderWindow* window, SDL_Scancode key, bool* direction, void (*foo)(vector<void*>), vector<void*> passingArgument);
+void arrowChange(RenderWindow* window, vector<SDL_Scancode>& keys, bool* direction, void (*foo)(vector<void*>), vector<void*> passingArgument);
 
 enum Gamestate {
 	OVERWORLD, 

@@ -7,6 +7,7 @@
 #include <queue>
 
 #include "Entity.hpp"
+#include "ControlsConfig.hpp"
 #include "utils.hpp"
 
 class Fightable;
@@ -25,6 +26,7 @@ public:
 	int yOrigin = 0;
 
 	const Uint8* keyboard;
+	ControlsConfig cc;
 
 	bool temp = false;
 	bool playerInput = true;

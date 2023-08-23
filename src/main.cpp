@@ -159,6 +159,7 @@ int main(int argc, char *argv[]) {
 				}
 				SDL_Keycode kc = event.key.keysym.sym;
 				if (event.type == SDL_KEYDOWN) {
+					/*
 					if (kc == SDLK_w) {
 						player->input.up = true;
 					}
@@ -187,6 +188,7 @@ int main(int argc, char *argv[]) {
 					*/
 				}
 				if (event.type == SDL_KEYUP) {
+					/*
 					if (kc == SDLK_w) {
 						player->input.up = false;
 					}
@@ -199,6 +201,7 @@ int main(int argc, char *argv[]) {
 					if (kc == SDLK_d) {
 						player->input.right = false;
 					}
+					*/
 					if (kc == SDLK_BACKQUOTE) {
 						if (fastForward != 1) {
 							fastForward = 1;
