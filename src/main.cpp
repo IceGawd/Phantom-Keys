@@ -3,6 +3,7 @@
 #include "Enemy.hpp"
 #include "BattleOptions.hpp"
 #include "Selector.hpp"
+#include "HealthBar.hpp"
 
 #include <chrono>
 #include <queue>
@@ -81,6 +82,7 @@ int main(int argc, char *argv[]) {
 	World* world = new World(window, player, etVec);
 	TextSequence* ts = nullptr;
 	BattleOptions* bo = new BattleOptions(window);
+	HealthBar* hb = new HealthBar(&window, 46 * bo->scalingSizeMain, bo->mainMenu->y + 5 * bo->scalingSizeMain, 390 * bo->scalingSizeMain, 45 * bo->scalingSizeMain);
 	Selector* selector = new Selector(window);
 	/*
 	TextSequence* ts = new TextSequence({
@@ -257,6 +259,7 @@ int main(int argc, char *argv[]) {
 						}
 						bo->pm = (PartyMember*) (window.turnOrder.front());
 						bo->customDraw(&window);
+						hb->represent(&window, window.turnOrder.front());
 					}
 					else if (window.turnstate == CHOOSEMOVE) {
 						bo->customDraw(&window);
@@ -306,7 +309,7 @@ int main(int argc, char *argv[]) {
 						// cout << "gone" << endl;
 					}
 					else {
-						window.turnstate = static_cast<Turnstate>(0);
+						window.turnstate = CHOOSEOPTION;
 						if (playerTurn) {
 							bo->options.clear();
 						}

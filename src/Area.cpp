@@ -458,7 +458,7 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 
 	// /* BATTLE
 	if (toBattle != nullptr && window.gamestate == BATTLE) {
-		window.turnstate = static_cast<Turnstate>(0); // If check turnstate exists, this (and other places where this is used) is wrong
+		window.turnstate = CHOOSEOPTION; // If check turnstate exists, this (and other places where this is used) is wrong
 		window.savedX = window.x;
 		window.savedY = window.y;
 		window.savedZoom = window.zoom;
@@ -472,7 +472,8 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 		while (enemies != 3 && random() > 0.5) {
 			enemies++;
 		}
-		window.enemyTeam.clear();
+		// enemies = 3;
+		// window.enemyTeam.clear();
 
 		while (!window.turnOrder.empty()) {
 			window.turnOrder.pop();
@@ -508,7 +509,7 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 			tempOrder.push_back(f);
 			total += f->stats.agility;
 			f->battleX = 1000;
-			f->battleY = 100 * (temp + 1);
+			f->battleY = 150 + 100 * temp;
 			f->flip = 0;
 			temp++;
 		}
@@ -516,8 +517,8 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 		for (Fightable* f : window.playerTeam) {
 			tempOrder.push_back(f);
 			total += f->stats.agility;
-			f->battleX = 100;
-			f->battleY = 100 * (temp + 1);
+			f->battleX = 200;
+			f->battleY = 150 + 100 * temp;
 			temp++;
 		}
 

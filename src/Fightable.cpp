@@ -1,7 +1,7 @@
 #include "Fightable.hpp"
 
 Fightable::Fightable() {
-	
+	sizeIncrease = 1.5;
 }
 
 void Fightable::battle(RenderWindow* window, Fightable* turn) {
@@ -20,10 +20,14 @@ void Fightable::battle(RenderWindow* window, Fightable* turn) {
 
 	x = battleX;
 	y = battleY;
+	show_width *= sizeIncrease;
+	show_height *= sizeIncrease;
 
 	setRect();
 	window->render(this);
 
 	x = tempx;
 	y = tempy;
+	show_width /= sizeIncrease;
+	show_height /= sizeIncrease;
 }

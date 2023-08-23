@@ -13,6 +13,7 @@ struct Fightable : public Collideable {
 
 	int battleX;
 	int battleY;
+	float sizeIncrease;
 
 	Fightable();
 

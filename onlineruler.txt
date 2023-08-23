@@ -18,3 +18,7 @@ O2 - (141, 6) -> (255, 27)
 O3 - (21, 32) -> (130, 54)
 Info - (280, 7) ->(457, 54)
 21 height, 109 width
+
+HEALTH BRACKET
+top left - 12, 0
+bottom right - 181, 21

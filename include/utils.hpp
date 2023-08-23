@@ -38,6 +38,7 @@ enum Gamestate {
 };
 
 enum Turnstate {
+	HEALTHCHECK, 
 	CHOOSEOPTION, 
 	CHOOSEMOVE, 
 	SELECTENEMY, 

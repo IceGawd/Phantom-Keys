@@ -20,9 +20,9 @@ void Selector::render(RenderWindow* window) {
 	}
 
 	Enemy* selected = window->enemyTeam.at(selection);
-	xCenterAim = selected->battleX + (selected->show_width - note->show_width) / 2;
-	yCenterAim = selected->battleY + (selected->show_height - note->show_height) / 2;
-	radiusAim = (int) sqrt(pow((selected->show_width + note->show_width) / 2, 2) + pow((selected->show_height + note->show_height) / 2, 2));
+	xCenterAim = selected->battleX + (selected->sizeIncrease * selected->show_width - note->show_width) / 2;
+	yCenterAim = selected->battleY + (selected->sizeIncrease * selected->show_height - note->show_height) / 2;
+	radiusAim = (int) sqrt(pow((selected->sizeIncrease * selected->show_width + note->show_width) / 2, 2) + pow((selected->sizeIncrease * selected->show_height + note->show_height) / 2, 2));
 
 	angle += 0.05;
 	if (snap) {
