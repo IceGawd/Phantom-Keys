@@ -42,6 +42,24 @@ void forward(vector<void*> passingArgument) {
 	bo->options.clear();
 }
 
+template <typename T>
+void sortComb(vector<T*>& vec, int (*foo)(T*)) {
+	for (int x = 0; x < vec.size() - 1; x++) {
+		if (foo(vec.at(x)) > foo(vec.at(x + 1))) {
+			// cout << "SWAP!\n";
+			iter_swap(vec.begin() + x, vec.begin() + x + 1);
+		}
+	}
+}
+
+int getValue(Fightable* f) {
+	return f->battleY + f->show_height * f->sizeIncrease;
+}
+
+int getValue(Enemy* f) {
+	return getValue((Fightable*) f);
+}
+
 int main(int argc, char *argv[]) {
 	const int FPS = 60;
 	int fastForward = 1;
@@ -233,6 +251,11 @@ int main(int argc, char *argv[]) {
 							fastForward = 3;
 						}
 					}
+					if (kc == SDLK_LALT) {
+						auto flag = SDL_GetWindowFlags(window.window);
+						auto is_fullscreen  = flag&SDL_WINDOW_FULLSCREEN;
+						SDL_SetWindowFullscreen(window.window, is_fullscreen != SDL_WINDOW_FULLSCREEN);
+					}
 				}
 				if ((event.type == SDL_WINDOWEVENT) && (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)) {
 					window.resizeWindow();
@@ -254,14 +277,20 @@ int main(int argc, char *argv[]) {
 			}
 			else if (window.gamestate == BATTLE) {
 				window.render(world->current->battleBackground);
-				for (GameObject* go : battleEntities) {
-					go->draw(&window, world, battleEntities);
-					battleEntities.erase(battleEntities.begin());
+				for (int x = 0; x < battleEntities.size(); x++) {
+					if (battleEntities.at(x)->draw(&window, world, battleEntities)) {
+						battleEntities.erase(battleEntities.begin() + x);
+						x--;
+					}
 				}
 				Fightable* myTurn = window.turnOrder.front();
 
 				bool playerTurn = false;
 				// cout << "a\n";
+
+				sortComb(window.enemyTeam, getValue);
+				sortComb(window.playerTeam, getValue);
+
 				for (Enemy* go : window.enemyTeam) {
 					go->battle(&window, myTurn);
 					// cout << "b\n";

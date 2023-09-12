@@ -472,7 +472,7 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 		while (enemies != 3 && random() > 0.5) {
 			enemies++;
 		}
-		// enemies = 3;
+		enemies = 3;
 		// window.enemyTeam.clear();
 
 		while (!window.turnOrder.empty()) {
@@ -504,22 +504,26 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 		// Turn Order
 		int total = 0;
 		vector<Fightable*> tempOrder;
-		int temp = 0;
-		for (Fightable* f : window.enemyTeam) {
+		for (int index = 0; index < window.enemyTeam.size(); index++) {
+			Fightable* f = window.enemyTeam.at(index);
+
 			tempOrder.push_back(f);
 			total += f->stats.agility;
-			f->battleX = 1000;
-			f->battleY = 150 + 100 * temp;
+			f->battleX = (index == 0 && window.enemyTeam.size() != 2) ? 800 : 925;
+			f->battleY = (window.enemyTeam.size() == 2) ? 115 + index * 230 : ((1.5 * index - 2.5) * index + 2) * 115;
+			// cout << "index: " << index << endl;
+			// cout << "window.enemyTeam.size(): " << window.enemyTeam.size() << endl;
+			// cout << "f->battleX: " << f->battleX << endl;
+			// cout << "f->battleY: " << f->battleY << endl;
 			f->flip = 0;
-			temp++;
 		}
-		temp = 0;
-		for (Fightable* f : window.playerTeam) {
+		for (int index = 0; index < window.playerTeam.size(); index++) {
+			Fightable* f = window.playerTeam.at(index);
+
 			tempOrder.push_back(f);
 			total += f->stats.agility;
-			f->battleX = 200;
-			f->battleY = 150 + 100 * temp;
-			temp++;
+			f->battleX = (index == 0 && window.playerTeam.size() != 2) ? 300 : 175;
+			f->battleY = (window.playerTeam.size() == 2) ? 115 + index * 230 : ((1.5 * index - 2.5) * index + 2) * 115;
 		}
 
 		while (tempOrder.size() > 0) {

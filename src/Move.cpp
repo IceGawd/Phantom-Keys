@@ -1,10 +1,12 @@
 #include "Move.hpp"
+#include "DamageNumber.hpp"
 
 Move::Move(string n, float d, int m, bool p, bool se, int a, vector<Tag> t, bool tet, int h) : ap(a), name(n), physical(p), damage(d), mana(m), selectEnemy(se), tags(t), targetEnemyTeam(tet), hits(h) {
 
 }
 
 void Move::dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defender) {
+	window->revert = ENDTURN;
 	cout << name << endl;
 	attacker->stats.ap -= ap;
 	

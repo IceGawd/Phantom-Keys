@@ -32,6 +32,7 @@ public:
 	bool playerInput = true;
 	Gamestate gamestate = OVERWORLD;
 	Turnstate turnstate = CHOOSEMOVE;
+	Turnstate revert = CHOOSEMOVE;	
 	vector<Fightable*> playerTeam;
 	vector<Enemy*> enemyTeam;
 	queue<Fightable*> turnOrder;

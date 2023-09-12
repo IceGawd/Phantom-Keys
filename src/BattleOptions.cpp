@@ -50,7 +50,7 @@ void BattleOptions::customDraw(RenderWindow* window) {
 		select->show_width = select->width * noteScale;
 		select->show_height = select->height * noteScale;
 		// cout << select->y << endl;
-		select->x = (15 + 120 * (selection % 2)) * scalingSizeFight;
+		select->x = (25 + 120 * (selection % 2)) * scalingSizeFight;
 		select->y = fightOptions->y + (5 + 26 * (selection / 2)) * scalingSizeFight;
 
 		window->render(fightOptions);
@@ -58,7 +58,7 @@ void BattleOptions::customDraw(RenderWindow* window) {
 		for (int x = 0; x < options.size(); x++) {
 			int tempx = x % 2;
 			int tempy = x / 2;
-			window->drawScaledTextInBox(options[x], 255, 255, 255, 255, (25 + 120 * tempx) * scalingSizeFight, fightOptions->y + (6 + 27 * tempy) * scalingSizeFight, 100 * scalingSizeFight, 19 * scalingSizeFight, true);
+			window->drawScaledTextInBox(options[x], 255, 255, 255, 255, (40 + 120 * tempx) * scalingSizeFight, fightOptions->y + (9 + 27 * tempy) * scalingSizeFight, 70 * scalingSizeFight, 13 * scalingSizeFight, true);
 		}
 	}
 	// cout << "selection: " << selection << endl;
