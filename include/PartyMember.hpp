@@ -4,6 +4,6 @@
 
 struct PartyMember : public Fightable {
 	Move* moveEntered = nullptr;
-	virtual void battle(RenderWindow* window, Fightable* turn);
-	void doAttack(RenderWindow* window, Fightable* enemy);
+	virtual void battle(RenderWindow* window, Fightable* turn, vector<GameObject*>& battleEntities);
+	void doAttack(RenderWindow* window, Fightable* enemy, vector<GameObject*>& battleEntities);
 };

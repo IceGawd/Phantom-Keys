@@ -176,6 +176,8 @@ void Area::diagonalTileFinder(RenderWindow& window, const Layer::Ptr& layer) {
 					SDL_RenderReadPixels(window.renderer, NULL, SDL_PIXELFORMAT_RGBA8888, pixels, pitch);
 					SDL_SetRenderTarget(window.renderer, NULL);
 
+					SDL_DestroyTexture(diagonalTexture);
+
 					// /*
 					cout << pixels << endl;
 					cout << pitch << endl;
@@ -456,8 +458,8 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 	}
 	// */
 
-	// /* BATTLE
-	if (toBattle != nullptr && window.gamestate == BATTLE) {
+	// /* BATTLETRANSITION
+	if (toBattle != nullptr && window.gamestate == BATTLETRANSITION) {
 		window.turnstate = CHOOSEOPTION; // If check turnstate exists, this (and other places where this is used) is wrong
 		window.savedX = window.x;
 		window.savedY = window.y;
@@ -472,7 +474,7 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 		while (enemies != 3 && random() > 0.5) {
 			enemies++;
 		}
-		enemies = 3;
+		// enemies = 3;
 		// window.enemyTeam.clear();
 
 		while (!window.turnOrder.empty()) {

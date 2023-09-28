@@ -10,6 +10,42 @@
 
 using namespace std;
 
+float atanLookup(vector<void*> vv) {
+	RenderWindow* window = (RenderWindow*) vv[0];
+	float x = *((float*) vv[1]);
+
+	int index = 127;
+	int size = 128;
+	pair<float, float> prev;
+	bool bigger = false;
+	
+	pair<float, float> check;
+
+	while (size > 0) {
+		prev = check;
+		check = window->atanSheet[index];
+		if (check.first == x) {
+			return check.second;
+		}
+
+		size /= 2;
+		if (check.first > x) {
+			index += size;
+			bigger = false;
+		}
+		else {
+			index -= size;
+			bigger = true;
+		}
+	}
+
+	if (bigger) {
+		swap(prev, check); // Ensures check is bigger
+	}
+	float percent = ((check.first - x) / (check.first - prev.first));
+	return (1 - percent) * check.second + percent * prev.second;
+}
+
 map<char, Mix_Chunk*> getChunks(string s) {
 	map<char, Mix_Chunk*> answer;
 	string path = "res/Sounds/SFX/UI/Text/" + s + "/";
@@ -95,7 +131,7 @@ int main(int argc, char *argv[]) {
 	};
 
 	// /*
-	map<string, EnemyType*> enemyTypes = {
+	map<string, EnemyType*> enemyTypes = { // UNUSED WASTE OF TIME FIX THIS SHIT
 		{"Tuba Snail", new EnemyType(
 			"Tuba Snail", 
 			Stats(1, 2, 2, 1, 2, 2), 
@@ -186,13 +222,119 @@ int main(int argc, char *argv[]) {
 	// TextSequence* ts = new TextSequence({TextBox(window, {TextSlice(window, "Hello every person type or thing, I need to make a long text to test out the scrolling features. ", {255, 255, 255, 255}, {WAVEY}), TextSlice(window, "Its ice god here", {0, 120, 200, 255}, {SHAKY})})}, &textNoise["Trumpet"]);
 
 	bool prevBack = true;
+	int transitionFrames = 0;
+	SDL_Texture* window_texture = nullptr;
+	SDL_Surface* window_surface = nullptr;
+	Uint32* newPixels = nullptr;
 
 	while (gameRunning) {
 		auto start = chrono::steady_clock().now();
 
 		for (int framesDone = 0; framesDone < fastForward; framesDone++) {
 			// cout << "frame\n";
-			window.clear();
+			if (window.gamestate == BATTLETRANSITION) {
+				int width = (int) (window.WIDTH * window.scaleMultiplier);
+				int height = (int) (window.HEIGHT * window.scaleMultiplier);
+				SDL_Rect texture_rect = {0, 0, width, height};
+				Uint32* pixels;
+				int pitch;
+
+				int PIXELGROUP = 1 + ((60 - transitionFrames) / 2);
+				// int PIXELGROUP = 1;
+
+				if (window_texture == nullptr) {
+					window_surface = SDL_GetWindowSurface(window.window);
+					window_texture = SDL_CreateTextureFromSurface(window.renderer, window_surface);
+					texture_rect = {window.xOrigin, window.yOrigin, width, height};
+				}
+				SDL_Texture* trueDiagonalTexture = SDL_CreateTexture(window.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, width, height);
+				SDL_LockTexture(trueDiagonalTexture, NULL, reinterpret_cast<void**>(&pixels), &pitch);
+
+				if (newPixels == nullptr) {
+					SDL_SetRenderTarget(window.renderer, window_texture);
+					SDL_RenderReadPixels(window.renderer, &texture_rect, SDL_PIXELFORMAT_RGBA8888, pixels, pitch);
+					SDL_SetRenderTarget(window.renderer, NULL);
+					newPixels = new Uint32[width * height];
+					for (int x = 0; x < width * height; x++) {
+						newPixels[x] = pixels[x];
+					}
+				}
+				// /*
+				int maxRadius = distanceFrom(width / 2, height / 2);
+				int centerx = width / 2 + texture_rect.x;
+				int centery = height / 2 + texture_rect.y;
+				for (int x = texture_rect.x; x < texture_rect.x + width; x += PIXELGROUP) {
+					for (int y = texture_rect.y; y < texture_rect.y + height; y += PIXELGROUP) {
+						/*
+						int yCpy = (x < centerx) ? y + 1 : y - 1;
+						int xCpy = (y < centery) ? x + 1 : x - 1;
+						if (yCpy > 0 && yCpy < height && xCpy > 0 && xCpy < width) {
+							pixels[x + y * width] = newPixels[xCpy + yCpy * width];
+						}
+						*/
+						int refX = x - centerx;
+						int refY = y - centery;
+						double radius = distanceFrom(refX, refY);
+						if (radius < maxRadius * (60 - transitionFrames) / 60) {
+							/*
+							if ((refX == 0) || (refY == 0) || (1.0 * refX / refY > 2.4) || (1.0 * refY / refX > 2.4)) {
+								radius = max(abs(refX), abs(refY));
+							}
+							else {
+								radius = sqrt(pow(refX, 2) + pow(refY, 2));
+							}
+							*/
+							// double angle = angleFromCoords(refX, refY);
+							double angle = angleFromCoords(refX, refY, &atanApprox, {}) + 0.001 * radius * transitionFrames;
+							int yCpy = centery - radius * sin(angle);
+							int xCpy = centerx + radius * cos(angle);
+							for (int x2 = 0; x2 < PIXELGROUP; x2++) {
+								for (int y2 = 0; y2 < PIXELGROUP; y2++) {
+									if (x + x2 < width && y + y2 < height && yCpy > 0 && yCpy + y2 < height && xCpy > 0 && xCpy + x2 < width) {
+										pixels[(x + x2) + (y + y2) * width] = newPixels[(xCpy + x2) + (yCpy + y2) * width];
+									}
+								}
+							}
+						// /*
+						}
+						else {
+							for (int x2 = 0; x2 < PIXELGROUP; x2++) {
+								for (int y2 = 0; y2 < PIXELGROUP; y2++) {
+									if (x + x2 < width && y + y2 < height) {
+										pixels[(x + x2) + (y + y2) * width] = SDL_MapRGBA(window_surface->format, 0, 0, 0, 255);
+									}
+								}
+							}							
+						}
+						// */
+					}
+				}
+				// */
+				SDL_UnlockTexture(trueDiagonalTexture);
+
+				window.clear();
+				SDL_RenderCopy(window.renderer, trueDiagonalTexture, NULL, &texture_rect);
+
+				SDL_DestroyTexture(window_texture);
+				window_texture = trueDiagonalTexture;
+
+				transitionFrames++;
+				if (transitionFrames >= 60) {
+					SDL_DestroyTexture(window_texture);
+					window_texture = nullptr;
+					SDL_FreeSurface(window_surface);
+					window_surface = nullptr;
+					delete newPixels;
+					newPixels = nullptr;
+					window.gamestate = BATTLE;
+					transitionFrames = 0;
+				}
+
+				// continue; // MIGHT HELLA CAUSE ISSUES
+			}
+			else {
+				window.clear();
+			}
 
 			while (SDL_PollEvent(&event)) {
 				if (event.type == SDL_QUIT) {
@@ -251,7 +393,7 @@ int main(int argc, char *argv[]) {
 							fastForward = 3;
 						}
 					}
-					if (kc == SDLK_LALT) {
+					if (kc == SDLK_RALT) {
 						auto flag = SDL_GetWindowFlags(window.window);
 						auto is_fullscreen  = flag&SDL_WINDOW_FULLSCREEN;
 						SDL_SetWindowFullscreen(window.window, is_fullscreen != SDL_WINDOW_FULLSCREEN);
@@ -269,7 +411,7 @@ int main(int argc, char *argv[]) {
 
 				world->current->render(window, player, world, overworldEntities);
 
-				if (window.gamestate == BATTLE) {
+				if (window.gamestate == BATTLETRANSITION) {
 					while (!battleEntities.empty()) {
 						delete battleEntities.at(0);
 					}
@@ -277,12 +419,6 @@ int main(int argc, char *argv[]) {
 			}
 			else if (window.gamestate == BATTLE) {
 				window.render(world->current->battleBackground);
-				for (int x = 0; x < battleEntities.size(); x++) {
-					if (battleEntities.at(x)->draw(&window, world, battleEntities)) {
-						battleEntities.erase(battleEntities.begin() + x);
-						x--;
-					}
-				}
 				Fightable* myTurn = window.turnOrder.front();
 
 				bool playerTurn = false;
@@ -292,12 +428,12 @@ int main(int argc, char *argv[]) {
 				sortComb(window.playerTeam, getValue);
 
 				for (Enemy* go : window.enemyTeam) {
-					go->battle(&window, myTurn);
+					go->battle(&window, myTurn, battleEntities);
 					// cout << "b\n";
 				}
 				// cout << "c\n";
 				for (Fightable* go : window.playerTeam) {
-					go->battle(&window, myTurn);
+					go->battle(&window, myTurn, battleEntities);
 					playerTurn = playerTurn || (go == myTurn);
 					// cout << "d\n";
 				}
@@ -313,7 +449,7 @@ int main(int argc, char *argv[]) {
 							bo->options.clear();
 						}
 						bo->customDraw(&window);
-						selector->render(&window);
+						selector->render(&window, battleEntities);
 						hb->represent(&window, selector->getSelected(&window));
 						arrowChange(&window, window.cc.back, &prevBack, &forward, {&window, bo});
 					}
@@ -337,7 +473,14 @@ int main(int argc, char *argv[]) {
 						bo->customDraw(&window);
 					}
 					else if (window.turnstate == SELECTENEMY) {
-						selector->render(&window);
+						selector->render(&window, battleEntities);
+					}
+
+					for (int x = 0; x < battleEntities.size(); x++) {
+						if (battleEntities.at(x)->draw(&window, world, battleEntities)) {
+							battleEntities.erase(battleEntities.begin() + x);
+							x--;
+						}
 					}
 				}
 				if (window.turnstate == ENDTURN) {
@@ -372,13 +515,19 @@ int main(int argc, char *argv[]) {
 							e->zone->dudes.erase(remove(e->zone->dudes.begin(), e->zone->dudes.end(), e));
 							e->zone->spawned--;
 							// cout << "pre delete call\n";
-							delete e;
 							// cout << "post delete call\n";
 							window.enemyTeam.erase(window.enemyTeam.begin());
+							delete e;
 							// cout << "erase enemies\n";
 						}
 						// window.enemyTeam.clear();
 						// cout << "gone" << endl;
+
+						while (!battleEntities.empty()) {
+							GameObject* go = battleEntities.at(0);
+							delete go;
+							battleEntities.erase(battleEntities.begin());
+						}
 					}
 					else {
 						window.turnstate = CHOOSEOPTION;
@@ -420,12 +569,14 @@ int main(int argc, char *argv[]) {
 			// cout << "player->x: " << player->x << " player->y: " << player->y << endl; 
 		}
 
+
 		window.display();
 
 		// /*
 		auto end = chrono::steady_clock().now();
 		chrono::duration<double> frameDone = end - start;
 
+		// cout << 1000 * frameDone.count() << endl;
 		double delay = 1000 * ((1.0 / FPS) - frameDone.count());
 		// cout << "delay: " << delay << endl;
 		if (delay > 0) {

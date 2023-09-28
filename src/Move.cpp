@@ -1,11 +1,11 @@
 #include "Move.hpp"
-#include "DamageNumber.hpp"
+#include "TextObject.hpp"
 
 Move::Move(string n, float d, int m, bool p, bool se, int a, vector<Tag> t, bool tet, int h) : ap(a), name(n), physical(p), damage(d), mana(m), selectEnemy(se), tags(t), targetEnemyTeam(tet), hits(h) {
 
 }
 
-void Move::dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defender) {
+void Move::dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defender, vector<GameObject*>& battleEntities) {
 	window->revert = ENDTURN;
 	cout << name << endl;
 	attacker->stats.ap -= ap;
@@ -18,36 +18,42 @@ void Move::dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defe
 
 	double percent = 0.15 * luckPercent + 0.85; // 0.7 to 1
 	bool hitting = random() < percent;
+	// hitting = false;
 
 	if (hitting) {
 		double index = (weighted(window->playerTeam) - weighted(window->enemyTeam) + 196) / 1571;
 		double bonus = 0.2;
 		int critAccountedDamage = damage;
 		double actualCritChance = increase(0.04 * attacker->stats.critchancebonus, attacker->stats.luck / 2000.0);
-		if (random() < actualCritChance) {
+		bool crit = random() < actualCritChance;
+		// crit = true;
+		if (crit) {
 			cout << "Critical hit!\n";
+			battleEntities.push_back(new TextObject(window, "CRITICAL HIT!", attacker, {255, 150, 0}));
 			critAccountedDamage *= attacker->stats.critincrease;
 		}
-
 
 		double power = attacker->stats.magic;
 		if (physical) {
 			power = attacker->stats.strength;
 		}
 
-		double deviation = (bonus + (attacker->stats.luck / 2000.0)) * power * critAccountedDamage;
-		// cout << "deviation: " << deviation << endl;
+		double mean = (bonus + (attacker->stats.luck / 2000.0)) * power * critAccountedDamage;
+		// cout << "mean: " << mean << endl;
 
-		int damagedone = (int) (rand(index * attacker->stats.damagebonus, deviation * attacker->stats.rangebonus) * defender->stats.damagetaken + 1);
+		int damagedone = (int) (rand(index * attacker->stats.rangebonus, mean * attacker->stats.damagebonus) * defender->stats.damagetaken + 1);
 		cout << "Damage done: " << damagedone << endl;
 		defender->stats.hp -= damagedone;
+		battleEntities.push_back(new TextObject(window, damagedone, defender, crit));
 		if (physical) { // Not true, ranged weapons dont recoil
 			int recoil = (int) (critAccountedDamage * defender->stats.vitality / 9.0);
 			cout << "Recoil: " << recoil << endl;
 			attacker->stats.hp -= recoil;
+			battleEntities.push_back(new TextObject(window, recoil, attacker, crit));
 		}
 	}
 	else {
-		cout << "Miss!\n";
+		cout << "MISS!\n";
+		battleEntities.push_back(new TextObject(window, "MISS!", attacker, {150, 150, 150}));
 	}
 }

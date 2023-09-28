@@ -67,7 +67,13 @@ float distanceFrom(float x, float y) {
 
 // From 0 to 2pi
 float angleFromCoords(float x, float y) {
+	return angleFromCoords(x, y, &literalAtan, {});
+}
+
+float angleFromCoords(float x, float y, float (*foo)(vector<void*> vv), vector<void*> bonus) {
 	float angle;
+	float val = y / x;
+	bonus.push_back(&val);
 	if (x == 0) {
 		if (y >= 0) {
 			angle = 3.0 * M_PI / 2.0;
@@ -77,15 +83,35 @@ float angleFromCoords(float x, float y) {
 		}
 	}
 	else if (x > 0) {
-		angle = -atan(y / x);
+		angle = -foo(bonus);
 		if (angle < 0) {
 			angle += 2.0 * M_PI;
 		}
 	}
 	else {
-		angle = M_PI - atan(y / x);
+		angle = M_PI - foo(bonus);
 	}
 	return angle;
+}
+
+float literalAtan(vector<void*> vv) {
+	return atan(*((float*) vv[0]));	
+}
+
+float atanApprox(vector<void*> vv) {
+	float x = *((float*) vv[0]);
+	/*
+	int mult = (x < 0) ? -1 : 1;
+	x = abs(x);
+	float var = 1.0 / (0.43 * x + 1);
+	return mult * (var * 0.718 * sqrt(x) + (1 - var) * (1 + (0.225 * x) / (0.395 * x + 1)));
+	// */
+	if (x > 0) {
+		return 1.571 * x / (x + 1);
+	}
+	else {
+		return 1.571 * x / (1 - x);
+	}
 }
 
 void arrowChange(RenderWindow* window, vector<SDL_Scancode>& keys, bool* direction, void (*foo)(vector<void*>), vector<void*> passingArgument) {

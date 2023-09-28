@@ -10,7 +10,6 @@ struct Collideable : public GameObject {
 	float prevx;
 	float prevy;
 
-
 	virtual bool draw(RenderWindow* window, World* world, vector<GameObject*>& entities);
 
 	virtual SDL_Rect getHitbox();

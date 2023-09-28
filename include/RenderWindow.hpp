@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <queue>
+#include <map>
 
 #include "Entity.hpp"
 #include "ControlsConfig.hpp"
@@ -26,6 +27,7 @@ public:
 	int yOrigin = 0;
 
 	const Uint8* keyboard;
+	pair<float, float>* atanSheet = nullptr;
 	ControlsConfig cc;
 
 	bool temp = false;

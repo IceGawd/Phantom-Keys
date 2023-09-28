@@ -1,13 +1,12 @@
 #include "Selector.hpp"
 #include "RenderWindow.hpp"
 #include "utils.hpp"
-#include "Enemy.hpp"
 
 Selector::Selector(RenderWindow& window) {
 	note = new Entity(0, 0, window.loadTexture("res/gfx/Battle/rotatingIndicator.png"));
 }
 
-void Selector::render(RenderWindow* window) {
+void Selector::render(RenderWindow* window, vector<GameObject*>& entities) {
 	arrowChange(window, window->cc.up, &prevUp, &sDecrement, {this});
 	arrowChange(window, window->cc.down, &prevDown, &sIncrement, {this});
 	if (window->turnstate == HEALTHCHECK) {
@@ -15,7 +14,7 @@ void Selector::render(RenderWindow* window) {
 		arrowChange(window, window->cc.right, &prevRight, &sEnemy, {this});
 	}
 	else {
-		arrowChange(window, window->cc.okay, &prevEnter, &sEnter, {this, window});
+		arrowChange(window, window->cc.okay, &prevEnter, &sEnter, {this, window, &entities});
 		enemyPoint = true;
 	}
 
@@ -87,7 +86,8 @@ void sEnter(vector<void*> passingArgument) {
 	Selector* selector = (Selector*) (passingArgument[0]);	
 	RenderWindow* window = (RenderWindow*) (passingArgument[1]);
 	PartyMember* pm = (PartyMember*) (window->turnOrder.front());
-	pm->doAttack(window, window->enemyTeam.at(selector->selection));
+	vector<GameObject*>* entities = (vector<GameObject*>*) (passingArgument[2]);
+	pm->doAttack(window, window->enemyTeam.at(selector->selection), *entities);
 	window->turnstate = ENDTURN;
 	selector->selection = 0;
 }

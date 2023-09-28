@@ -15,6 +15,14 @@ RenderWindow::RenderWindow(const char* title) : window(NULL), renderer(NULL) {
 
 	keyboard = SDL_GetKeyboardState(NULL);
 	resizeWindow();
+
+	if (atanSheet == nullptr) {
+		atanSheet = new pair<float, float>[255];
+		for (int x = 1; x < 256; x++) {
+			float angle = x * M_PI / 512;
+			atanSheet[x - 1] = {tan(angle), angle};
+		}
+	}
 }
 
 void RenderWindow::resizeWindow() {
@@ -199,7 +207,7 @@ SDL_Surface* RenderWindow::getTextSurface(string text, unsigned char r, unsigned
 //	cout << 1.5 << endl;
 //	cout << SDL_GetError() << endl;
 //	cout << TTF_GetError() << endl;
-	SDL_Surface* surfaceMessage = TTF_RenderText_Solid(zephyrea, text.c_str(), color); 
+	SDL_Surface* surfaceMessage = TTF_RenderText_Blended(zephyrea, text.c_str(), color); 
 //	cout << 2 << endl;
 	return surfaceMessage;
 }

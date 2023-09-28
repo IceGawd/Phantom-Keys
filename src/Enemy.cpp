@@ -138,20 +138,20 @@ bool Enemy::draw(RenderWindow* window, World* world, vector<GameObject*>& entiti
 	SDL_Rect i;
 
 	if (SDL_IntersectRect(&a, &b, &i) == SDL_TRUE && playerDist < (min(player->show_height, player->show_width) + min(show_height, show_width)) / 2) {
-		window->gamestate = BATTLE;
+		window->gamestate = BATTLETRANSITION;
 		return true;
 	}
 
 	return false;
 }
 
-void Enemy::battle(RenderWindow* window, Fightable* turn) {
+void Enemy::battle(RenderWindow* window, Fightable* turn, vector<GameObject*>& battleEntities) {
 	if (turn == this) {
 		cout << "Enemy Attacks!\n";
-		moves.at((int) (moves.size() * random()))->dealDamage(window, this, window->playerTeam.at((int) (window->playerTeam.size() * random())));
+		moves.at((int) (moves.size() * random()))->dealDamage(window, this, window->playerTeam.at((int) (window->playerTeam.size() * random())), battleEntities);
 		// cout << "donemove\n";
 		window->turnstate = ENDTURN;
 	}
 
-	Fightable::battle(window, turn);
+	Fightable::battle(window, turn, battleEntities);
 }

@@ -4,7 +4,7 @@ Fightable::Fightable() {
 	sizeIncrease = 2.15;
 }
 
-void Fightable::battle(RenderWindow* window, Fightable* turn) {
+void Fightable::battle(RenderWindow* window, Fightable* turn, vector<GameObject*>& battleEntities) {
 	frames += 1;
 	if (frames >= next->frames) {
 		frames = 0;

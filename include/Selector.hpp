@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Entity.hpp"
+#include "Enemy.hpp"
 
 struct Selector {
 	Entity* note;
@@ -23,7 +23,7 @@ struct Selector {
 	bool enemyPoint = true;
 
 	Selector(RenderWindow& window);
-	void render(RenderWindow* window);
+	void render(RenderWindow* window, vector<GameObject*>& entities);
 	Fightable* getSelected(RenderWindow* window);
 };
 

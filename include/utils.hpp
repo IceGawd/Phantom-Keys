@@ -28,13 +28,18 @@ float increase(float initial, float percent);
 
 float distanceFrom(float x, float y);
 float angleFromCoords(float x, float y);
+float angleFromCoords(float x, float y, float (*foo)(vector<void*>), vector<void*> bonus);
+
+float literalAtan(vector<void*> vv);
+float atanApprox(vector<void*> vv);
 
 void arrowChange(RenderWindow* window, vector<SDL_Scancode>& keys, bool* direction, void (*foo)(vector<void*>), vector<void*> passingArgument);
 
 enum Gamestate {
 	OVERWORLD, 
 	BATTLE, 
-	CUTSCENE
+	CUTSCENE, 
+	BATTLETRANSITION
 };
 
 enum Turnstate {
