@@ -4,6 +4,7 @@
 #include "BattleOptions.hpp"
 #include "Selector.hpp"
 #include "HealthBar.hpp"
+#include "mingw.thread.h"
 
 #include <chrono>
 #include <queue>
@@ -44,6 +45,59 @@ float atanLookup(vector<void*> vv) {
 	}
 	float percent = ((check.first - x) / (check.first - prev.first));
 	return (1 - percent) * check.second + percent * prev.second;
+}
+
+void spiral(int xstart, int xend, int texrecx, int texrecy, int PIXELGROUP, int width, int height, int transitionFrames, Uint32* pixels, Uint32* newPixels) {
+	int maxRadius = distanceFrom(width / 2, height / 2);
+	int centerx = width / 2 + texrecx;
+	int centery = height / 2 + texrecy;
+	for (int x = xstart; x < xend; x += PIXELGROUP) {
+		for (int y = texrecy; y < texrecx + height; y += PIXELGROUP) {
+			/*
+			int yCpy = (x < centerx) ? y + 1 : y - 1;
+			int xCpy = (y < centery) ? x + 1 : x - 1;
+			if (yCpy > 0 && yCpy < height && xCpy > 0 && xCpy < width) {
+				pixels[x + y * width] = newPixels[xCpy + yCpy * width];
+			}
+			*/
+			int refX = x - centerx;
+			int refY = y - centery;
+			double radius = distanceFrom(refX, refY);
+			// if (radius < maxRadius * (60 - transitionFrames) / 60) {
+				/*
+				if ((refX == 0) || (refY == 0) || (1.0 * refX / refY > 2.4) || (1.0 * refY / refX > 2.4)) {
+					radius = max(abs(refX), abs(refY));
+				}
+				else {
+					radius = sqrt(pow(refX, 2) + pow(refY, 2));
+				}
+				*/
+				// double angle = angleFromCoords(refX, refY);
+				double angle = angleFromCoords(refX, refY, &atanApprox, {}) + 0.001 * radius * transitionFrames;
+				int yCpy = centery - radius * sin(angle);
+				int xCpy = centerx + radius * cos(angle);
+				for (int x2 = 0; x2 < PIXELGROUP; x2++) {
+					for (int y2 = 0; y2 < PIXELGROUP; y2++) {
+						if (x + x2 < width && y + y2 < height && yCpy > 0 && yCpy + y2 < height && xCpy > 0 && xCpy + x2 < width) {
+							pixels[(x + x2) + (y + y2) * width] = newPixels[(xCpy + x2) + (yCpy + y2) * width];
+							// swaps->push_back({(x + x2) + (y + y2) * width, (xCpy + x2) + (yCpy + y2) * width});
+						}
+					}
+				}
+			/*
+			}
+			else {
+				for (int x2 = 0; x2 < PIXELGROUP; x2++) {
+					for (int y2 = 0; y2 < PIXELGROUP; y2++) {
+						if (x + x2 < width && y + y2 < height) {
+							pixels[(x + x2) + (y + y2) * width] = SDL_MapRGBA(window_surface->format, 0, 0, 0, 255);
+						}
+					}
+				}							
+			}
+			// */
+		}
+	}
 }
 
 map<char, Mix_Chunk*> getChunks(string s) {
@@ -226,6 +280,7 @@ int main(int argc, char *argv[]) {
 	SDL_Texture* window_texture = nullptr;
 	SDL_Surface* window_surface = nullptr;
 	Uint32* newPixels = nullptr;
+	int PIXELGROUP = 1;
 
 	while (gameRunning) {
 		auto start = chrono::steady_clock().now();
@@ -239,8 +294,7 @@ int main(int argc, char *argv[]) {
 				Uint32* pixels;
 				int pitch;
 
-				int PIXELGROUP = 1 + ((60 - transitionFrames) / 2);
-				// int PIXELGROUP = 1;
+				// int PIXELGROUP = 1 + ((60 - transitionFrames) / 2);
 
 				if (window_texture == nullptr) {
 					window_surface = SDL_GetWindowSurface(window.window);
@@ -260,55 +314,43 @@ int main(int argc, char *argv[]) {
 					}
 				}
 				// /*
-				int maxRadius = distanceFrom(width / 2, height / 2);
-				int centerx = width / 2 + texture_rect.x;
-				int centery = height / 2 + texture_rect.y;
-				for (int x = texture_rect.x; x < texture_rect.x + width; x += PIXELGROUP) {
-					for (int y = texture_rect.y; y < texture_rect.y + height; y += PIXELGROUP) {
-						/*
-						int yCpy = (x < centerx) ? y + 1 : y - 1;
-						int xCpy = (y < centery) ? x + 1 : x - 1;
-						if (yCpy > 0 && yCpy < height && xCpy > 0 && xCpy < width) {
-							pixels[x + y * width] = newPixels[xCpy + yCpy * width];
-						}
-						*/
-						int refX = x - centerx;
-						int refY = y - centery;
-						double radius = distanceFrom(refX, refY);
-						if (radius < maxRadius * (60 - transitionFrames) / 60) {
-							/*
-							if ((refX == 0) || (refY == 0) || (1.0 * refX / refY > 2.4) || (1.0 * refY / refX > 2.4)) {
-								radius = max(abs(refX), abs(refY));
-							}
-							else {
-								radius = sqrt(pow(refX, 2) + pow(refY, 2));
-							}
-							*/
-							// double angle = angleFromCoords(refX, refY);
-							double angle = angleFromCoords(refX, refY, &atanApprox, {}) + 0.001 * radius * transitionFrames;
-							int yCpy = centery - radius * sin(angle);
-							int xCpy = centerx + radius * cos(angle);
-							for (int x2 = 0; x2 < PIXELGROUP; x2++) {
-								for (int y2 = 0; y2 < PIXELGROUP; y2++) {
-									if (x + x2 < width && y + y2 < height && yCpy > 0 && yCpy + y2 < height && xCpy > 0 && xCpy + x2 < width) {
-										pixels[(x + x2) + (y + y2) * width] = newPixels[(xCpy + x2) + (yCpy + y2) * width];
-									}
-								}
-							}
-						// /*
-						}
-						else {
-							for (int x2 = 0; x2 < PIXELGROUP; x2++) {
-								for (int y2 = 0; y2 < PIXELGROUP; y2++) {
-									if (x + x2 < width && y + y2 < height) {
-										pixels[(x + x2) + (y + y2) * width] = SDL_MapRGBA(window_surface->format, 0, 0, 0, 255);
-									}
-								}
-							}							
-						}
-						// */
-					}
+				auto start1 = chrono::steady_clock().now();
+
+				int THREADS = 16;
+				thread threads[THREADS];
+				int xstart = texture_rect.x;
+				for (int x = 0; x < THREADS; x++) {
+					int xend = texture_rect.x + PIXELGROUP * int(ceil((x + 1.0) * width / THREADS / PIXELGROUP));
+					threads[x] = thread(spiral, xstart, xend, texture_rect.x, texture_rect.y, PIXELGROUP, width, height, transitionFrames, pixels, newPixels);
+					// cout << "xstart: " << xstart << " xend: " << xend << endl;
+					xstart = xend;
 				}
+
+				for (int x = 0; x < THREADS; x++) {
+					threads[x].join();
+				}
+
+				auto end1 = chrono::steady_clock().now();
+				chrono::duration<double> frameDone = end1 - start1;
+				cout << "threads: " << 1000 * frameDone.count() << endl;
+				PIXELGROUP = int(ceil(PIXELGROUP * frameDone.count() * 60));
+
+				/*
+				start1 = chrono::steady_clock().now();
+
+				for (int x = 0; x < THREADS; x++) {
+					for (int y = 0; y < allSwaps[x]->size(); y++) {
+						pixels[allSwaps[x]->at(y).first] = newPixels[allSwaps[x]->at(y).second];
+					}
+					delete allSwaps[x];
+				}
+
+
+				end1 = chrono::steady_clock().now();
+				frameDone = end1 - start1;
+				cout << "swaps: " << 1000 * frameDone.count() << endl;
+				*/
+
 				// */
 				SDL_UnlockTexture(trueDiagonalTexture);
 
