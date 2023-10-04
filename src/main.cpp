@@ -47,57 +47,70 @@ float atanLookup(vector<void*> vv) {
 	return (1 - percent) * check.second + percent * prev.second;
 }
 
-void spiral(int xstart, int xend, int texrecx, int texrecy, int PIXELGROUP, int width, int height, int transitionFrames, Uint32* pixels, Uint32* newPixels) {
-	int maxRadius = distanceFrom(width / 2, height / 2);
+pair<int, int> flippedIndex(int num, vector<pair<int, int>>& degree45) {
+	int actualNum = num % degree45.size();
+	int falseNum = (num - actualNum) / degree45.size();
+	if (falseNum % 2) { // REVERSE
+		actualNum = degree45.size() - actualNum - 1;
+	}
+	int first = degree45[actualNum].first;
+	int second = degree45[actualNum].second;
+	if (((falseNum + 1) / 2) % 2) { // SWAP
+		swap(first, second);
+	}
+	first = (((falseNum + 2) / 4) % 2) ? -first : first; // FIRST NEGATIVE
+	second = ((falseNum / 4) % 2) ? -second : second; // SECOND NEGATIVE
+	return {first, second};
+}
+
+bool inRange(int n, int s, int l) {
+	return n > s && n < s + l;
+}
+
+pair<int, int> operator+(const pair<int, int>& a, const pair<int, int>& b) {
+	return {a.first + b.first, a.second + b.second};
+}
+
+void spiral(int rstart, int rend, int texrecx, int texrecy, int width, int height, int transitionFrames, Uint32* pixels, Uint32* newPixels, int maxRadius) {
+	pair<int, int> center = {width / 2 + texrecx, height / 2 + texrecy};
+	/*
 	int centerx = width / 2 + texrecx;
 	int centery = height / 2 + texrecy;
-	for (int x = xstart; x < xend; x += PIXELGROUP) {
-		for (int y = texrecy; y < texrecx + height; y += PIXELGROUP) {
+	*/
+	for (int r = rstart; r < rend; r += 1) {
+		int xSquared = r * r;
+		int makeCloser = (r - 1) * (r - 1);
+		int change = 2 * r - 1;
+		int x = r;
+		int y = 0;
+		vector<pair<int, int>> degree45;
+		while (y <= x) {
+			degree45.push_back({x, y});
+			xSquared -= 2 * y + 1;
+			if (xSquared <= makeCloser) {
+				change -= 2;
+				makeCloser -= change;
+				x--;
+			}
+			y++;
+		}
+		int movement = 0.001 * r * transitionFrames * degree45.size();
+		for (int z = 0; z < 8 * degree45.size(); z++) {
+			pair<int, int> start = flippedIndex(z, degree45) + center;
+			pair<int, int> finish = flippedIndex(z + movement, degree45) + center;
+
 			/*
-			int yCpy = (x < centerx) ? y + 1 : y - 1;
-			int xCpy = (y < centery) ? x + 1 : x - 1;
-			if (yCpy > 0 && yCpy < height && xCpy > 0 && xCpy < width) {
-				pixels[x + y * width] = newPixels[xCpy + yCpy * width];
+			if (r == 4) {
+				cout << flippedIndex(z, degree45).first << ", " << flippedIndex(z, degree45).second << endl;
 			}
 			*/
-			int refX = x - centerx;
-			int refY = y - centery;
-			double radius = distanceFrom(refX, refY);
-			// if (radius < maxRadius * (60 - transitionFrames) / 60) {
-				/*
-				if ((refX == 0) || (refY == 0) || (1.0 * refX / refY > 2.4) || (1.0 * refY / refX > 2.4)) {
-					radius = max(abs(refX), abs(refY));
-				}
-				else {
-					radius = sqrt(pow(refX, 2) + pow(refY, 2));
-				}
-				*/
-				// double angle = angleFromCoords(refX, refY);
-				double angle = angleFromCoords(refX, refY, &atanApprox, {}) + 0.001 * radius * transitionFrames;
-				int yCpy = centery - radius * sin(angle);
-				int xCpy = centerx + radius * cos(angle);
-				for (int x2 = 0; x2 < PIXELGROUP; x2++) {
-					for (int y2 = 0; y2 < PIXELGROUP; y2++) {
-						if (x + x2 < width && y + y2 < height && yCpy > 0 && yCpy + y2 < height && xCpy > 0 && xCpy + x2 < width) {
-							pixels[(x + x2) + (y + y2) * width] = newPixels[(xCpy + x2) + (yCpy + y2) * width];
-							// swaps->push_back({(x + x2) + (y + y2) * width, (xCpy + x2) + (yCpy + y2) * width});
-						}
-					}
-				}
-			/*
+
+			if (inRange(start.first, texrecx, width) && inRange(start.second, texrecy, height) && inRange(finish.first, texrecx, width) && inRange(finish.second, texrecy, height)) {
+				pixels[start.first + start.second * width] = newPixels[finish.first + finish.second * width];
 			}
-			else {
-				for (int x2 = 0; x2 < PIXELGROUP; x2++) {
-					for (int y2 = 0; y2 < PIXELGROUP; y2++) {
-						if (x + x2 < width && y + y2 < height) {
-							pixels[(x + x2) + (y + y2) * width] = SDL_MapRGBA(window_surface->format, 0, 0, 0, 255);
-						}
-					}
-				}							
-			}
-			// */
 		}
 	}
+	// cout << rstart << endl;
 }
 
 map<char, Mix_Chunk*> getChunks(string s) {
@@ -280,7 +293,7 @@ int main(int argc, char *argv[]) {
 	SDL_Texture* window_texture = nullptr;
 	SDL_Surface* window_surface = nullptr;
 	Uint32* newPixels = nullptr;
-	int PIXELGROUP = 1;
+	const int THREADS = 16;
 
 	while (gameRunning) {
 		auto start = chrono::steady_clock().now();
@@ -294,8 +307,6 @@ int main(int argc, char *argv[]) {
 				Uint32* pixels;
 				int pitch;
 
-				// int PIXELGROUP = 1 + ((60 - transitionFrames) / 2);
-
 				if (window_texture == nullptr) {
 					window_surface = SDL_GetWindowSurface(window.window);
 					window_texture = SDL_CreateTextureFromSurface(window.renderer, window_surface);
@@ -304,7 +315,7 @@ int main(int argc, char *argv[]) {
 				SDL_Texture* trueDiagonalTexture = SDL_CreateTexture(window.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, width, height);
 				SDL_LockTexture(trueDiagonalTexture, NULL, reinterpret_cast<void**>(&pixels), &pitch);
 
-				if (newPixels == nullptr) {
+				if (newPixels == nullptr) { // DOES NOT WORK WITH WINDOW RESIZE
 					SDL_SetRenderTarget(window.renderer, window_texture);
 					SDL_RenderReadPixels(window.renderer, &texture_rect, SDL_PIXELFORMAT_RGBA8888, pixels, pitch);
 					SDL_SetRenderTarget(window.renderer, NULL);
@@ -316,14 +327,15 @@ int main(int argc, char *argv[]) {
 				// /*
 				auto start1 = chrono::steady_clock().now();
 
-				int THREADS = 16;
 				thread threads[THREADS];
-				int xstart = texture_rect.x;
+				int rstart = 1;
+				int maxRadius = distanceFrom(width / 2, height / 2);
+				double mod = (maxRadius + 1) / sqrt(THREADS);
 				for (int x = 0; x < THREADS; x++) {
-					int xend = texture_rect.x + PIXELGROUP * int(ceil((x + 1.0) * width / THREADS / PIXELGROUP));
-					threads[x] = thread(spiral, xstart, xend, texture_rect.x, texture_rect.y, PIXELGROUP, width, height, transitionFrames, pixels, newPixels);
+					int rend = mod * sqrt(x + 1);
+					threads[x] = thread(spiral, rstart, rend, texture_rect.x, texture_rect.y, width, height, transitionFrames, pixels, newPixels, maxRadius);
 					// cout << "xstart: " << xstart << " xend: " << xend << endl;
-					xstart = xend;
+					rstart = rend;
 				}
 
 				for (int x = 0; x < THREADS; x++) {
@@ -333,7 +345,7 @@ int main(int argc, char *argv[]) {
 				auto end1 = chrono::steady_clock().now();
 				chrono::duration<double> frameDone = end1 - start1;
 				cout << "threads: " << 1000 * frameDone.count() << endl;
-				PIXELGROUP = int(ceil(PIXELGROUP * frameDone.count() * 60));
+				// PIXELGROUP = int(ceil(PIXELGROUP * frameDone.count() * 60));
 
 				/*
 				start1 = chrono::steady_clock().now();
