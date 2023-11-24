@@ -511,8 +511,10 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 
 			tempOrder.push_back(f);
 			total += f->stats.agility;
-			f->battleX = (index == 0 && window.enemyTeam.size() != 2) ? 800 : 925;
-			f->battleY = (window.enemyTeam.size() == 2) ? 115 + index * 230 : ((1.5 * index - 2.5) * index + 2) * 115;
+			f->battleOriginX = (index == 0 && window.enemyTeam.size() != 2) ? 800 : 925;
+			f->battleOriginY = (window.enemyTeam.size() == 2) ? 115 + index * 230 : ((1.5 * index - 2.5) * index + 2) * 115;
+			f->battleX = f->battleOriginX;
+			f->battleY = f->battleOriginY;
 			// cout << "index: " << index << endl;
 			// cout << "window.enemyTeam.size(): " << window.enemyTeam.size() << endl;
 			// cout << "f->battleX: " << f->battleX << endl;
@@ -524,8 +526,10 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 
 			tempOrder.push_back(f);
 			total += f->stats.agility;
-			f->battleX = (index == 0 && window.playerTeam.size() != 2) ? 300 : 175;
-			f->battleY = (window.playerTeam.size() == 2) ? 115 + index * 230 : ((1.5 * index - 2.5) * index + 2) * 115;
+			f->battleOriginX = (index == 0 && window.playerTeam.size() != 2) ? 300 : 175;
+			f->battleOriginY = (window.playerTeam.size() == 2) ? 115 + index * 230 : ((1.5 * index - 2.5) * index + 2) * 115;
+			f->battleX = f->battleOriginX;
+			f->battleY = f->battleOriginY;
 		}
 
 		while (tempOrder.size() > 0) {

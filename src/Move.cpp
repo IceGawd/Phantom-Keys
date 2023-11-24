@@ -1,13 +1,14 @@
 #include "Move.hpp"
 #include "TextObject.hpp"
 
-Move::Move(string n, float d, int m, bool p, bool se, int a, vector<Tag> t, bool tet, int h) : ap(a), name(n), physical(p), damage(d), mana(m), selectEnemy(se), tags(t), targetEnemyTeam(tet), hits(h) {
+Move::Move(string n, float d, int m, bool p, bool se, int a, vector<Tag> t, vector<KeyFrame> k, bool tet, int h) : ap(a), name(n), physical(p), damage(d), mana(m), selectEnemy(se), tags(t), animation(k), targetEnemyTeam(tet), hits(h) {
 
 }
 
 void Move::dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defender, vector<GameObject*>& battleEntities) {
 	window->revert = ENDTURN;
 	cout << name << endl;
+	
 	attacker->stats.ap -= ap;
 	
 	double agilityBased = diffSum(attacker->stats.agility, defender->stats.agility); // x is 2000
@@ -45,7 +46,7 @@ void Move::dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defe
 		cout << "Damage done: " << damagedone << endl;
 		defender->stats.hp -= damagedone;
 		battleEntities.push_back(new TextObject(window, damagedone, defender, crit));
-		if (physical) { // Not true, ranged weapons dont recoil
+		if (physical) { // Not true, ranged weapons dont recoil, ranged is technically physical
 			int recoil = (int) (critAccountedDamage * defender->stats.vitality / 9.0);
 			cout << "Recoil: " << recoil << endl;
 			attacker->stats.hp -= recoil;

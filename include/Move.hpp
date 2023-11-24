@@ -21,7 +21,7 @@ struct Move {
 	bool targetEnemyTeam;
 	int hits;
 
-	Move(string n, float d, int m, bool p, bool se, int a, vector<Tag> t, bool tet = true, int h = 1);
+	Move(string n, float d, int m, bool p, bool se, int a, vector<Tag> t, vector<KeyFrame> k, bool tet = true, int h = 1);
 
 	virtual void dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defender, vector<GameObject*>& battleEntities);
 };

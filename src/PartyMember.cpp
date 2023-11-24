@@ -19,5 +19,5 @@ void PartyMember::battle(RenderWindow* window, Fightable* turn, vector<GameObjec
 void PartyMember::doAttack(RenderWindow* window, Fightable* enemy, vector<GameObject*>& battleEntities) {
 	moveEntered->dealDamage(window, this, enemy, battleEntities);
 	moveEntered = nullptr;
-	window->turnstate = ENDTURN;
+	window->turnstate = ANIMATION;
 }

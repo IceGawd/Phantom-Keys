@@ -88,7 +88,7 @@ void sEnter(vector<void*> passingArgument) {
 	PartyMember* pm = (PartyMember*) (window->turnOrder.front());
 	vector<GameObject*>* entities = (vector<GameObject*>*) (passingArgument[2]);
 	pm->doAttack(window, window->enemyTeam.at(selector->selection), *entities);
-	window->turnstate = ENDTURN;
+	// window->turnstate = ENDTURN;
 	selector->selection = 0;
 }
 

@@ -8,6 +8,8 @@ Player::Player(RenderWindow* window, vector<Move*> m) {
 	traction = 0.7;
 
 	sheets["overworld"] = SpriteSheet(window->loadTexture("res/gfx/Overworld/Keyboard.png"), 4, 5, 10);
+	sheets["buff"] = SpriteSheet(window->loadTexture("res/gfx/Battle/KeyboardBuff.png"), 7, 1, 1);
+	sheets["swords"] = SpriteSheet(window->loadTexture("res/gfx/Battle/KeyboardSwords.png"), 12, 1, 1);
 	sheets["battleidle"] = SpriteSheet(window->loadTexture("res/gfx/Battle/KeyboardIdle.png"), 6, 1, 10);
 
 	changeSpriteSheet("overworld");

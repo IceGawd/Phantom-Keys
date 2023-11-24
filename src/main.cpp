@@ -47,13 +47,13 @@ float atanLookup(vector<void*> vv) {
 	return (1 - percent) * check.second + percent * prev.second;
 }
 
-pair<int, int> flippedIndex(int num, vector<pair<int, int>>& degree45) {
+inline pair<int, int> flippedIndex(int num, vector<pair<int, int>>& degree45, int subtract = 0) {
 	int actualNum = num % degree45.size();
 	int falseNum = (num - actualNum) / degree45.size();
 	if (falseNum % 2) { // REVERSE
 		actualNum = degree45.size() - actualNum - 1;
 	}
-	int first = degree45[actualNum].first;
+	int first = degree45[actualNum].first - subtract;
 	int second = degree45[actualNum].second;
 	if (((falseNum + 1) / 2) % 2) { // SWAP
 		swap(first, second);
@@ -63,7 +63,7 @@ pair<int, int> flippedIndex(int num, vector<pair<int, int>>& degree45) {
 	return {first, second};
 }
 
-bool inRange(int n, int s, int l) {
+inline bool inRange(int n, int s, int l) {
 	return n > s && n < s + l;
 }
 
@@ -71,13 +71,13 @@ pair<int, int> operator+(const pair<int, int>& a, const pair<int, int>& b) {
 	return {a.first + b.first, a.second + b.second};
 }
 
-void spiral(int rstart, int rend, int texrecx, int texrecy, int width, int height, int transitionFrames, Uint32* pixels, Uint32* newPixels, int maxRadius) {
+void spiral(int rstart, int rend, int texrecx, int texrecy, int width, int height, int transitionFrames, Uint32* pixels, Uint32* newPixels, int maxRadius, int PIXELGROUP) {
 	pair<int, int> center = {width / 2 + texrecx, height / 2 + texrecy};
 	/*
 	int centerx = width / 2 + texrecx;
 	int centery = height / 2 + texrecy;
 	*/
-	for (int r = rstart; r < rend; r += 1) {
+	for (int r = rstart; r < rend; r += PIXELGROUP) {
 		int xSquared = r * r;
 		int makeCloser = (r - 1) * (r - 1);
 		int change = 2 * r - 1;
@@ -91,22 +91,37 @@ void spiral(int rstart, int rend, int texrecx, int texrecy, int width, int heigh
 				change -= 2;
 				makeCloser -= change;
 				x--;
+				degree45.push_back({x, y});
 			}
 			y++;
 		}
 		int movement = 0.001 * r * transitionFrames * degree45.size();
 		for (int z = 0; z < 8 * degree45.size(); z++) {
-			pair<int, int> start = flippedIndex(z, degree45) + center;
-			pair<int, int> finish = flippedIndex(z + movement, degree45) + center;
+			for (int a = 0; a < PIXELGROUP; a++) {
+				pair<int, int> start = flippedIndex(z, degree45, a) + center;
+				pair<int, int> finish = flippedIndex(z + movement, degree45, a) + center;
 
-			/*
-			if (r == 4) {
-				cout << flippedIndex(z, degree45).first << ", " << flippedIndex(z, degree45).second << endl;
-			}
-			*/
+				/*
+				if (r == 4) {
+					cout << flippedIndex(z, degree45).first << ", " << flippedIndex(z, degree45).second << endl;
+				}
+				*/
 
-			if (inRange(start.first, texrecx, width) && inRange(start.second, texrecy, height) && inRange(finish.first, texrecx, width) && inRange(finish.second, texrecy, height)) {
-				pixels[start.first + start.second * width] = newPixels[finish.first + finish.second * width];
+				if (inRange(start.first, texrecx, width) && inRange(start.second, texrecy, height) && inRange(finish.first, texrecx, width) && inRange(finish.second, texrecy, height)) {
+					pixels[start.first + start.second * width] = newPixels[finish.first + finish.second * width];
+				}
+				/*
+				for (int x1 = 0; x1 < PIXELGROUP; x1++) {
+					for (int y1 = 0; y1 < PIXELGROUP; y1++) {
+						if (inRange(start.first + x1, texrecx, width) && inRange(start.second + y1, texrecy, height) && inRange(finish.first + x1, texrecx, width) && inRange(finish.second + y1, texrecy, height)) {
+							pixels[(start.first + x1) + (start.second + y1) * width] = newPixels[(finish.first + x1) + (finish.second + y1) * width];
+						}
+						else {
+							break;
+						}
+					}
+				}
+				*/
 			}
 		}
 	}
@@ -191,18 +206,41 @@ int main(int argc, char *argv[]) {
 	};
 
 	map<string, Move*> moves = {
-		{"Scratch", new Move("Scratch", 10, 0, true, true, 1, {SLASHING})}, 
-		{"Ram", new Move("Ram", 30, 0, true, false, 2, {BLUDGEONING, FORWARD})}, 
-		{"16th Notes", new Move("16th Notes", 10, 25, false, false, 2, {FORCE, FORWARD}, true, 4)}, 
-		{"Vibrato", new Move("Vibrato", 20, 10, false, true, 1, {VIBRATING})}
+		{"Scratch", new Move("Scratch", 10, 0, true, true, 1, {SLASHING}, 
+			{
+				KeyFrame(45, "overworld", 1, -100, 0, INFRONTENEMY, LINEAR, false), 
+				KeyFrame(10, "overworld", 1, 0, 0, INFRONTENEMY, LOGARITHMIC, false), 
+				KeyFrame(15, "swords", 0, 0, 0, INFRONTENEMY, LINEAR, true), 
+				KeyFrame(35, "overworld", 3, 0, 0, STARTINGCOORDS, LINEAR, false)
+			}
+		)}, 
+		{"Ram", new Move("Ram", 30, 0, true, false, 2, {BLUDGEONING, FORWARD}, 
+			{
+
+			}
+		)}, 
+		{"16th Notes", new Move("16th Notes", 10, 25, false, false, 2, {FORCE, FORWARD}, 
+			{
+
+			}
+		, true, 4)}, 
+		{"Vibrato", new Move("Vibrato", 20, 10, false, true, 1, {VIBRATING}, 
+			{
+
+			}
+		)}
 	};
+
+	for (auto it = moves.begin(); it != moves.end(); ++it) {
+		it->second->animation.insert(it->second->animation.begin(), KeyFrame(20, "battleidle", 0, 0, 0, STARTINGCOORDS, LINEAR, false));
+	}
 
 	// /*
 	map<string, EnemyType*> enemyTypes = { // UNUSED WASTE OF TIME FIX THIS SHIT
 		{"Tuba Snail", new EnemyType(
 			"Tuba Snail", 
 			Stats(1, 2, 2, 1, 2, 2), 
-			{moves.find("Scratch")->second, moves.find("Ram")->second, moves.find("16th Notes")->second, moves.find("Vibrato")->second}, 
+			{moves.find("Ram")->second, moves.find("Vibrato")->second}, 
 			3, 2, 0.1, 0.01, ACCELERATING, 200, 500, true, 
 			"res/gfx/Enemies/TubaSnail.png", 7, 1)
 		}
@@ -294,6 +332,10 @@ int main(int argc, char *argv[]) {
 	SDL_Surface* window_surface = nullptr;
 	Uint32* newPixels = nullptr;
 	const int THREADS = 16;
+	int PIXELGROUP = 1;
+
+	double delay = 0;
+	double normalDelay = 0;
 
 	while (gameRunning) {
 		auto start = chrono::steady_clock().now();
@@ -330,23 +372,33 @@ int main(int argc, char *argv[]) {
 				thread threads[THREADS];
 				int rstart = 1;
 				int maxRadius = distanceFrom(width / 2, height / 2);
-				double mod = (maxRadius + 1) / sqrt(THREADS);
+				double mod = (maxRadius * (transitionFrames > 30 ? (60.0 - transitionFrames) / 30.0 : 1) + 1) / sqrt(THREADS);
 				for (int x = 0; x < THREADS; x++) {
-					int rend = mod * sqrt(x + 1);
-					threads[x] = thread(spiral, rstart, rend, texture_rect.x, texture_rect.y, width, height, transitionFrames, pixels, newPixels, maxRadius);
+					int rend = PIXELGROUP * ceil(mod * sqrt(x + 1) / PIXELGROUP) + 1;
+					threads[x] = thread(spiral, rstart, rend, texture_rect.x, texture_rect.y, width, height, transitionFrames, pixels, newPixels, maxRadius, PIXELGROUP);
 					// cout << "xstart: " << xstart << " xend: " << xend << endl;
 					rstart = rend;
 				}
+
+				auto end1 = chrono::steady_clock().now();
+				chrono::duration<double> frameDone = end1 - start1;
+				// cout << "step1: " << 1000 * frameDone.count() << endl;
 
 				for (int x = 0; x < THREADS; x++) {
 					threads[x].join();
 				}
 
-				auto end1 = chrono::steady_clock().now();
-				chrono::duration<double> frameDone = end1 - start1;
-				cout << "threads: " << 1000 * frameDone.count() << endl;
-				// PIXELGROUP = int(ceil(PIXELGROUP * frameDone.count() * 60));
-
+				end1 = chrono::steady_clock().now();
+				frameDone = end1 - start1;
+				double millis = 1000 * frameDone.count();
+				cout << "threads: " << millis << endl;
+				/*
+				PIXELGROUP = int(ceil(PIXELGROUP * millis / (1000.0 / FPS - normalDelay)));
+				if (PIXELGROUP > 100) {
+					PIXELGROUP = 100;
+				}
+				cout << "PIXELGROUP: " << PIXELGROUP << endl; 
+				// */
 				/*
 				start1 = chrono::steady_clock().now();
 
@@ -372,7 +424,8 @@ int main(int argc, char *argv[]) {
 				SDL_DestroyTexture(window_texture);
 				window_texture = trueDiagonalTexture;
 
-				transitionFrames++;
+				transitionFrames += max(int(frameDone.count() * FPS), 1);
+				// transitionFrames += 1;
 				if (transitionFrames >= 60) {
 					SDL_DestroyTexture(window_texture);
 					window_texture = nullptr;
@@ -383,11 +436,17 @@ int main(int argc, char *argv[]) {
 					window.gamestate = BATTLE;
 					transitionFrames = 0;
 				}
+				while (SDL_PollEvent(&event)) {
+					if (event.type == SDL_QUIT) {
+						gameRunning = false;
+					}
+				}
 
-				// continue; // MIGHT HELLA CAUSE ISSUES
+				continue; // MIGHT HELLA CAUSE ISSUES
 			}
 			else {
 				window.clear();
+				normalDelay = (normalDelay + delay) / 2;
 			}
 
 			while (SDL_PollEvent(&event)) {
@@ -529,16 +588,20 @@ int main(int argc, char *argv[]) {
 					else if (window.turnstate == SELECTENEMY) {
 						selector->render(&window, battleEntities);
 					}
+				}
 
-					for (int x = 0; x < battleEntities.size(); x++) {
-						if (battleEntities.at(x)->draw(&window, world, battleEntities)) {
-							battleEntities.erase(battleEntities.begin() + x);
-							x--;
-						}
+				for (int x = 0; x < battleEntities.size(); x++) {
+					// cout << "battleEntities\n";
+					if (battleEntities.at(x)->draw(&window, world, battleEntities)) {
+						delete battleEntities.at(x);
+						battleEntities.erase(battleEntities.begin() + x);
+						x--;
 					}
 				}
+				// cout << "out of loop\n";
+
 				if (window.turnstate == ENDTURN) {
-					// cout << "g\n";
+					cout << "g\n";
 					selector->snap = true;
 					bool fighterLoss = true;
 					bool fighterWin = true;
@@ -592,23 +655,35 @@ int main(int argc, char *argv[]) {
 							window.turnOrder.pop();
 							window.turnOrder.push(myTurn);
 						} while (window.turnOrder.front()->stats.hp <= 0);
-					}
-				}
-				else {
-					// /*
-					for (int x = 0; x < window.enemyTeam.size(); x++) {
-						Enemy* e = window.enemyTeam.at(x);
-						if (e->stats.hp <= 0) {
-							// cout << "deleted " << e << endl;
-							overworldEntities.erase(remove(overworldEntities.begin(), overworldEntities.end(), e));
-							e->zone->dudes.erase(remove(e->zone->dudes.begin(), e->zone->dudes.end(), e));
-							e->zone->spawned--;
-							window.enemyTeam.erase(remove(window.enemyTeam.begin(), window.enemyTeam.end(), e));
-							delete e;
-							x--;
+
+						// /*
+						for (int x = 0; x < window.enemyTeam.size(); x++) {
+							/*
+							cout << "x: " << x << endl;
+							for (Enemy* e : window.enemyTeam) {
+								cout << e << endl;
+							}
+							*/
+							// cout << "window.enemyTeam.size(): " << window.enemyTeam.size() << endl;
+							Enemy* e = window.enemyTeam.at(x);
+							if (e->stats.hp <= 0) {
+								// cout << "deleted " << e << endl;
+								overworldEntities.erase(remove(overworldEntities.begin(), overworldEntities.end(), e));
+								// cout << "a\n";
+								e->zone->dudes.erase(remove(e->zone->dudes.begin(), e->zone->dudes.end(), e));
+								// cout << "b\n";
+								e->zone->spawned--;
+								// cout << "c\n";
+								window.enemyTeam.erase(remove(window.enemyTeam.begin(), window.enemyTeam.end(), e));
+								// cout << "d\n";
+								delete e;
+								// cout << "e\n";
+								x--;
+								// cout << "window.enemyTeam.size(): " << window.enemyTeam.size() << endl;
+							}
 						}
+						// */
 					}
-					// */
 				}
 			}
 
@@ -631,11 +706,12 @@ int main(int argc, char *argv[]) {
 		chrono::duration<double> frameDone = end - start;
 
 		// cout << 1000 * frameDone.count() << endl;
-		double delay = 1000 * ((1.0 / FPS) - frameDone.count());
-		// cout << "delay: " << delay << endl;
+		delay = 1000 * ((1.0 / FPS) - frameDone.count());
 		if (delay > 0) {
 			SDL_Delay(delay);
+			delay = 0;
 		}
+		// cout << "delay: " << delay << endl;
 		// */
 	}
 
