@@ -10,6 +10,8 @@ struct Fightable : public Collideable {
 	Stats stats;
 	vector<Move*> moves;
 	vector<Buff*> activeBuffs;
+	Move* moveEntered = nullptr;
+	Fightable* target = nullptr;
 
 	int battleX;
 	int battleY;

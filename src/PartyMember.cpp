@@ -3,7 +3,7 @@
 
 void PartyMember::battle(RenderWindow* window, Fightable* turn, vector<GameObject*>& battleEntities) {
 	if (turn == this) {
-		if (moveEntered != nullptr) {
+		if (moveEntered != nullptr && window->turnstate != ANIMATION) {
 			// cout << "PM\n";
 			if (moveEntered->selectEnemy) {
 				window->turnstate = SELECTENEMY;
@@ -17,7 +17,8 @@ void PartyMember::battle(RenderWindow* window, Fightable* turn, vector<GameObjec
 }
 
 void PartyMember::doAttack(RenderWindow* window, Fightable* enemy, vector<GameObject*>& battleEntities) {
-	moveEntered->dealDamage(window, this, enemy, battleEntities);
-	moveEntered = nullptr;
+	// moveEntered->dealDamage(window, this, enemy, battleEntities);
+	// moveEntered = nullptr;
+	target = enemy;
 	window->turnstate = ANIMATION;
 }

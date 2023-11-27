@@ -69,7 +69,7 @@ bool TextObject::draw(RenderWindow* window, World* world, vector<GameObject*>& e
 
 	if (life <= 0) {
 		// cout << "revert back to " << window->revert << endl;
-		window->turnstate = window->revert;
+		// window->turnstate = window->revert;
 		return true;
 	}
 	return false;

@@ -71,6 +71,13 @@ pair<int, int> operator+(const pair<int, int>& a, const pair<int, int>& b) {
 	return {a.first + b.first, a.second + b.second};
 }
 
+ostream& operator<<(ostream& os, const KeyFrame& obj)
+{
+	os << "x: " << obj.x << ", y: " << obj.y << ", rf: " << obj.rf << ", frame: " << obj.frame;
+    // write obj to stream
+    return os;
+}
+
 void spiral(int rstart, int rend, int texrecx, int texrecy, int width, int height, int transitionFrames, Uint32* pixels, Uint32* newPixels, int maxRadius, int PIXELGROUP) {
 	pair<int, int> center = {width / 2 + texrecx, height / 2 + texrecy};
 	/*
@@ -327,7 +334,7 @@ int main(int argc, char *argv[]) {
 	// TextSequence* ts = new TextSequence({TextBox(window, {TextSlice(window, "Hello every person type or thing, I need to make a long text to test out the scrolling features. ", {255, 255, 255, 255}, {WAVEY}), TextSlice(window, "Its ice god here", {0, 120, 200, 255}, {SHAKY})})}, &textNoise["Trumpet"]);
 
 	bool prevBack = true;
-	int transitionFrames = 0;
+	int transitionFrames = 0; // USED FOR BOTH BATTLE TRANSITION AND ATTACK ANIMATION 
 	SDL_Texture* window_texture = nullptr;
 	SDL_Surface* window_surface = nullptr;
 	Uint32* newPixels = nullptr;
@@ -553,7 +560,7 @@ int main(int argc, char *argv[]) {
 				// cout << "e\n";
 
 				if (playerTurn) {
-					// cout << "f\n";
+					// cout << "f" << window.turnstate << "\n";
 					if ((int) window.turnstate <= 3 && (int) window.turnstate > 0) {
 						arrowChange(&window, window.cc.back, &prevBack, &backout, {&window, bo, selector});
 					}
@@ -589,6 +596,42 @@ int main(int argc, char *argv[]) {
 						selector->render(&window, battleEntities);
 					}
 				}
+
+				if (window.turnstate == ANIMATION) {
+					transitionFrames++;
+					int curFrames = transitionFrames;
+					// cout << myTurn << endl;
+					// cout << myTurn->moveEntered << endl;
+					for (int x = 1; x < myTurn->moveEntered->animation.size(); x++) {
+						// cout << "a\n";
+						KeyFrame& kf = myTurn->moveEntered->animation.at(x);
+						curFrames -= kf.frame;
+						if (curFrames <= 0) {
+							// cout << "b\n";
+							curFrames += kf.frame;
+							kf.applyKeyframe(myTurn, myTurn->moveEntered->animation.at(x - 1), curFrames, myTurn->target);
+
+							cout << "curKey: " << kf << endl;
+							cout << "prevKey: " << myTurn->moveEntered->animation.at(x - 1) << endl;
+							cout << "curFrames: " << curFrames << endl;
+
+							if (kf.damage && curFrames == kf.frame) {
+								myTurn->moveEntered->dealDamage(&window, myTurn, myTurn->target, battleEntities);
+							}
+							curFrames -= kf.frame;
+							break;
+						}
+					}
+					// cout << "d\n";
+					if (curFrames > 0) {
+						cout << "joever\n";
+						window.turnstate = ENDTURN;
+						myTurn->moveEntered = nullptr;
+						myTurn->target = nullptr;
+						transitionFrames = 0;
+					}
+				}
+
 
 				for (int x = 0; x < battleEntities.size(); x++) {
 					// cout << "battleEntities\n";
@@ -647,6 +690,7 @@ int main(int argc, char *argv[]) {
 						}
 					}
 					else {
+						cout << "turnover, CHOOSEOPTION\n";
 						window.turnstate = CHOOSEOPTION;
 						if (playerTurn) {
 							bo->options.clear();

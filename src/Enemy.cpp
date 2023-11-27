@@ -148,7 +148,8 @@ bool Enemy::draw(RenderWindow* window, World* world, vector<GameObject*>& entiti
 void Enemy::battle(RenderWindow* window, Fightable* turn, vector<GameObject*>& battleEntities) {
 	if (turn == this && window->turnstate == CHOOSEOPTION) {
 		cout << "Enemy Attacks!\n";
-		moves.at((int) (moves.size() * random()))->dealDamage(window, this, window->playerTeam.at((int) (window->playerTeam.size() * random())), battleEntities);
+		moveEntered = moves.at((int) (moves.size() * random()));
+		target = window->playerTeam.at((int) (window->playerTeam.size() * random()));
 		// cout << "donemove\n";
 		window->revert = ENDTURN;
 		window->turnstate = ANIMATION;

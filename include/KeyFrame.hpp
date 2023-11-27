@@ -32,6 +32,6 @@ struct KeyFrame {
 	bool damage;
 
 	KeyFrame(int f, string a, int ro, int xTemp, int yTemp, ReferenceFrame r, Interpolation i, bool d);
-	void applyKeyframe(Fightable* attacker, KeyFrame* previous, int curFrame, Fightable* defender);
+	void applyKeyframe(Fightable* attacker, KeyFrame& previous, int curFrame, Fightable* defender);
 	pair<int, int> base(Fightable* attacker, Fightable* defender);
 };
