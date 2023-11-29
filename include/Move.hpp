@@ -23,5 +23,7 @@ struct Move {
 
 	Move(string n, float d, int m, bool p, bool se, int a, vector<Tag> t, vector<KeyFrame> k, bool tet = true, int h = 1);
 
-	virtual void dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defender, vector<GameObject*>& battleEntities);
+	bool getHitting(Fightable* attacker, Fightable* defender);
+	bool getCrit(Fightable* attacker);
+	virtual void dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defender, vector<GameObject*>& battleEntities, bool hitting, bool crit);
 };

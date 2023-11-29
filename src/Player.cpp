@@ -91,17 +91,16 @@ bool Player::draw(RenderWindow* window, World* world, vector<GameObject*>& entit
 				column = 0;
 			}
 		}
-	}
-
-	float currSpeed = sqrt(pow(xvel, 2) + pow(yvel, 2));
-	float ch = currSpeed / (speed * traction / (1 - traction));
-	frames += ch;
-	while (frames >= next->frames) {
-		frames -= next->frames;
-		if (row != 0) {
-			column++;
-			if (column == 4) {
-				column = 0;
+		float currSpeed = sqrt(pow(xvel, 2) + pow(yvel, 2));
+		float ch = currSpeed / (speed * traction / (1 - traction));
+		frames += ch;
+		while (frames >= next->frames) {
+			frames -= next->frames;
+			if (row != 0) {
+				column++;
+				if (column == 4) {
+					column = 0;
+				}
 			}
 		}
 	}

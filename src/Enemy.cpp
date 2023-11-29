@@ -145,6 +145,18 @@ bool Enemy::draw(RenderWindow* window, World* world, vector<GameObject*>& entiti
 	return false;
 }
 
+void Enemy::changeSpriteSheet(string newSheet) {
+	GameObject::changeSpriteSheet("overworld");
+	/*
+	if (newSheet == "battleidle") {
+		GameObject::changeSpriteSheet("overworld");		
+	}
+	else {
+		GameObject::changeSpriteSheet(newSheet);
+	}
+	*/
+}
+
 void Enemy::battle(RenderWindow* window, Fightable* turn, vector<GameObject*>& battleEntities) {
 	if (turn == this && window->turnstate == CHOOSEOPTION) {
 		cout << "Enemy Attacks!\n";

@@ -78,8 +78,8 @@ SDL_Rect RenderWindow::getDestRect(Entity* entity, bool stationary) {
 		dest = entity->getRect();
 	}
 	else {
-		dest.x = (int) ceil((entity->x - x) * zoom);
-		dest.y = (int) ceil((entity->y - y) * zoom);
+		dest.x = (int) ceil((entity->x - x - WIDTH / 2) * zoom + WIDTH / 2);
+		dest.y = (int) ceil((entity->y - y - HEIGHT / 2) * zoom + HEIGHT / 2);
 		dest.w = (int) ceil(entity->show_width * zoom);
 		dest.h = (int) ceil(entity->show_height * zoom);
 	}

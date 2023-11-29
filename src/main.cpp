@@ -215,25 +215,42 @@ int main(int argc, char *argv[]) {
 	map<string, Move*> moves = {
 		{"Scratch", new Move("Scratch", 10, 0, true, true, 1, {SLASHING}, 
 			{
-				KeyFrame(45, "overworld", 1, -100, 0, INFRONTENEMY, LINEAR, false), 
-				KeyFrame(10, "overworld", 1, 0, 0, INFRONTENEMY, LOGARITHMIC, false), 
-				KeyFrame(15, "swords", 0, 0, 0, INFRONTENEMY, LINEAR, true), 
-				KeyFrame(35, "overworld", 3, 0, 0, STARTINGCOORDS, LINEAR, false)
+				KeyFrame(45, "overworld", 1, -200, 0, INFRONTENEMY, LINEAR), 
+				KeyFrame(20, "battleidle", 0, -200, 0, INFRONTENEMY, LINEAR), 
+				KeyFrame(10, "overworld", 1, -100, 0, INFRONTENEMY, LOGARITHMIC), 
+				KeyFrame(12, "swords", 0, -100, 0, INFRONTENEMY, LINEAR, true, 9), 
+				KeyFrame(20, "battleidle", 0, -100, 0, INFRONTENEMY, LINEAR), 
+				KeyFrame(35, "overworld", 3, 0, 0, STARTINGCOORDS, LINEAR)
 			}
 		)}, 
 		{"Ram", new Move("Ram", 30, 0, true, false, 2, {BLUDGEONING, FORWARD}, 
 			{
-
+				KeyFrame(45, "overworld", 1, -200, 0, INFRONTENEMY, LINEAR), 
+				KeyFrame(20, "battleidle", 0, -200, 0, INFRONTENEMY, LINEAR), 
+				KeyFrame(10, "overworld", 1, -100, 0, INFRONTENEMY, LOGARITHMIC), 
+				KeyFrame(12, "swords", 0, -100, 0, INFRONTENEMY, LINEAR, true, 9), 
+				KeyFrame(20, "battleidle", 0, -100, 0, INFRONTENEMY, LINEAR), 
+				KeyFrame(35, "overworld", 3, 0, 0, STARTINGCOORDS, LINEAR)
 			}
 		)}, 
 		{"16th Notes", new Move("16th Notes", 10, 25, false, false, 2, {FORCE, FORWARD}, 
 			{
-
+				KeyFrame(45, "overworld", 1, -200, 0, INFRONTENEMY, LINEAR), 
+				KeyFrame(20, "battleidle", 0, -200, 0, INFRONTENEMY, LINEAR), 
+				KeyFrame(10, "overworld", 1, -100, 0, INFRONTENEMY, LOGARITHMIC), 
+				KeyFrame(12, "swords", 0, -100, 0, INFRONTENEMY, LINEAR, true, 9), 
+				KeyFrame(20, "battleidle", 0, -100, 0, INFRONTENEMY, LINEAR), 
+				KeyFrame(35, "overworld", 3, 0, 0, STARTINGCOORDS, LINEAR)
 			}
 		, true, 4)}, 
 		{"Vibrato", new Move("Vibrato", 20, 10, false, true, 1, {VIBRATING}, 
 			{
-
+				KeyFrame(45, "overworld", 1, -200, 0, INFRONTENEMY, LINEAR), 
+				KeyFrame(20, "battleidle", 0, -200, 0, INFRONTENEMY, LINEAR), 
+				KeyFrame(10, "overworld", 1, -100, 0, INFRONTENEMY, LOGARITHMIC), 
+				KeyFrame(12, "swords", 0, -100, 0, INFRONTENEMY, LINEAR, true, 9), 
+				KeyFrame(20, "battleidle", 0, -100, 0, INFRONTENEMY, LINEAR), 
+				KeyFrame(35, "overworld", 3, 0, 0, STARTINGCOORDS, LINEAR)
 			}
 		)}
 	};
@@ -343,6 +360,11 @@ int main(int argc, char *argv[]) {
 
 	double delay = 0;
 	double normalDelay = 0;
+
+	bool hitting = false;
+	bool crit = true;
+
+	double sideScreenDarken = 0;
 
 	while (gameRunning) {
 		auto start = chrono::steady_clock().now();
@@ -598,6 +620,10 @@ int main(int argc, char *argv[]) {
 				}
 
 				if (window.turnstate == ANIMATION) {
+					if (transitionFrames == 0) {
+						hitting = myTurn->moveEntered->getHitting(myTurn, myTurn->target);
+						crit = myTurn->moveEntered->getCrit(myTurn);
+					}
 					transitionFrames++;
 					int curFrames = transitionFrames;
 					// cout << myTurn << endl;
@@ -607,27 +633,65 @@ int main(int argc, char *argv[]) {
 						KeyFrame& kf = myTurn->moveEntered->animation.at(x);
 						curFrames -= kf.frame;
 						if (curFrames <= 0) {
+							KeyFrame& prev = myTurn->moveEntered->animation.at(x - 1);
 							// cout << "b\n";
 							curFrames += kf.frame;
-							kf.applyKeyframe(myTurn, myTurn->moveEntered->animation.at(x - 1), curFrames, myTurn->target);
+							kf.applyKeyframe(myTurn, prev, curFrames, myTurn->target, !playerTurn);
 
-							cout << "curKey: " << kf << endl;
-							cout << "prevKey: " << myTurn->moveEntered->animation.at(x - 1) << endl;
-							cout << "curFrames: " << curFrames << endl;
+							// cout << "curKey: " << kf << endl;
+							// cout << "prevKey: " << myTurn->moveEntered->animation.at(x - 1) << endl;
+							// cout << "curFrames: " << curFrames << endl;
 
-							if (kf.damage && curFrames == kf.frame) {
-								myTurn->moveEntered->dealDamage(&window, myTurn, myTurn->target, battleEntities);
+							if (kf.damage) {
+								// cout << "NOW crit: " << crit << endl;
+								if (curFrames == kf.framedelay) {
+									// cout << "DAMAGE\n";
+									myTurn->moveEntered->dealDamage(&window, myTurn, myTurn->target, battleEntities, hitting, crit);
+								}
+								if (crit) {
+									// cout << "CRIT kf.framedelay: " << kf.framedelay << endl;
+									if (curFrames < kf.framedelay) {
+										// cout << "CRITHIT\n";
+										/*
+										window.x -= (myTurn->battleX - (RenderWindow::WIDTH - myTurn->show_width * myTurn->sizeIncrease) / 2 - window.x) / 2.0;
+										window.y -= (myTurn->battleY - (RenderWindow::HEIGHT - myTurn->show_height * myTurn->sizeIncrease) / 2 - window.y) / 2.0;
+										window.zoom += (2.0 - window.zoom) / 2.0;
+										// */
+										// /*
+										window.x = myTurn->battleX - (RenderWindow::WIDTH - myTurn->show_width * myTurn->sizeIncrease) / 2;
+										window.y = myTurn->battleY - (RenderWindow::HEIGHT - myTurn->show_height * myTurn->sizeIncrease) / 2;
+										window.zoom = 1.5;
+										// */
+									}
+									else {
+										// /*
+										window.x = window.x / 2.0;
+										window.y = window.y / 2.0;
+										window.zoom += (1.0 - window.zoom) / 2.0;
+										// */
+									}
+								}
+							}
+							if (prev.damage && crit) {
+								// /*
+								window.x -= window.x / (kf.frame - curFrames + 1);
+								window.y -= window.y / (kf.frame - curFrames + 1);
+								window.zoom += (1.0 - window.zoom) / (kf.frame - curFrames + 1);
+								// */
 							}
 							curFrames -= kf.frame;
 							break;
 						}
 					}
+					// cout << "myTurn->column: " << myTurn->column << endl;
 					// cout << "d\n";
 					if (curFrames > 0) {
 						cout << "joever\n";
 						window.turnstate = ENDTURN;
 						myTurn->moveEntered = nullptr;
 						myTurn->target = nullptr;
+						myTurn->changeSpriteSheet("battleidle");
+						myTurn->row = 0;
 						transitionFrames = 0;
 					}
 				}

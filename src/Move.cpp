@@ -5,12 +5,7 @@ Move::Move(string n, float d, int m, bool p, bool se, int a, vector<Tag> t, vect
 
 }
 
-void Move::dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defender, vector<GameObject*>& battleEntities) {
-	window->revert = ENDTURN;
-	cout << name << endl;
-	
-	attacker->stats.ap -= ap;
-	
+bool Move::getHitting(Fightable* attacker, Fightable* defender) {
 	double agilityBased = diffSum(attacker->stats.agility, defender->stats.agility); // x is 2000
 	double bonusBased = diffSum(attacker->stats.accuracybonus, defender->stats.evasionbonus); // x is 2000 (although could be anything)
 	double weightedSpeedDiff = agilityBased + bonusBased; // -2 to 2
@@ -18,15 +13,26 @@ void Move::dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defe
 	double luckPercent = 0.6 * basePercent + 0.4 * pow(0.5 + (attacker->stats.luck - defender->stats.luck) / 4000.0, 1.5); // -1 to 1
 
 	double percent = 0.15 * luckPercent + 0.85; // 0.7 to 1
-	bool hitting = random() < percent;
-	// hitting = false;
+	return random() < percent;
+}
 
+bool Move::getCrit(Fightable* attacker) {
+	double actualCritChance = increase(0.04 * attacker->stats.critchancebonus, attacker->stats.luck / 2000.0);
+	return random() < actualCritChance;
+	// return true;
+}
+
+
+void Move::dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defender, vector<GameObject*>& battleEntities, bool hitting, bool crit) {
+	window->revert = ENDTURN;
+	cout << name << endl;
+	
+	attacker->stats.ap -= ap;
+	
 	if (hitting) {
 		double index = (weighted(window->playerTeam) - weighted(window->enemyTeam) + 196) / 1571;
 		double bonus = 0.2;
 		int critAccountedDamage = damage;
-		double actualCritChance = increase(0.04 * attacker->stats.critchancebonus, attacker->stats.luck / 2000.0);
-		bool crit = random() < actualCritChance;
 		// crit = true;
 		if (crit) {
 			cout << "Critical hit!\n";
