@@ -78,13 +78,61 @@ ostream& operator<<(ostream& os, const KeyFrame& obj)
     return os;
 }
 
-void spiral(int rstart, int rend, int texrecx, int texrecy, int width, int height, int transitionFrames, Uint32* pixels, Uint32* newPixels, int maxRadius, int PIXELGROUP) {
-	pair<int, int> center = {width / 2 + texrecx, height / 2 + texrecy};
+void spiralPerPixel(Uint32* pixels, Uint32* newPixels, vector<pair<int, int>>& degree45, pair<int, int>& center, SDL_Rect texture_rect, int z, int r, SDL_PixelFormat* format, int transitionFrames) {
+	pair<int, int> start = flippedIndex(z, degree45) + center;
+	pair<int, int> finish = flippedIndex(z + 0.001 * r * transitionFrames * degree45.size(), degree45) + center;
+
 	/*
-	int centerx = width / 2 + texrecx;
-	int centery = height / 2 + texrecy;
+	if (r == 4) {
+		cout << flippedIndex(z, degree45).first << ", " << flippedIndex(z, degree45).second << endl;
+	}
 	*/
-	for (int r = rstart; r < rend; r += PIXELGROUP) {
+
+	// cout << "d <<<<<<< width: " << texture_rect.w << endl; 
+	if (inRange(start.first, texture_rect.x, texture_rect.w) && inRange(start.second, texture_rect.y, texture_rect.h) && inRange(finish.first, texture_rect.x, texture_rect.w) && inRange(finish.second, texture_rect.y, texture_rect.h)) {
+		pixels[start.first + start.second * texture_rect.w] = newPixels[finish.first + finish.second * texture_rect.w];
+	}
+	/*
+	for (int x1 = 0; x1 < PIXELGROUP; x1++) {
+		for (int y1 = 0; y1 < PIXELGROUP; y1++) {
+			if (inRange(start.first + x1, texture_rect.x, texture_rect.w) && inRange(start.second + y1, texture_rect.y, texture_rect.h) && inRange(finish.first + x1, texture_rect.x, texture_rect.w) && inRange(finish.second + y1, texture_rect.y, texture_rect.h)) {
+				pixels[(start.first + x1) + (start.second + y1) * texture_rect.w] = newPixels[(finish.first + x1) + (finish.second + y1) * texture_rect.w];
+			}
+			else {
+				break;
+			}
+		}
+	}
+	*/
+}
+
+void blackPerPixel(Uint32* pixels, Uint32* newPixels, vector<pair<int, int>>& degree45, pair<int, int>& center, SDL_Rect texture_rect, int z, int r, SDL_PixelFormat* format, int transitionFrames) {
+	pair<int, int> start = flippedIndex(z, degree45) + center;
+
+	if (inRange(start.first, texture_rect.x, texture_rect.w) && inRange(start.second, texture_rect.y, texture_rect.h)) {
+		Uint8 red;
+		Uint8 green;
+		Uint8 blue;
+		Uint8 alpha;
+
+		SDL_GetRGBA(newPixels[start.first + start.second * texture_rect.w], format, &red, &green, &blue, &alpha);
+
+		double mult = 1 - (0.05 * transitionFrames * r / (texture_rect.w + texture_rect.h));
+		red *= mult;
+		green *= mult;
+		blue *= mult;
+		pixels[start.first + start.second * texture_rect.w] = SDL_MapRGBA(format, red, green, blue, alpha);
+	}
+}
+
+
+void circularScreenEdit(int rstart, int rend, SDL_Rect texture_rect, int transitionFrames, Uint32* pixels, Uint32* newPixels, int maxRadius, SDL_PixelFormat* format, void (*perPixel)(Uint32*, Uint32*, vector<pair<int, int>>&, pair<int, int>&, SDL_Rect, int, int, SDL_PixelFormat*, int)) {
+	pair<int, int> center = {texture_rect.w / 2 + texture_rect.x, texture_rect.h / 2 + texture_rect.y};
+	/*
+	int centerx = texture_rect.w / 2 + texture_rect.x;
+	int centery = texture_rect.h / 2 + texture_rect.y;
+	*/
+	for (int r = rstart; r < rend; r += 1) {
 		int xSquared = r * r;
 		int makeCloser = (r - 1) * (r - 1);
 		int change = 2 * r - 1;
@@ -103,33 +151,9 @@ void spiral(int rstart, int rend, int texrecx, int texrecy, int width, int heigh
 			y++;
 		}
 		int movement = 0.001 * r * transitionFrames * degree45.size();
+		// cout << "c <<<<<<< width: " << texture_rect.w << endl; 
 		for (int z = 0; z < 8 * degree45.size(); z++) {
-			for (int a = 0; a < PIXELGROUP; a++) {
-				pair<int, int> start = flippedIndex(z, degree45, a) + center;
-				pair<int, int> finish = flippedIndex(z + movement, degree45, a) + center;
-
-				/*
-				if (r == 4) {
-					cout << flippedIndex(z, degree45).first << ", " << flippedIndex(z, degree45).second << endl;
-				}
-				*/
-
-				if (inRange(start.first, texrecx, width) && inRange(start.second, texrecy, height) && inRange(finish.first, texrecx, width) && inRange(finish.second, texrecy, height)) {
-					pixels[start.first + start.second * width] = newPixels[finish.first + finish.second * width];
-				}
-				/*
-				for (int x1 = 0; x1 < PIXELGROUP; x1++) {
-					for (int y1 = 0; y1 < PIXELGROUP; y1++) {
-						if (inRange(start.first + x1, texrecx, width) && inRange(start.second + y1, texrecy, height) && inRange(finish.first + x1, texrecx, width) && inRange(finish.second + y1, texrecy, height)) {
-							pixels[(start.first + x1) + (start.second + y1) * width] = newPixels[(finish.first + x1) + (finish.second + y1) * width];
-						}
-						else {
-							break;
-						}
-					}
-				}
-				*/
-			}
+			perPixel(pixels, newPixels, degree45, center, texture_rect, z, r, format, transitionFrames);
 		}
 	}
 	// cout << rstart << endl;
@@ -183,6 +207,53 @@ int getValue(Fightable* f) {
 
 int getValue(Enemy* f) {
 	return getValue((Fightable*) f);
+}
+
+SDL_Texture* threadCircularApplication(RenderWindow& window, Uint32*& newPixels, SDL_Texture*& window_texture, SDL_Surface*& window_surface, int& transitionFrames, SDL_Rect& texture_rect, const int& THREADS, void (*perPixel)(Uint32*, Uint32*, vector<pair<int, int>>&, pair<int, int>&, SDL_Rect, int, int, SDL_PixelFormat*, int)) {
+	Uint32* pixels;
+	int pitch;
+
+	if (window_texture == nullptr) {
+		window_surface = SDL_GetWindowSurface(window.window);
+		window_texture = SDL_CreateTextureFromSurface(window.renderer, window_surface);
+		texture_rect = {window.xOrigin, window.yOrigin, texture_rect.w, texture_rect.h};
+	}
+	SDL_Texture* trueDiagonalTexture = SDL_CreateTexture(window.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, texture_rect.w, texture_rect.h);
+	SDL_LockTexture(trueDiagonalTexture, NULL, reinterpret_cast<void**>(&pixels), &pitch);
+
+	if (newPixels == nullptr) { // DOES NOT WORK WITH WINDOW RESIZE
+		SDL_SetRenderTarget(window.renderer, window_texture);
+		SDL_RenderReadPixels(window.renderer, &texture_rect, SDL_PIXELFORMAT_RGBA8888, pixels, pitch);
+		SDL_SetRenderTarget(window.renderer, NULL);
+		newPixels = new Uint32[texture_rect.w * texture_rect.h];
+		for (int x = 0; x < texture_rect.w * texture_rect.h; x++) {
+			newPixels[x] = pixels[x];
+		}
+	}
+	// /*
+
+	thread threads[THREADS];
+	int rstart = 1;
+	int maxRadius = distanceFrom(texture_rect.w / 2, texture_rect.h / 2);
+	double mod = (maxRadius * (transitionFrames > 30 ? (60.0 - transitionFrames) / 30.0 : 1) + 1) / sqrt(THREADS);
+	for (int x = 0; x < THREADS; x++) {
+		// cout << "b <<<<<<< width: " << texture_rect.w << endl; 
+		int rend = ceil(mod * sqrt(x + 1)) + 1;
+		// circularScreenEdit(rstart, rend, texture_rect, transitionFrames, pixels, newPixels, maxRadius, window_surface->format, perPixel);
+		threads[x] = thread(circularScreenEdit, rstart, rend, texture_rect, transitionFrames, pixels, newPixels, maxRadius, window_surface->format, perPixel);
+		// threads[x] = thread(test, rstart, rend, texture_rect);
+		// cout << "xstart: " << xstart << " xend: " << xend << endl;
+		rstart = rend;
+	}
+
+	// /*
+	for (int x = 0; x < THREADS; x++) {
+		threads[x].join();
+	}
+	// */
+
+	SDL_UnlockTexture(trueDiagonalTexture);
+	return trueDiagonalTexture;
 }
 
 int main(int argc, char *argv[]) {
@@ -364,7 +435,7 @@ int main(int argc, char *argv[]) {
 	bool hitting = false;
 	bool crit = true;
 
-	double sideScreenDarken = 0;
+	int sideScreenDarken = 0;
 
 	while (gameRunning) {
 		auto start = chrono::steady_clock().now();
@@ -375,86 +446,33 @@ int main(int argc, char *argv[]) {
 				int width = (int) (window.WIDTH * window.scaleMultiplier);
 				int height = (int) (window.HEIGHT * window.scaleMultiplier);
 				SDL_Rect texture_rect = {0, 0, width, height};
-				Uint32* pixels;
-				int pitch;
 
-				if (window_texture == nullptr) {
-					window_surface = SDL_GetWindowSurface(window.window);
-					window_texture = SDL_CreateTextureFromSurface(window.renderer, window_surface);
-					texture_rect = {window.xOrigin, window.yOrigin, width, height};
-				}
-				SDL_Texture* trueDiagonalTexture = SDL_CreateTexture(window.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, width, height);
-				SDL_LockTexture(trueDiagonalTexture, NULL, reinterpret_cast<void**>(&pixels), &pitch);
-
-				if (newPixels == nullptr) { // DOES NOT WORK WITH WINDOW RESIZE
-					SDL_SetRenderTarget(window.renderer, window_texture);
-					SDL_RenderReadPixels(window.renderer, &texture_rect, SDL_PIXELFORMAT_RGBA8888, pixels, pitch);
-					SDL_SetRenderTarget(window.renderer, NULL);
-					newPixels = new Uint32[width * height];
-					for (int x = 0; x < width * height; x++) {
-						newPixels[x] = pixels[x];
-					}
-				}
-				// /*
 				auto start1 = chrono::steady_clock().now();
 
-				thread threads[THREADS];
-				int rstart = 1;
-				int maxRadius = distanceFrom(width / 2, height / 2);
-				double mod = (maxRadius * (transitionFrames > 30 ? (60.0 - transitionFrames) / 30.0 : 1) + 1) / sqrt(THREADS);
-				for (int x = 0; x < THREADS; x++) {
-					int rend = PIXELGROUP * ceil(mod * sqrt(x + 1) / PIXELGROUP) + 1;
-					threads[x] = thread(spiral, rstart, rend, texture_rect.x, texture_rect.y, width, height, transitionFrames, pixels, newPixels, maxRadius, PIXELGROUP);
-					// cout << "xstart: " << xstart << " xend: " << xend << endl;
-					rstart = rend;
-				}
+				// cout << "a <<<<<<< width: " << width << endl; 
+
+				SDL_Texture* trueDiagonalTexture = threadCircularApplication(window, newPixels, window_texture, window_surface, transitionFrames, texture_rect, THREADS, spiralPerPixel);
+				// SDL_Texture* trueDiagonalTexture = threadCircularApplication(window, newPixels, window_texture, window_surface, transitionFrames, texture_rect, THREADS);
 
 				auto end1 = chrono::steady_clock().now();
 				chrono::duration<double> frameDone = end1 - start1;
 				// cout << "step1: " << 1000 * frameDone.count() << endl;
-
-				for (int x = 0; x < THREADS; x++) {
-					threads[x].join();
-				}
-
-				end1 = chrono::steady_clock().now();
-				frameDone = end1 - start1;
 				double millis = 1000 * frameDone.count();
 				cout << "threads: " << millis << endl;
-				/*
-				PIXELGROUP = int(ceil(PIXELGROUP * millis / (1000.0 / FPS - normalDelay)));
-				if (PIXELGROUP > 100) {
-					PIXELGROUP = 100;
-				}
-				cout << "PIXELGROUP: " << PIXELGROUP << endl; 
-				// */
-				/*
-				start1 = chrono::steady_clock().now();
-
-				for (int x = 0; x < THREADS; x++) {
-					for (int y = 0; y < allSwaps[x]->size(); y++) {
-						pixels[allSwaps[x]->at(y).first] = newPixels[allSwaps[x]->at(y).second];
-					}
-					delete allSwaps[x];
-				}
 
 
-				end1 = chrono::steady_clock().now();
-				frameDone = end1 - start1;
-				cout << "swaps: " << 1000 * frameDone.count() << endl;
-				*/
-
-				// */
-				SDL_UnlockTexture(trueDiagonalTexture);
-
+				// cout << "prerender\n";
 				window.clear();
 				SDL_RenderCopy(window.renderer, trueDiagonalTexture, NULL, &texture_rect);
+				// cout << "postrender\n";
 
 				SDL_DestroyTexture(window_texture);
 				window_texture = trueDiagonalTexture;
+				// cout << "postdestroy\n";
 
 				transitionFrames += max(int(frameDone.count() * FPS), 1);
 				// transitionFrames += 1;
+				// cout << "posttransframes\n";
 				if (transitionFrames >= 60) {
 					SDL_DestroyTexture(window_texture);
 					window_texture = nullptr;
@@ -661,6 +679,7 @@ int main(int argc, char *argv[]) {
 										window.x = myTurn->battleX - (RenderWindow::WIDTH - myTurn->show_width * myTurn->sizeIncrease) / 2;
 										window.y = myTurn->battleY - (RenderWindow::HEIGHT - myTurn->show_height * myTurn->sizeIncrease) / 2;
 										window.zoom = 1.5;
+										sideScreenDarken++;
 										// */
 									}
 									else {
@@ -668,6 +687,7 @@ int main(int argc, char *argv[]) {
 										window.x = window.x / 2.0;
 										window.y = window.y / 2.0;
 										window.zoom += (1.0 - window.zoom) / 2.0;
+										sideScreenDarken = sideScreenDarken / 2;
 										// */
 									}
 								}
@@ -677,6 +697,7 @@ int main(int argc, char *argv[]) {
 								window.x -= window.x / (kf.frame - curFrames + 1);
 								window.y -= window.y / (kf.frame - curFrames + 1);
 								window.zoom += (1.0 - window.zoom) / (kf.frame - curFrames + 1);
+								sideScreenDarken = 0;
 								// */
 							}
 							curFrames -= kf.frame;
@@ -709,6 +730,7 @@ int main(int argc, char *argv[]) {
 
 				if (window.turnstate == ENDTURN) {
 					cout << "g\n";
+					sideScreenDarken = 0;
 					selector->snap = true;
 					bool fighterLoss = true;
 					bool fighterWin = true;
@@ -805,9 +827,15 @@ int main(int argc, char *argv[]) {
 
 			// cout << "player->x: " << player->x << " player->y: " << player->y << endl; 
 		}
+		if (sideScreenDarken != 0) {
+			// SDL_Texture* trueDiagonalTexture = threadCircularApplication(window, newPixels, window_texture, transitionFrames, blackPerPixel);
+			// window_texture = nullptr;		
+		}
 
 
+		// cout << "predisplay\n";
 		window.display();
+		// cout << "postdisplay\n";
 
 		// /*
 		auto end = chrono::steady_clock().now();
