@@ -78,9 +78,9 @@ ostream& operator<<(ostream& os, const KeyFrame& obj)
     return os;
 }
 
-void spiralPerPixel(Uint32* pixels, Uint32* newPixels, vector<pair<int, int>>& degree45, pair<int, int>& center, SDL_Rect texture_rect, int z, int r, SDL_PixelFormat* format, int transitionFrames) {
+void spiralPerPixel(Uint32* pixels, Uint32* newPixels, vector<pair<int, int>>& degree45, pair<int, int>& center, SDL_Rect& texture_rect, int z, int r, SDL_PixelFormat* format, int transitionFrames, double val) {
 	pair<int, int> start = flippedIndex(z, degree45) + center;
-	pair<int, int> finish = flippedIndex(z + 0.001 * r * transitionFrames * degree45.size(), degree45) + center;
+	pair<int, int> finish = flippedIndex(z + val, degree45) + center;
 
 	/*
 	if (r == 4) {
@@ -106,27 +106,78 @@ void spiralPerPixel(Uint32* pixels, Uint32* newPixels, vector<pair<int, int>>& d
 	*/
 }
 
-void blackPerPixel(Uint32* pixels, Uint32* newPixels, vector<pair<int, int>>& degree45, pair<int, int>& center, SDL_Rect texture_rect, int z, int r, SDL_PixelFormat* format, int transitionFrames) {
+double movementCompute(int transitionFrames, vector<pair<int, int>>& degree45, int r, SDL_Rect& texture_rect) {
+	return 0.001 * r * transitionFrames * degree45.size();
+}
+
+double blackCompute(int transitionFrames, vector<pair<int, int>>& degree45, int r, SDL_Rect& texture_rect) {
+	return 1 - (0.1 * transitionFrames * r / (texture_rect.w + texture_rect.h));
+}
+
+
+void blackPerPixel(Uint32* pixels, Uint32* newPixels, vector<pair<int, int>>& degree45, pair<int, int>& center, SDL_Rect& texture_rect, int z, int r, SDL_PixelFormat* format, int transitionFrames, double mult) {
+	if (mult >= 1) {
+		return;
+	}
+
 	pair<int, int> start = flippedIndex(z, degree45) + center;
 
 	if (inRange(start.first, texture_rect.x, texture_rect.w) && inRange(start.second, texture_rect.y, texture_rect.h)) {
+		// /*
 		Uint8 red;
 		Uint8 green;
 		Uint8 blue;
 		Uint8 alpha;
 
-		SDL_GetRGBA(newPixels[start.first + start.second * texture_rect.w], format, &red, &green, &blue, &alpha);
+		// SDL_GetRGBA(newPixels[start.first + start.second * texture_rect.w], format, &red, &green, &blue, &alpha);
+		
+		/*
+		if (z == 10 && r == 100) {
+			// /*
 
-		double mult = 1 - (0.05 * transitionFrames * r / (texture_rect.w + texture_rect.h));
+			cout << "z: " << z << " r: " << r << " red: " << (int) red << " green: " << (int) green << " blue: " << (int) blue << " alpha: " << (int) alpha << endl;
+
+			Uint32 pixel = newPixels[start.first + start.second * texture_rect.w];
+
+			cout << "pixel: " << (int) pixel << endl;
+			cout << "z: " << z << " r: " << r << " red: " << (int) red << " green: " << (int) green << " blue: " << (int) blue << " alpha: " << (int) alpha << endl;
+		}
+
+		// */
+
+		Uint32 pixel = newPixels[start.first + start.second * texture_rect.w];
+
+		red = (pixel >> 24) & 0xFF;
+		green = (pixel >> 16) & 0xFF;
+		blue = (pixel >> 8) & 0xFF;
+		alpha = pixel & 0xFF;
+
+		/*
+		if (z == 10 && r == 100) {
+			// cout << "pixel: " << (int) pixel << endl;
+		}
+		*/
+		
+		if (mult < 0) {
+			mult = 0;
+		}
+
 		red *= mult;
 		green *= mult;
 		blue *= mult;
-		pixels[start.first + start.second * texture_rect.w] = SDL_MapRGBA(format, red, green, blue, alpha);
+		// */
+		pixel = (((((red << 8) + green) << 8) + blue) << 8) + alpha;
+		// cout << "pixel: " << (int) pixel << endl;
+
+		pixels[start.first + start.second * texture_rect.w] = pixel;
+
+		// pixels[start.first + start.second * texture_rect.w] = SDL_MapRGBA(format, red, green, blue, alpha);
+		// */
+		// pixels[start.first + start.second * texture_rect.w] = newPixels[start.first + start.second * texture_rect.w];
 	}
 }
 
-
-void circularScreenEdit(int rstart, int rend, SDL_Rect texture_rect, int transitionFrames, Uint32* pixels, Uint32* newPixels, int maxRadius, SDL_PixelFormat* format, void (*perPixel)(Uint32*, Uint32*, vector<pair<int, int>>&, pair<int, int>&, SDL_Rect, int, int, SDL_PixelFormat*, int)) {
+void circularScreenEdit(int rstart, int rend, SDL_Rect texture_rect, int transitionFrames, Uint32* pixels, Uint32* newPixels, int maxRadius, SDL_PixelFormat* format, void (*perPixel)(Uint32*, Uint32*, vector<pair<int, int>>&, pair<int, int>&, SDL_Rect&, int, int, SDL_PixelFormat*, int, double), double (*compute)(int, vector<pair<int, int>>&, int r, SDL_Rect&)) {
 	pair<int, int> center = {texture_rect.w / 2 + texture_rect.x, texture_rect.h / 2 + texture_rect.y};
 	/*
 	int centerx = texture_rect.w / 2 + texture_rect.x;
@@ -150,10 +201,10 @@ void circularScreenEdit(int rstart, int rend, SDL_Rect texture_rect, int transit
 			}
 			y++;
 		}
-		int movement = 0.001 * r * transitionFrames * degree45.size();
+		double computedValue = compute(transitionFrames, degree45, r, texture_rect);
 		// cout << "c <<<<<<< width: " << texture_rect.w << endl; 
 		for (int z = 0; z < 8 * degree45.size(); z++) {
-			perPixel(pixels, newPixels, degree45, center, texture_rect, z, r, format, transitionFrames);
+			perPixel(pixels, newPixels, degree45, center, texture_rect, z, r, format, transitionFrames, computedValue);
 		}
 	}
 	// cout << rstart << endl;
@@ -209,12 +260,15 @@ int getValue(Enemy* f) {
 	return getValue((Fightable*) f);
 }
 
-SDL_Texture* threadCircularApplication(RenderWindow& window, Uint32*& newPixels, SDL_Texture*& window_texture, SDL_Surface*& window_surface, int& transitionFrames, SDL_Rect& texture_rect, const int& THREADS, void (*perPixel)(Uint32*, Uint32*, vector<pair<int, int>>&, pair<int, int>&, SDL_Rect, int, int, SDL_PixelFormat*, int)) {
+inline SDL_Texture* threadCircularApplication(RenderWindow& window, Uint32*& newPixels, SDL_Texture*& window_texture, SDL_Surface*& window_surface, int& transitionFrames, SDL_Rect& texture_rect, const int& THREADS, int rstart, double mod, void (*perPixel)(Uint32*, Uint32*, vector<pair<int, int>>&, pair<int, int>&, SDL_Rect&, int, int, SDL_PixelFormat*, int, double), double (*compute)(int, vector<pair<int, int>>&, int r, SDL_Rect&)) {
 	Uint32* pixels;
 	int pitch;
 
 	if (window_texture == nullptr) {
-		window_surface = SDL_GetWindowSurface(window.window);
+		SDL_Surface* temp_window_surface = SDL_GetWindowSurface(window.window);
+		window_surface = SDL_ConvertSurfaceFormat(temp_window_surface, SDL_PIXELFORMAT_RGBA8888, 0);
+		SDL_FreeSurface(temp_window_surface);
+
 		window_texture = SDL_CreateTextureFromSurface(window.renderer, window_surface);
 		texture_rect = {window.xOrigin, window.yOrigin, texture_rect.w, texture_rect.h};
 	}
@@ -233,14 +287,13 @@ SDL_Texture* threadCircularApplication(RenderWindow& window, Uint32*& newPixels,
 	// /*
 
 	thread threads[THREADS];
-	int rstart = 1;
 	int maxRadius = distanceFrom(texture_rect.w / 2, texture_rect.h / 2);
-	double mod = (maxRadius * (transitionFrames > 30 ? (60.0 - transitionFrames) / 30.0 : 1) + 1) / sqrt(THREADS);
+	mod = (maxRadius * mod + 1) / sqrt(THREADS);
 	for (int x = 0; x < THREADS; x++) {
 		// cout << "b <<<<<<< width: " << texture_rect.w << endl; 
 		int rend = ceil(mod * sqrt(x + 1)) + 1;
 		// circularScreenEdit(rstart, rend, texture_rect, transitionFrames, pixels, newPixels, maxRadius, window_surface->format, perPixel);
-		threads[x] = thread(circularScreenEdit, rstart, rend, texture_rect, transitionFrames, pixels, newPixels, maxRadius, window_surface->format, perPixel);
+		threads[x] = thread(circularScreenEdit, rstart, rend, texture_rect, transitionFrames, pixels, newPixels, maxRadius, window_surface->format, perPixel, compute);
 		// threads[x] = thread(test, rstart, rend, texture_rect);
 		// cout << "xstart: " << xstart << " xend: " << xend << endl;
 		rstart = rend;
@@ -451,7 +504,7 @@ int main(int argc, char *argv[]) {
 
 				// cout << "a <<<<<<< width: " << width << endl; 
 
-				SDL_Texture* trueDiagonalTexture = threadCircularApplication(window, newPixels, window_texture, window_surface, transitionFrames, texture_rect, THREADS, spiralPerPixel);
+				SDL_Texture* trueDiagonalTexture = threadCircularApplication(window, newPixels, window_texture, window_surface, transitionFrames, texture_rect, THREADS, 1, (transitionFrames > 30 ? (60.0 - transitionFrames) / 30.0 : 1), spiralPerPixel, movementCompute);
 				// SDL_Texture* trueDiagonalTexture = threadCircularApplication(window, newPixels, window_texture, window_surface, transitionFrames, texture_rect, THREADS);
 
 				auto end1 = chrono::steady_clock().now();
@@ -827,11 +880,33 @@ int main(int argc, char *argv[]) {
 
 			// cout << "player->x: " << player->x << " player->y: " << player->y << endl; 
 		}
-		if (sideScreenDarken != 0) {
-			// SDL_Texture* trueDiagonalTexture = threadCircularApplication(window, newPixels, window_texture, transitionFrames, blackPerPixel);
-			// window_texture = nullptr;		
-		}
 
+		if (sideScreenDarken != 0) {
+			auto start1 = chrono::steady_clock().now();
+
+			int width = (int) (window.WIDTH * window.scaleMultiplier);
+			int height = (int) (window.HEIGHT * window.scaleMultiplier);
+			SDL_Rect texture_rect = {0, 0, width, height};
+			Uint32* pixelsTemp = nullptr;
+
+			SDL_Surface* temp_surface = nullptr;
+			SDL_Texture* temp_texture = nullptr;
+			SDL_Texture* trueDiagonalTexture = threadCircularApplication(window, pixelsTemp, temp_texture, temp_surface, sideScreenDarken, texture_rect, THREADS, 1, 1, blackPerPixel, blackCompute);
+
+			window.clear();
+			SDL_RenderCopy(window.renderer, trueDiagonalTexture, NULL, &texture_rect);
+
+			SDL_DestroyTexture(temp_texture);
+			SDL_DestroyTexture(trueDiagonalTexture);
+			SDL_FreeSurface(temp_surface);
+			delete pixelsTemp;
+			pixelsTemp = nullptr;
+
+			auto end1 = chrono::steady_clock().now();
+			chrono::duration<double> frameDone = end1 - start1;
+			double millis = 1000 * frameDone.count();
+			cout << "darkness: " << millis << endl;
+		}
 
 		// cout << "predisplay\n";
 		window.display();

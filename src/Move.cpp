@@ -18,8 +18,8 @@ bool Move::getHitting(Fightable* attacker, Fightable* defender) {
 
 bool Move::getCrit(Fightable* attacker) {
 	double actualCritChance = increase(0.04 * attacker->stats.critchancebonus, attacker->stats.luck / 2000.0);
-	return random() < actualCritChance;
-	// return true;
+	// return random() < actualCritChance;
+	return true;
 }
 
 
