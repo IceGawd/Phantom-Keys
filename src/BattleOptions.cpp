@@ -108,7 +108,8 @@ void boDown(vector<void*> passingArgument) {
 
 void boSelect(vector<void*> passingArgument) {
 	BattleOptions* bo = (BattleOptions*) (passingArgument[0]);
-	bo->pm->moveEntered = bo->pm->moves.at(bo->selection);
+	Move* move = (Move*) (bo->pm->moves.at(bo->selection));
+	bo->pm->moveEntered = move;
 	bo->options.clear();
 }
 

@@ -1,7 +1,7 @@
 #include "Move.hpp"
 #include "TextObject.hpp"
 
-Move::Move(string n, float d, int m, bool p, bool se, int a, vector<Tag> t, vector<KeyFrame> k, bool tet, int h) : ap(a), name(n), physical(p), damage(d), mana(m), selectEnemy(se), tags(t), animation(k), targetEnemyTeam(tet), hits(h) {
+Move::Move(string n, float d, int m, bool p, bool se, int a, vector<Tag> t, vector<KeyFrame> k, vector<pair<int, NoteType>> sn, bool tet, int h) : ap(a), name(n), physical(p), damage(d), mana(m), selectEnemy(se), tags(t), animation(k), targetEnemyTeam(tet), hits(h), stingerNotes(sn) {
 
 }
 
@@ -13,13 +13,14 @@ bool Move::getHitting(Fightable* attacker, Fightable* defender) {
 	double luckPercent = 0.6 * basePercent + 0.4 * pow(0.5 + (attacker->stats.luck - defender->stats.luck) / 4000.0, 1.5); // -1 to 1
 
 	double percent = 0.15 * luckPercent + 0.85; // 0.7 to 1
-	return random() < percent;
+	// return random() < percent;
+	return random() < 0.5;
 }
 
 bool Move::getCrit(Fightable* attacker) {
 	double actualCritChance = increase(0.04 * attacker->stats.critchancebonus, attacker->stats.luck / 2000.0);
 	// return random() < actualCritChance;
-	return true;
+	return random() < 0.5;
 }
 
 

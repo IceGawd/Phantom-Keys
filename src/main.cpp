@@ -4,12 +4,14 @@
 #include "BattleOptions.hpp"
 #include "Selector.hpp"
 #include "HealthBar.hpp"
+#include "RhythmNote.hpp"
 #include "mingw.thread.h"
 
-#include <chrono>
 #include <queue>
 
 using namespace std;
+
+const double DARKEDGE = 0.5;
 
 float atanLookup(vector<void*> vv) {
 	RenderWindow* window = (RenderWindow*) vv[0];
@@ -260,7 +262,70 @@ int getValue(Enemy* f) {
 	return getValue((Fightable*) f);
 }
 
-inline SDL_Texture* threadCircularApplication(RenderWindow& window, Uint32*& newPixels, SDL_Texture*& window_texture, SDL_Surface*& window_surface, int& transitionFrames, SDL_Rect& texture_rect, const int& THREADS, int rstart, double mod, void (*perPixel)(Uint32*, Uint32*, vector<pair<int, int>>&, pair<int, int>&, SDL_Rect&, int, int, SDL_PixelFormat*, int, double), double (*compute)(int, vector<pair<int, int>>&, int r, SDL_Rect&)) {
+// /*
+void rhythmPress(vector<RhythmNote*>* notes, float* howGoodYouDoIt, float maxGoodness, NoteType nt) {
+	// lol check if correct button pressed
+	// cout << "maxGoodness: " << maxGoodness << endl;
+	// cout << "howGoodYouDoIt: " << *howGoodYouDoIt << endl;
+	for (int x = 0; x < notes->size(); x++) {
+		RhythmNote* rn = notes->at(x);
+		if (rn->nt == nt) {
+			float ratio = 1 - (1.0 * abs(rn->x - RhythmNote::NOTEX) / RhythmNote::KEYSIZE);
+			cout << ratio << endl;
+			// if (abs(notes->at(x)->x - RhythmNote::NOTEX) < RhythmNote::KEYSIZE) {
+			if (ratio > 0) {
+				*howGoodYouDoIt += ratio * maxGoodness;
+				delete notes->at(x);
+				notes->erase(notes->begin() + x);
+				return;
+			}
+		}
+	}
+	*howGoodYouDoIt -= maxGoodness / 2;
+}
+
+void rhythmPressUp(vector<void*> passingArgument) {
+	rhythmPress((vector<RhythmNote*>*) passingArgument[0], (float*) passingArgument[1], *((float*) passingArgument[2]), UP);
+}
+void rhythmPressLeft(vector<void*> passingArgument) {
+	rhythmPress((vector<RhythmNote*>*) passingArgument[0], (float*) passingArgument[1], *((float*) passingArgument[2]), LEFT);
+}
+void rhythmPressRight(vector<void*> passingArgument) {
+	rhythmPress((vector<RhythmNote*>*) passingArgument[0], (float*) passingArgument[1], *((float*) passingArgument[2]), RIGHT);
+}
+void rhythmPressDown(vector<void*> passingArgument) {
+	rhythmPress((vector<RhythmNote*>*) passingArgument[0], (float*) passingArgument[1], *((float*) passingArgument[2]), DOWN);
+}
+// */
+
+/*
+void rhythmPress(vector<RhythmNote*>* notes, float* howGoodYouDoIt, float maxGoodness, NoteType nt) {
+	for (int x = 0; x < notes->size(); x++) {
+		int ratio = 1 - abs(notes->at(x)->x - RhythmNote::NOTEX) / RhythmNote::KEYSIZE;
+		if (ratio > 0) {
+			// (*howGoodYouDoIt) += ratio * maxGoodness;
+			notes->erase(notes->begin() + x);
+			return;
+		}
+	}
+	// (*howGoodYouDoIt) -= maxGoodness;
+}
+
+void rhythmPressUp(vector<void*> passingArgument) {
+	rhythmPress((vector<RhythmNote*>*) passingArgument[0], UP);
+}
+void rhythmPressLeft(vector<void*> passingArgument) {
+	rhythmPress((vector<RhythmNote*>*) passingArgument[0], LEFT);
+}
+void rhythmPressRight(vector<void*> passingArgument) {
+	rhythmPress((vector<RhythmNote*>*) passingArgument[0], RIGHT);
+}
+void rhythmPressDown(vector<void*> passingArgument) {
+	rhythmPress((vector<RhythmNote*>*) passingArgument[0], DOWN);
+}
+*/
+
+inline SDL_Texture* threadCircularApplication(RenderWindow& window, Uint32*& newPixels, SDL_Texture*& window_texture, SDL_Surface*& window_surface, int& transitionFrames, SDL_Rect& texture_rect, const int& THREADS, int start, double mod, void (*perPixel)(Uint32*, Uint32*, vector<pair<int, int>>&, pair<int, int>&, SDL_Rect&, int, int, SDL_PixelFormat*, int, double), double (*compute)(int, vector<pair<int, int>>&, int r, SDL_Rect&)) {
 	Uint32* pixels;
 	int pitch;
 
@@ -289,9 +354,10 @@ inline SDL_Texture* threadCircularApplication(RenderWindow& window, Uint32*& new
 	thread threads[THREADS];
 	int maxRadius = distanceFrom(texture_rect.w / 2, texture_rect.h / 2);
 	mod = (maxRadius * mod + 1) / sqrt(THREADS);
+	int rstart = start;
 	for (int x = 0; x < THREADS; x++) {
 		// cout << "b <<<<<<< width: " << texture_rect.w << endl; 
-		int rend = ceil(mod * sqrt(x + 1)) + 1;
+		int rend = ceil(mod * sqrt(x + 1)) + start;
 		// circularScreenEdit(rstart, rend, texture_rect, transitionFrames, pixels, newPixels, maxRadius, window_surface->format, perPixel);
 		threads[x] = thread(circularScreenEdit, rstart, rend, texture_rect, transitionFrames, pixels, newPixels, maxRadius, window_surface->format, perPixel, compute);
 		// threads[x] = thread(test, rstart, rend, texture_rect);
@@ -311,6 +377,7 @@ inline SDL_Texture* threadCircularApplication(RenderWindow& window, Uint32*& new
 
 int main(int argc, char *argv[]) {
 	const int FPS = 60;
+
 	int fastForward = 1;
 	SDL_Event event;
 	bool gameRunning = true;
@@ -345,7 +412,8 @@ int main(int argc, char *argv[]) {
 				KeyFrame(12, "swords", 0, -100, 0, INFRONTENEMY, LINEAR, true, 9), 
 				KeyFrame(20, "battleidle", 0, -100, 0, INFRONTENEMY, LINEAR), 
 				KeyFrame(35, "overworld", 3, 0, 0, STARTINGCOORDS, LINEAR)
-			}
+			}, 
+			{}
 		)}, 
 		{"Ram", new Move("Ram", 30, 0, true, false, 2, {BLUDGEONING, FORWARD}, 
 			{
@@ -355,7 +423,8 @@ int main(int argc, char *argv[]) {
 				KeyFrame(12, "swords", 0, -100, 0, INFRONTENEMY, LINEAR, true, 9), 
 				KeyFrame(20, "battleidle", 0, -100, 0, INFRONTENEMY, LINEAR), 
 				KeyFrame(35, "overworld", 3, 0, 0, STARTINGCOORDS, LINEAR)
-			}
+			}, 
+			{}
 		)}, 
 		{"16th Notes", new Move("16th Notes", 10, 25, false, false, 2, {FORCE, FORWARD}, 
 			{
@@ -365,6 +434,24 @@ int main(int argc, char *argv[]) {
 				KeyFrame(12, "swords", 0, -100, 0, INFRONTENEMY, LINEAR, true, 9), 
 				KeyFrame(20, "battleidle", 0, -100, 0, INFRONTENEMY, LINEAR), 
 				KeyFrame(35, "overworld", 3, 0, 0, STARTINGCOORDS, LINEAR)
+			}, 
+			{
+				{0, UP}, 
+				{5, UP}, 
+				{10, UP}, 
+				{15, UP}, 
+				{20, DOWN}, 
+				{25, DOWN}, 
+				{30, DOWN}, 
+				{35, DOWN}, 
+				{40, LEFT}, 
+				{45, RIGHT}, 
+				{50, LEFT}, 
+				{55, RIGHT}, 
+				{60, UP}, 
+				{65, LEFT}, 
+				{70, DOWN}, 
+				{75, RIGHT}, 
 			}
 		, true, 4)}, 
 		{"Vibrato", new Move("Vibrato", 20, 10, false, true, 1, {VIBRATING}, 
@@ -375,6 +462,16 @@ int main(int argc, char *argv[]) {
 				KeyFrame(12, "swords", 0, -100, 0, INFRONTENEMY, LINEAR, true, 9), 
 				KeyFrame(20, "battleidle", 0, -100, 0, INFRONTENEMY, LINEAR), 
 				KeyFrame(35, "overworld", 3, 0, 0, STARTINGCOORDS, LINEAR)
+			}, 
+			{
+				{0, UP}, 
+				{10, LEFT}, 
+				{20, DOWN}, 
+				{30, RIGHT}, 
+				{60, RIGHT}, 
+				{70, DOWN}, 
+				{80, LEFT}, 
+				{90, UP}, 
 			}
 		)}
 	};
@@ -403,6 +500,13 @@ int main(int argc, char *argv[]) {
 	Player* player = new Player(&window, {moves.find("Scratch")->second, moves.find("Ram")->second, moves.find("16th Notes")->second, moves.find("Vibrato")->second});
 	vector<GameObject*> overworldEntities;
 	vector<GameObject*> battleEntities;
+	vector<Entity*> emptyKeys;
+	vector<RhythmNote*> notes;
+
+	emptyKeys.push_back(new Entity(RhythmNote::NOTEX, RenderWindow::HEIGHT - RhythmNote::KEYSIZE - RhythmNote::NOTEY, window.loadTexture("res/gfx/Battle/RhythmUI/downhole.png"), RhythmNote::KEYSIZE, RhythmNote::KEYSIZE));
+	emptyKeys.push_back(new Entity(RhythmNote::NOTEX, RenderWindow::HEIGHT - 2 * RhythmNote::KEYSIZE - RhythmNote::NOTEY, window.loadTexture("res/gfx/Battle/RhythmUI/lefthole.png"), RhythmNote::KEYSIZE, RhythmNote::KEYSIZE));
+	emptyKeys.push_back(new Entity(RhythmNote::NOTEX, RenderWindow::HEIGHT - 3 * RhythmNote::KEYSIZE - RhythmNote::NOTEY, window.loadTexture("res/gfx/Battle/RhythmUI/righthole.png"), RhythmNote::KEYSIZE, RhythmNote::KEYSIZE));
+	emptyKeys.push_back(new Entity(RhythmNote::NOTEX, RenderWindow::HEIGHT - 4 * RhythmNote::KEYSIZE - RhythmNote::NOTEY, window.loadTexture("res/gfx/Battle/RhythmUI/uphole.png"), RhythmNote::KEYSIZE, RhythmNote::KEYSIZE));
 
 	overworldEntities.push_back(player); // PLAYER WAS DRAWN IN AREA RENDER (NOW EVERYTHING IS DRAWN THERE)
 	window.playerTeam.push_back(player);
@@ -416,7 +520,7 @@ int main(int argc, char *argv[]) {
 	TextSequence* ts = new TextSequence({
 		TextBox(window, {
 			TextSlice(window, "Suck it samurai game Calder plays. ", {125, 125, 125, 255}, {DIAGONAL_RAINBOW}), 
-			TextSlice(window, "That game can  suck my nuts. ", {255, 0, 255, 255}, {DIAGONAL_RAINBOW, WAVEY}), 
+			TextSlice(window, "That game can suck my nuts. ", {255, 0, 255, 255}, {DIAGONAL_RAINBOW, WAVEY}), 
 			TextSlice(window, "JK JK Its really cool. "), 
 		}), 
 		TextBox(window, {
@@ -479,8 +583,7 @@ int main(int argc, char *argv[]) {
 	SDL_Texture* window_texture = nullptr;
 	SDL_Surface* window_surface = nullptr;
 	Uint32* newPixels = nullptr;
-	const int THREADS = 16;
-	int PIXELGROUP = 1;
+	const int THREADS = 50;
 
 	double delay = 0;
 	double normalDelay = 0;
@@ -489,6 +592,11 @@ int main(int argc, char *argv[]) {
 	bool crit = true;
 
 	int sideScreenDarken = 0;
+
+	float howGoodYouDoIt = 0;
+	float maxGoodness = 0;
+
+	chrono::steady_clock::time_point rhythmStart;
 
 	while (gameRunning) {
 		auto start = chrono::steady_clock().now();
@@ -511,7 +619,7 @@ int main(int argc, char *argv[]) {
 				chrono::duration<double> frameDone = end1 - start1;
 				// cout << "step1: " << 1000 * frameDone.count() << endl;
 				double millis = 1000 * frameDone.count();
-				cout << "threads: " << millis << endl;
+				// cout << "threads: " << millis << endl;
 
 
 				// cout << "prerender\n";
@@ -770,6 +878,57 @@ int main(int argc, char *argv[]) {
 					}
 				}
 
+				// TODO: Maybe poll for keys for higher responsiveness in laggy environments?
+				if (window.turnstate == RHYTHM) {
+					for (Entity* e : emptyKeys) {
+						window.render(e);
+					}
+					if (notes.empty()) {
+						if (maxGoodness == 0) {
+							rhythmStart = chrono::steady_clock().now();
+							for (pair<int, NoteType> pint : myTurn->moveEntered->stingerNotes) {
+								// cout << "NOTE MADE\n";
+								notes.push_back(new RhythmNote(&window, pint, &rhythmStart));
+							}
+							maxGoodness = 1.0 / notes.size();
+						}
+						else {
+							cout << "SCORE: " << howGoodYouDoIt << endl;
+							window.turnstate = ANIMATION;
+							maxGoodness = 0;
+							howGoodYouDoIt = 0;
+						}
+					}
+
+					// cout << "maxGoodness: " << maxGoodness << endl;
+
+					// /*
+					arrowChange(&window, window.cc.up, &player->input.up, rhythmPressUp, {&notes, &howGoodYouDoIt, &maxGoodness});
+					arrowChange(&window, window.cc.left, &player->input.left, rhythmPressLeft, {&notes, &howGoodYouDoIt, &maxGoodness});
+					arrowChange(&window, window.cc.right, &player->input.right, rhythmPressRight, {&notes, &howGoodYouDoIt, &maxGoodness});
+					arrowChange(&window, window.cc.down, &player->input.down, rhythmPressDown, {&notes, &howGoodYouDoIt, &maxGoodness});
+					// */
+
+					/*
+					arrowChange(&window, window.cc.up, &player->input.up, rhythmPressUp, {&notes});
+					arrowChange(&window, window.cc.left, &player->input.left, rhythmPressLeft, {&notes});
+					arrowChange(&window, window.cc.right, &player->input.right, rhythmPressRight, {&notes});
+					arrowChange(&window, window.cc.down, &player->input.down, rhythmPressDown, {&notes});
+					*/
+
+					for (int x = 0; x < notes.size(); x++) {
+						RhythmNote* rn = notes.at(x);
+						rn->draw(&window, world, battleEntities);
+						if (rn->x + RhythmNote::KEYSIZE < 0) {
+							howGoodYouDoIt -= maxGoodness / 2;
+
+							delete notes.at(x);
+							notes.erase(notes.begin() + x);
+							x--;
+						}
+					}
+				}
+
 
 				for (int x = 0; x < battleEntities.size(); x++) {
 					// cout << "battleEntities\n";
@@ -787,14 +946,16 @@ int main(int argc, char *argv[]) {
 					selector->snap = true;
 					bool fighterLoss = true;
 					bool fighterWin = true;
+					// /*
 					for (Fightable* f : window.playerTeam) {
-						cout << "Fighter hp: " << f->stats.hp << endl;
+						// cout << "Fighter hp: " << f->stats.hp << endl;
 						fighterLoss = fighterLoss && (f->stats.hp <= 0);
 					}
 					for (Enemy* e : window.enemyTeam) {
-						cout << "Enemy hp: " << e->stats.hp << endl;						
+						// cout << "Enemy hp: " << e->stats.hp << endl;						
 						fighterWin = fighterWin && (e->stats.hp <= 0);
 					}
+					// */
 					if (fighterLoss) {
 						cout << "YOU LOSE!\n";
 						gameRunning = false;
@@ -881,6 +1042,7 @@ int main(int argc, char *argv[]) {
 			// cout << "player->x: " << player->x << " player->y: " << player->y << endl; 
 		}
 
+		// TODO: FIX DARKNESS LAG (LOOK AT HOW RENDERWINDOW DRAWCIRCLE WORKS TO FIX)
 		if (sideScreenDarken != 0) {
 			auto start1 = chrono::steady_clock().now();
 
@@ -905,7 +1067,7 @@ int main(int argc, char *argv[]) {
 			auto end1 = chrono::steady_clock().now();
 			chrono::duration<double> frameDone = end1 - start1;
 			double millis = 1000 * frameDone.count();
-			cout << "darkness: " << millis << endl;
+			// cout << "darkness: " << millis << endl;
 		}
 
 		// cout << "predisplay\n";

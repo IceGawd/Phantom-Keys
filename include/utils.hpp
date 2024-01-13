@@ -47,6 +47,7 @@ enum Turnstate {
 	CHOOSEOPTION, 
 	CHOOSEMOVE, 
 	SELECTENEMY, 
+	RHYTHM, 
 	ANIMATION, 
 	DAMAGE, 
 	ENDTURN
@@ -65,4 +66,11 @@ enum Tag {
 	DARK, 
 	LIGHT, 
 	VIBRATING, 
+};
+
+enum NoteType {
+	UP, 
+	DOWN, 
+	LEFT, 
+	RIGHT
 };
