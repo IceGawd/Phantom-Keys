@@ -274,14 +274,14 @@ void rhythmPress(vector<RhythmNote*>* notes, float* howGoodYouDoIt, float maxGoo
 			cout << ratio << endl;
 			// if (abs(notes->at(x)->x - RhythmNote::NOTEX) < RhythmNote::KEYSIZE) {
 			if (ratio > 0) {
-				*howGoodYouDoIt += ratio * maxGoodness;
+				*howGoodYouDoIt += sqrt(ratio) * maxGoodness;
 				delete notes->at(x);
 				notes->erase(notes->begin() + x);
 				return;
 			}
 		}
 	}
-	*howGoodYouDoIt -= maxGoodness / 2;
+	*howGoodYouDoIt -= maxGoodness / 3;
 }
 
 void rhythmPressUp(vector<void*> passingArgument) {
@@ -403,6 +403,12 @@ int main(int argc, char *argv[]) {
 		{"Trumpet", getChunks("Trumpet")}, 
 	};
 
+	map<string, Mix_Chunk*> stingers = {
+		{"16th Notes", Mix_LoadWAV("res/Sounds/SFX/STINGERS/LuckCrescendo.wav")}, 
+		{"Vibrato", Mix_LoadWAV("res/Sounds/SFX/STINGERS/JazzLick.wav")}, 
+	};
+
+
 	map<string, Move*> moves = {
 		{"Scratch", new Move("Scratch", 10, 0, true, true, 1, {SLASHING}, 
 			{
@@ -436,22 +442,13 @@ int main(int argc, char *argv[]) {
 				KeyFrame(35, "overworld", 3, 0, 0, STARTINGCOORDS, LINEAR)
 			}, 
 			{
-				{0, UP}, 
-				{5, UP}, 
-				{10, UP}, 
-				{15, UP}, 
-				{20, DOWN}, 
-				{25, DOWN}, 
-				{30, DOWN}, 
-				{35, DOWN}, 
-				{40, LEFT}, 
-				{45, RIGHT}, 
-				{50, LEFT}, 
-				{55, RIGHT}, 
-				{60, UP}, 
-				{65, LEFT}, 
-				{70, DOWN}, 
-				{75, RIGHT}, 
+				{0, LEFT}, 
+				{22, LEFT}, 
+				{42, DOWN}, 
+				{62, DOWN}, 
+				{84, UP}, 
+				{98, RIGHT}, 
+				{112, DOWN}, 
 			}
 		, true, 4)}, 
 		{"Vibrato", new Move("Vibrato", 20, 10, false, true, 1, {VIBRATING}, 
@@ -475,6 +472,25 @@ int main(int argc, char *argv[]) {
 			}
 		)}
 	};
+
+	/*
+		{0, UP}, 
+		{5, UP}, 
+		{10, UP}, 
+		{15, UP}, 
+		{20, DOWN}, 
+		{25, DOWN}, 
+		{30, DOWN}, 
+		{35, DOWN}, 
+		{40, LEFT}, 
+		{45, RIGHT}, 
+		{50, LEFT}, 
+		{55, RIGHT}, 
+		{60, UP}, 
+		{65, LEFT}, 
+		{70, DOWN}, 
+		{75, RIGHT}, 
+	*/
 
 	for (auto it = moves.begin(); it != moves.end(); ++it) {
 		it->second->animation.insert(it->second->animation.begin(), KeyFrame(20, "battleidle", 0, 0, 0, STARTINGCOORDS, LINEAR, false));
@@ -595,6 +611,7 @@ int main(int argc, char *argv[]) {
 
 	float howGoodYouDoIt = 0;
 	float maxGoodness = 0;
+	bool stingerStart = false;
 
 	chrono::steady_clock::time_point rhythmStart;
 
@@ -883,6 +900,7 @@ int main(int argc, char *argv[]) {
 					for (Entity* e : emptyKeys) {
 						window.render(e);
 					}
+
 					if (notes.empty()) {
 						if (maxGoodness == 0) {
 							rhythmStart = chrono::steady_clock().now();
@@ -897,8 +915,16 @@ int main(int argc, char *argv[]) {
 							window.turnstate = ANIMATION;
 							maxGoodness = 0;
 							howGoodYouDoIt = 0;
+							stingerStart = false;
 						}
 					}
+					else if (!stingerStart && round(((chrono::duration<double>) (chrono::steady_clock().now() - rhythmStart)).count() * FPS) > RhythmNote::FRAMESADVANCE) {
+						cout << "started\n";
+						stingerStart = true;
+						Mix_PlayChannel(-1, stingers[myTurn->moveEntered->name], 0);
+					}
+
+					// cout << "FRAMES ESSTITMESR: " << round(((chrono::duration<double>) (chrono::steady_clock().now() - rhythmStart)).count() * FPS) << endl;
 
 					// cout << "maxGoodness: " << maxGoodness << endl;
 
@@ -1084,6 +1110,8 @@ int main(int argc, char *argv[]) {
 			SDL_Delay(delay);
 			delay = 0;
 		}
+		// cout << "THIS FRAME TOOK: " << round(((chrono::duration<double>) (chrono::steady_clock().now() - start)).count() * 1000) << endl;
+
 		// cout << "delay: " << delay << endl;
 		// */
 	}

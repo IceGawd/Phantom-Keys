@@ -33,16 +33,24 @@ RhythmNote::RhythmNote(RenderWindow* window, pair<int, NoteType> note, chrono::s
 }
 
 bool RhythmNote::draw(RenderWindow* window, World* world, vector<GameObject*>& entities) {
+	// /*
 	auto end = chrono::steady_clock().now();
 	chrono::duration<double> len = end - *start;
 	// cout << "count: " << len.count() << endl;
-	double frameDone = 50.0 * len.count() / 3.0;
-	double frameDist = frame + FRAMESADVANCE - frameDone; // POTENTIAL ERROR: ASSUMES 60 FPS
-	cout << "frameDist: " << frameDist << endl;
+	double frameDone = len.count() * 60.0; // POTENTIAL ERROR: ASSUMES 60 FPS
+	double frameDist = frame + FRAMESADVANCE - frameDone;
+	// cout << "frameDist1: " << frameDist << endl;
+	// */
+
+	/*
+	frameDist = frame + FRAMESADVANCE - curFrames;
+	cout << "frameDist2: " << frameDist << endl;
+	curFrames++;
+	*/
 
 	x = NOTEX + frameDist * SPEED;
 
-	cout << "x: " << x << endl;
+	// cout << "x: " << x << endl;
 
 	if (x > 0 && x < RenderWindow::WIDTH) {
 		setRect();
