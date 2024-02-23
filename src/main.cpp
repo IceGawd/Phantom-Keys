@@ -113,14 +113,12 @@ double movementCompute(int transitionFrames, vector<pair<int, int>>& degree45, i
 }
 
 double blackCompute(int transitionFrames, vector<pair<int, int>>& degree45, int r, SDL_Rect& texture_rect) {
-	return 1 - (0.1 * transitionFrames * r / (texture_rect.w + texture_rect.h));
+	return transitionFrames * r / (texture_rect.w + texture_rect.h);
 }
 
 
 void blackPerPixel(Uint32* pixels, Uint32* newPixels, vector<pair<int, int>>& degree45, pair<int, int>& center, SDL_Rect& texture_rect, int z, int r, SDL_PixelFormat* format, int transitionFrames, double mult) {
-	if (mult >= 1) {
-		return;
-	}
+	int shift = (int) mult;
 
 	pair<int, int> start = flippedIndex(z, degree45) + center;
 
@@ -160,13 +158,9 @@ void blackPerPixel(Uint32* pixels, Uint32* newPixels, vector<pair<int, int>>& de
 		}
 		*/
 		
-		if (mult < 0) {
-			mult = 0;
-		}
-
-		red *= mult;
-		green *= mult;
-		blue *= mult;
+		red >>= shift;
+		green >>= shift;
+		blue >>= shift;
 		// */
 		pixel = (((((red << 8) + green) << 8) + blue) << 8) + alpha;
 		// cout << "pixel: " << (int) pixel << endl;
@@ -816,6 +810,9 @@ int main(int argc, char *argv[]) {
 				}
 
 				if (window.turnstate == ANIMATION) {
+					if (!playerTurn) {
+						howGoodYouDoIt = 0.8;
+					}
 					if (transitionFrames == 0) {
 						hitting = myTurn->moveEntered->getHitting(myTurn, myTurn->target);
 						crit = myTurn->moveEntered->getCrit(myTurn);
@@ -842,7 +839,7 @@ int main(int argc, char *argv[]) {
 								// cout << "NOW crit: " << crit << endl;
 								if (curFrames == kf.framedelay) {
 									// cout << "DAMAGE\n";
-									myTurn->moveEntered->dealDamage(&window, myTurn, myTurn->target, battleEntities, hitting, crit);
+									myTurn->moveEntered->dealDamage(&window, myTurn, myTurn->target, battleEntities, hitting, crit, howGoodYouDoIt);
 								}
 								if (crit) {
 									// cout << "CRIT kf.framedelay: " << kf.framedelay << endl;
@@ -914,7 +911,6 @@ int main(int argc, char *argv[]) {
 							cout << "SCORE: " << howGoodYouDoIt << endl;
 							window.turnstate = ANIMATION;
 							maxGoodness = 0;
-							howGoodYouDoIt = 0;
 							stingerStart = false;
 						}
 					}

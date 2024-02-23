@@ -26,5 +26,5 @@ struct Move {
 
 	bool getHitting(Fightable* attacker, Fightable* defender);
 	bool getCrit(Fightable* attacker);
-	virtual void dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defender, vector<GameObject*>& battleEntities, bool hitting, bool crit);
+	virtual void dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defender, vector<GameObject*>& battleEntities, bool hitting, bool crit, float howGoodYouDoIt);
 };

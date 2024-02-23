@@ -24,7 +24,7 @@ bool Move::getCrit(Fightable* attacker) {
 }
 
 
-void Move::dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defender, vector<GameObject*>& battleEntities, bool hitting, bool crit) {
+void Move::dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defender, vector<GameObject*>& battleEntities, bool hitting, bool crit, float howGoodYouDoIt) {
 	window->revert = ENDTURN;
 	cout << name << endl;
 	
@@ -32,7 +32,7 @@ void Move::dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defe
 	
 	if (hitting) {
 		double index = (weighted(window->playerTeam) - weighted(window->enemyTeam) + 196) / 1571;
-		double bonus = 0.2;
+		double bonus = howGoodYouDoIt;
 		int critAccountedDamage = damage;
 		// crit = true;
 		if (crit) {
@@ -51,13 +51,15 @@ void Move::dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defe
 
 		int damagedone = (int) (rand(index * attacker->stats.rangebonus, mean * attacker->stats.damagebonus) * defender->stats.damagetaken + 1);
 		cout << "Damage done: " << damagedone << endl;
-		defender->stats.hp -= damagedone;
-		battleEntities.push_back(new TextObject(window, damagedone, defender, crit));
-		if (physical) { // Not true, ranged weapons dont recoil, ranged is technically physical
-			int recoil = (int) (critAccountedDamage * defender->stats.vitality / 9.0);
-			cout << "Recoil: " << recoil << endl;
-			attacker->stats.hp -= recoil;
-			battleEntities.push_back(new TextObject(window, recoil, attacker, crit));
+		if (damagedone > 0) {
+			defender->stats.hp -= damagedone;
+			battleEntities.push_back(new TextObject(window, damagedone, defender, crit));
+			if (physical) { // NOTE: Not true, ranged weapons dont recoil, ranged is technically physical
+				int recoil = (int) (damagedone * defender->stats.vitality / 9.0);
+				cout << "Recoil: " << recoil << endl;
+				attacker->stats.hp -= recoil;
+				battleEntities.push_back(new TextObject(window, recoil, attacker, crit));
+			}
 		}
 	}
 	else {
