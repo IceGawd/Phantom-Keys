@@ -1,0 +1,14 @@
+name: CI/CD Pipeline
+
+on: [push, pull_request]
+jobs: # the things being executed
+  generate-docs:
+    name: Generate Docs
+    runs-on: ubuntu-latest # which device on Github's server that you are running the Actions on
+    steps:
+      - name: Doxygen Action
+        uses: mattnotmitt/doxygen-action@1.9.8
+        with:
+          working-directory: 'src/'
+          doxyfile-path: 'docs/Doxygen'
+          enable-latex: true
