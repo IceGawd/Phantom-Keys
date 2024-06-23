@@ -9,6 +9,6 @@ jobs: # the things being executed
       - name: Doxygen Action
         uses: mattnotmitt/doxygen-action@1.9.8
         with:
-          working-directory: 'src'
-          doxyfile-path: 'docs/Doxygen'
+          working-directory: './src/'
+          doxyfile-path: './docs/Doxygen'
           enable-latex: true
