@@ -2,7 +2,7 @@ name: CI/CD Pipeline
 
 on: [push, pull_request]
 jobs: # the things being executed
-  generate-docs:
+  build:
     name: Generate Docs
     runs-on: ubuntu-latest # which device on Github's server that you are running the Actions on
     steps:
