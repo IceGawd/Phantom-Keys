@@ -6,7 +6,7 @@
 struct RhythmNote : public GameObject {
 	const static int KEYSIZE = 40;
 	const static int NOTEX = 200;
-	const static int FRAMESADVANCE = 120;
+	const static int FRAMESADVANCE = 60;
 	const static int NOTEY = 50;
 	constexpr static double SPEED = 1.0 * (RenderWindow::WIDTH - NOTEX) / FRAMESADVANCE;
 

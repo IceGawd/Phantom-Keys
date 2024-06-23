@@ -578,6 +578,7 @@ void Area::placePlayer(Player* player) {
 	}
 }
 
+// TODO: sigh... angled collision once again sucks so we gotta fix (out of bounds clip can occur)
 void Area::collision(RenderWindow& window, Collideable* player) {
 	const vector<Layer::Ptr>& layers = map->getLayers();
 

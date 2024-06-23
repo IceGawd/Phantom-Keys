@@ -32,7 +32,7 @@ void Move::dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defe
 	
 	if (hitting) {
 		double index = (weighted(window->playerTeam) - weighted(window->enemyTeam) + 196) / 1571;
-		double bonus = howGoodYouDoIt;
+		double bonus = howGoodYouDoIt / 4.0;
 		int critAccountedDamage = damage;
 		// crit = true;
 		if (crit) {
@@ -60,6 +60,9 @@ void Move::dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defe
 				attacker->stats.hp -= recoil;
 				battleEntities.push_back(new TextObject(window, recoil, attacker, crit));
 			}
+		}
+		else {
+			battleEntities.push_back(new TextObject(window, "NO DAMAGE!", attacker, {150, 150, 150}));
 		}
 	}
 	else {

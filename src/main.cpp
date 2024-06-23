@@ -116,7 +116,6 @@ double blackCompute(int transitionFrames, vector<pair<int, int>>& degree45, int 
 	return transitionFrames * r / (texture_rect.w + texture_rect.h);
 }
 
-
 void blackPerPixel(Uint32* pixels, Uint32* newPixels, vector<pair<int, int>>& degree45, pair<int, int>& center, SDL_Rect& texture_rect, int z, int r, SDL_PixelFormat* format, int transitionFrames, double mult) {
 	int shift = (int) mult;
 
@@ -261,6 +260,7 @@ void rhythmPress(vector<RhythmNote*>* notes, float* howGoodYouDoIt, float maxGoo
 	// lol check if correct button pressed
 	// cout << "maxGoodness: " << maxGoodness << endl;
 	// cout << "howGoodYouDoIt: " << *howGoodYouDoIt << endl;
+
 	for (int x = 0; x < notes->size(); x++) {
 		RhythmNote* rn = notes->at(x);
 		if (rn->nt == nt) {
@@ -291,33 +291,6 @@ void rhythmPressDown(vector<void*> passingArgument) {
 	rhythmPress((vector<RhythmNote*>*) passingArgument[0], (float*) passingArgument[1], *((float*) passingArgument[2]), DOWN);
 }
 // */
-
-/*
-void rhythmPress(vector<RhythmNote*>* notes, float* howGoodYouDoIt, float maxGoodness, NoteType nt) {
-	for (int x = 0; x < notes->size(); x++) {
-		int ratio = 1 - abs(notes->at(x)->x - RhythmNote::NOTEX) / RhythmNote::KEYSIZE;
-		if (ratio > 0) {
-			// (*howGoodYouDoIt) += ratio * maxGoodness;
-			notes->erase(notes->begin() + x);
-			return;
-		}
-	}
-	// (*howGoodYouDoIt) -= maxGoodness;
-}
-
-void rhythmPressUp(vector<void*> passingArgument) {
-	rhythmPress((vector<RhythmNote*>*) passingArgument[0], UP);
-}
-void rhythmPressLeft(vector<void*> passingArgument) {
-	rhythmPress((vector<RhythmNote*>*) passingArgument[0], LEFT);
-}
-void rhythmPressRight(vector<void*> passingArgument) {
-	rhythmPress((vector<RhythmNote*>*) passingArgument[0], RIGHT);
-}
-void rhythmPressDown(vector<void*> passingArgument) {
-	rhythmPress((vector<RhythmNote*>*) passingArgument[0], DOWN);
-}
-*/
 
 inline SDL_Texture* threadCircularApplication(RenderWindow& window, Uint32*& newPixels, SDL_Texture*& window_texture, SDL_Surface*& window_surface, int& transitionFrames, SDL_Rect& texture_rect, const int& THREADS, int start, double mod, void (*perPixel)(Uint32*, Uint32*, vector<pair<int, int>>&, pair<int, int>&, SDL_Rect&, int, int, SDL_PixelFormat*, int, double), double (*compute)(int, vector<pair<int, int>>&, int r, SDL_Rect&)) {
 	Uint32* pixels;
@@ -892,7 +865,8 @@ int main(int argc, char *argv[]) {
 					}
 				}
 
-				// TODO: Maybe poll for keys for higher responsiveness in laggy environments?
+				// TODO: Maybe poll for keys in seperate thread for higher responsiveness in laggy environments?
+				// TODO: Rhythm Game Text (miss, hit, etc.)
 				if (window.turnstate == RHYTHM) {
 					for (Entity* e : emptyKeys) {
 						window.render(e);
