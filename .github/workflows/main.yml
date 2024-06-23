@@ -6,5 +6,7 @@ jobs: # the things being executed
     name: Generate Docs
     runs-on: ubuntu-latest # which device on Github's server that you are running the Actions on
     steps:
-      - name: Doxygen Action
-        uses: mattnotmitt/doxygen-action@1.9.8
+    - name: "Doxygen"
+      run: |
+        sudo apt-get install -y doxygen
+        doxygen Doxyfile
