@@ -152,7 +152,7 @@ void processDirectory(const string& dirPath, ofstream& outFile) {
 }
 
 int main() {
-	ofstream outFile("docs.md");
+	ofstream outFile("README.md");
 	if (!outFile) {
 		cerr << "Failed to open output file." << endl;
 		return 1;
@@ -163,7 +163,7 @@ int main() {
 	processDirectory("src", outFile);
 
 	outFile.close();
-	cout << "Documentation generated in docs.md" << endl;
+	cout << "Documentation generated in README.md" << endl;
 
 	return 0;
 }
