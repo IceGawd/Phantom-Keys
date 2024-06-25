@@ -3,14 +3,29 @@
 #include "Enemy.hpp"
 #include "RenderWindow.hpp"
 
-float random(){
+/**
+ * The random function that is called in the entire code
+ * @return A random float from 0.0 to 1.0
+ */
+float random() {
 	return (float) rand() / RAND_MAX;
 }
 
+/**
+ * Gives a random number that follows a bell curve
+ * @param {std} The standard deviation for the bell curve
+ * @param {m} The mean of the bell curve
+ * @return A random number with mean m and standard deviation of std
+ */
 float rand(float std, float m) {
 	return m + std * invNorm(random());
 }
 
+/**
+ * Does the inverse normal of the given number (inverse normal takes a cdf and returns the z-value)
+ * @param {x} cdf of a standard normal distribution
+ * @return The z-value of x 
+ */
 float invNorm(float x) {
 	if (x < 0.5) {
 		return -RationalApproximation(sqrt(-2.0 * log(x)));
@@ -57,6 +72,7 @@ float quadratic(float a, float b, float c) {
 	return (-b + sqrt(b * b - 4 * a * c)) / (2 * a);
 }
 
+
 float increase(float initial, float percent) {
 	return initial + percent * (1 - initial);
 }
@@ -70,7 +86,7 @@ float angleFromCoords(float x, float y) {
 	return angleFromCoords(x, y, &literalAtan, {});
 }
 
-float angleFromCoords(float x, float y, float (*foo)(vector<void*> vv), vector<void*> bonus) {
+float angleFromCoords(float x, float y, float (*foo)(vector<void*>), vector<void*> bonus) {
 	float angle;
 	float val = y / x;
 	bonus.push_back(&val);

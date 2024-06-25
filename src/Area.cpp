@@ -28,6 +28,12 @@ Vector2f vectorFromAngle(float angle) {
 	return vec;	
 }
 
+/**
+ * Gets the minimum and maximum dot products of vec to every point in points
+ * @param {vec} A vector that you are finding the min/max of
+ * @param {points} The points that we are getting the dot products of
+ * @return A datatype that holds the min and max dotproducts
+ */
 MinMax getMinMax(Vector2f vec, const vector<Vector2f>& points) {
 	// vec.y *= -1;
 	MinMax answer;
@@ -42,6 +48,11 @@ MinMax getMinMax(Vector2f vec, const vector<Vector2f>& points) {
 	return answer;
 }
 
+/**
+ * Modifies anglesToCheck to add the angle associated with vec IF the angle doesnt already exist in anglesToCheck
+ * @param {vec} The vector we might add to anglesToCheck
+ * @param {points} A list of angles that will be modified
+ */
 void addUnique(Vector2f vec, vector<float>& anglesToCheck) {
 	if (vec.x != 0) {
 		float angle = M_PI / 2 - atan(vec.y / vec.x);
@@ -127,6 +138,11 @@ Area::Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes, str
 	// */
 }
 
+/**
+ * Tiles in Tiled can be diagonally flipped, which cannot be done with simple flips and rotations. This function finds which tiles get diagonally flipped and creates a new texutre that is the diagonally flipped version of it.
+ * @param {window} A renderwindow is used to create the diagonally flipped textures
+ * @param {layer} The layer with tiles
+ */
 void Area::diagonalTileFinder(RenderWindow& window, const Layer::Ptr& layer) {
 	auto area = map->getTileCount();
 	auto tileSize = map->getTileSize();

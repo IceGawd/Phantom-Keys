@@ -11,8 +11,14 @@
 
 using namespace std;
 
+// Unused constant used for darkening the screen
 const double DARKEDGE = 0.5;
 
+/**
+ * Unused function that executes an Inverse Tangent via table lookup using binary search. The table used to be stored in RenderWindow
+ * @param {vv} Vector of RenderWindow in index 0 and float that you are looking for in index 1
+ * @returns atan of vv[1]
+ */
 float atanLookup(vector<void*> vv) {
 	RenderWindow* window = (RenderWindow*) vv[0];
 	float x = *((float*) vv[1]);
@@ -49,6 +55,9 @@ float atanLookup(vector<void*> vv) {
 	return (1 - percent) * check.second + percent * prev.second;
 }
 
+/**
+ * I dont remember what this does, its something for spiral / darkness though
+ */
 inline pair<int, int> flippedIndex(int num, vector<pair<int, int>>& degree45, int subtract = 0) {
 	int actualNum = num % degree45.size();
 	int falseNum = (num - actualNum) / degree45.size();
@@ -172,7 +181,7 @@ void blackPerPixel(Uint32* pixels, Uint32* newPixels, vector<pair<int, int>>& de
 	}
 }
 
-void circularScreenEdit(int rstart, int rend, SDL_Rect texture_rect, int transitionFrames, Uint32* pixels, Uint32* newPixels, int maxRadius, SDL_PixelFormat* format, void (*perPixel)(Uint32*, Uint32*, vector<pair<int, int>>&, pair<int, int>&, SDL_Rect&, int, int, SDL_PixelFormat*, int, double), double (*compute)(int, vector<pair<int, int>>&, int r, SDL_Rect&)) {
+void circularScreenEdit(int rstart, int rend, SDL_Rect texture_rect, int transitionFrames, Uint32* pixels, Uint32* newPixels, int maxRadius, SDL_PixelFormat* format, void (*perPixel)(Uint32*,Uint32*,vector<pair<int, int>>&,pair<int, int>&,SDL_Rect&,int,int,SDL_PixelFormat*,int,double), double (*compute)(int, vector<pair<int, int>>&, int r, SDL_Rect&)) {
 	pair<int, int> center = {texture_rect.w / 2 + texture_rect.x, texture_rect.h / 2 + texture_rect.y};
 	/*
 	int centerx = texture_rect.w / 2 + texture_rect.x;
@@ -292,7 +301,7 @@ void rhythmPressDown(vector<void*> passingArgument) {
 }
 // */
 
-inline SDL_Texture* threadCircularApplication(RenderWindow& window, Uint32*& newPixels, SDL_Texture*& window_texture, SDL_Surface*& window_surface, int& transitionFrames, SDL_Rect& texture_rect, const int& THREADS, int start, double mod, void (*perPixel)(Uint32*, Uint32*, vector<pair<int, int>>&, pair<int, int>&, SDL_Rect&, int, int, SDL_PixelFormat*, int, double), double (*compute)(int, vector<pair<int, int>>&, int r, SDL_Rect&)) {
+inline SDL_Texture* threadCircularApplication(RenderWindow& window, Uint32*& newPixels, SDL_Texture*& window_texture, SDL_Surface*& window_surface, int& transitionFrames, SDL_Rect& texture_rect, const int& THREADS, int start, double mod, void (*perPixel)(Uint32*,Uint32*,vector<pair<int, int>>&,pair<int, int>&,SDL_Rect&,int,int,SDL_PixelFormat*,int,double), double (*compute)(int, vector<pair<int, int>>&, int r, SDL_Rect&)) {
 	Uint32* pixels;
 	int pitch;
 

@@ -2,6 +2,11 @@
 #include "RenderWindow.hpp"
 #include "utils.hpp"
 
+/**
+ * Creates a Selector
+ * @param {window} Window used to load the selector texture
+ * @return Selector
+ */
 Selector::Selector(RenderWindow& window) {
 	note = new Entity(0, 0, window.loadTexture("res/gfx/Battle/rotatingIndicator.png"));
 }
@@ -57,6 +62,11 @@ void Selector::render(RenderWindow* window, vector<GameObject*>& entities) {
 	}
 }
 
+/**
+ * Gets the selected enemy the cursor is hovering over
+ * @param {window} Window used to get the teams
+ * @return Fighter that is selected
+ */
 Fightable* Selector::getSelected(RenderWindow* window) {
 	if (enemyPoint) {
 		if (selection >= window->enemyTeam.size()) {
