@@ -76,7 +76,7 @@ void processFile(const string& filePath, ofstream& outFile) {
 				string args = line.substr(argStart + 1, argEnd - argStart - 1);
 
 				outFile << "| **Type** | **Variable Name** | **Description** | \n";
-
+				outFile << "| -------- | ----------------- | --------------- | \n";
 				while (args != "") {
 					int pos = args.find(", ");
 					if (pos == string::npos) {
