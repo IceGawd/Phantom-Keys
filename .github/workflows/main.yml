@@ -1,11 +1,10 @@
 name: CI/CD Pipeline
 
-on: [push, pull_request] 
-
+on: [push, pull_request]
 jobs: # the things being executed
-  build:  # the name of your status check
-    name: Lint Code Base
-    runs-on: windows-latest  # which device on Github's server that you are running the Actions on
+  build:
+    name: Generate Docs
+    runs-on: windows-latest # which device on Github's server that you are running the Actions on
     steps:
-      - name: "Documentation"
+    - name: "Run executable"
       run: ./iceDocsGenerator.exe

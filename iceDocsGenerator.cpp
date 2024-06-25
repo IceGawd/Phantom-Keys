@@ -26,6 +26,10 @@ void processFile(const string& filePath, ofstream& outFile) {
 	vector<pair<string, string>> params;
 
 	while (getline(file, line)) {
+		// NOT MY FILE
+		if (line.substr(0, 70) == "/*********************************************************************") {
+			return;
+		}
 		// cout << line << " [Comment: " << comment << "]\n";
 		if (comment) {
 			if (line.length() < 3) {
@@ -58,6 +62,13 @@ void processFile(const string& filePath, ofstream& outFile) {
 			comment = false;
 		}
 
+		int colon = getLastThing(line, ':');
+		int doubleColon = line.find("::");
+
+		if (colon != string::npos && colon != doubleColon + 1) {
+			line = line.substr(0, colon);
+		}
+
 		int argStart = line.find("(");
 		int argEnd = getLastThing(line, ')');
 
@@ -76,7 +87,7 @@ void processFile(const string& filePath, ofstream& outFile) {
 				string args = line.substr(argStart + 1, argEnd - argStart - 1);
 
 				outFile << "| **Type** | **Variable Name** | **Description** | \n";
-				outFile << "| -------- | ----------------- | --------------- | \n";
+				outFile << "| :------: | :---------------: | :-------------: | \n";
 				while (args != "") {
 					int pos = args.find(", ");
 					if (pos == string::npos) {
