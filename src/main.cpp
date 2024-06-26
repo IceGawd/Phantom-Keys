@@ -301,6 +301,9 @@ void rhythmPressDown(vector<void*> passingArgument) {
 }
 // */
 
+/**
+ * This whole thing does full screen visual effects such as darkening edges and spiralling pixels
+ */
 inline SDL_Texture* threadCircularApplication(RenderWindow& window, Uint32*& newPixels, SDL_Texture*& window_texture, SDL_Surface*& window_surface, int& transitionFrames, SDL_Rect& texture_rect, const int& THREADS, int start, double mod, void (*perPixel)(Uint32*,Uint32*,vector<pair<int, int>>&,pair<int, int>&,SDL_Rect&,int,int,SDL_PixelFormat*,int,double), double (*compute)(int, vector<pair<int, int>>&, int r, SDL_Rect&)) {
 	Uint32* pixels;
 	int pitch;

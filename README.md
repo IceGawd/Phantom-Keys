@@ -45,6 +45,7 @@
 
 
 ### getMinMax
+*Gets the minimum and maximum dot products of vec to every point in points*
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
 | Vector2f | vec | A vector that you are finding the min/max of |
@@ -54,6 +55,7 @@
 
 
 ### addUnique
+*Modifies anglesToCheck to add the angle associated with vec IF the angle doesnt already exist in anglesToCheck*
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
 | Vector2f | vec | The vector we might add to anglesToCheck |
@@ -74,10 +76,11 @@
 
 
 ### Area::diagonalTileFinder
+*Tiles in Tiled can be diagonally flipped, which cannot be done with simple flips and rotations. This function finds which tiles get diagonally flipped and creates a new texutre that is the diagonally flipped version of it.*
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
 | RenderWindow& | window | A renderwindow is used to create the diagonally flipped textures |
-| const | Layer: | N/A |
+| const Layer::Ptr& | layer | The layer with tiles |
 
 **Return Type:** void (N/A)
 
@@ -94,7 +97,8 @@
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
 | RenderWindow& | window | N/A |
-| const | Layer: | N/A |
+| const Layer::Ptr& | layer | N/A |
+| IntRect | intrect | N/A |
 
 **Return Type:** void (N/A)
 
@@ -102,7 +106,9 @@
 ### Area::subRender
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
-| const | Layer: | N/A |
+| const Layer::Ptr& | layer | N/A |
+| RenderWindow& | window | N/A |
+| IntRect | rect | N/A |
 
 **Return Type:** void (N/A)
 
@@ -694,6 +700,7 @@
 ## src/LayerGroup.cpp
 ## src/main.cpp
 ### atanLookup
+*Unused function that executes an Inverse Tangent via table lookup using binary search. The table used to be stored in RenderWindow*
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
 | vector<void*> | vv | Vector of RenderWindow in index 0 and float that you are looking for in index 1 |
@@ -702,6 +709,7 @@
 
 
 ### flippedIndex
+*I dont remember what this does, its something for spiral / darkness though*
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
 | int | num | N/A |
@@ -920,6 +928,7 @@
 
 
 ### threadCircularApplication
+*This whole thing does full screen visual effects such as darkening edges and spiralling pixels*
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
 | RenderWindow& | window | N/A |
@@ -1248,7 +1257,7 @@
 | RenderWindow* | window | N/A |
 |  | air<int | N/A |
 | NoteType> | note | N/A |
-|  | hrono::steady_clock: | N/A |
+| chrono::steady_clock::time_point* | s | N/A |
 
 **Return Type:**  (N/A)
 
@@ -1265,6 +1274,7 @@
 
 ## src/Selector.cpp
 ### Selector::Selector
+*Creates a Selector*
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
 | RenderWindow& | window | Window used to load the selector texture |
@@ -1282,6 +1292,7 @@
 
 
 ### Selector::getSelected
+*Gets the selected enemy the cursor is hovering over*
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
 | RenderWindow* | window | Window used to get the teams |
@@ -1562,6 +1573,7 @@
 ## src/Tileset.cpp
 ## src/utils.cpp
 ### random
+*The random function that is called in the entire code*
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
 
@@ -1569,6 +1581,7 @@
 
 
 ### rand
+*Gives a random number that follows a bell curve*
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
 | float | std | The standard deviation for the bell curve |

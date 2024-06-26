@@ -15,7 +15,7 @@ int getLastThing(string token, char lookFor) {
 	return 0;
 }
 
-// FIXME: pairs break the system because of ", "
+// FIXME: pairs break the system because of ", ".
 void processFile(const string& filePath, ofstream& outFile) {
 	ifstream file(filePath);
 	string line;
@@ -62,10 +62,9 @@ void processFile(const string& filePath, ofstream& outFile) {
 			comment = false;
 		}
 
-		int colon = getLastThing(line, ':');
-		int doubleColon = line.find("::");
+		int colon = line.find(" : ");
 
-		if (colon != string::npos && colon != doubleColon + 1) {
+		if (colon != string::npos) {
 			line = line.substr(0, colon);
 		}
 
@@ -83,6 +82,10 @@ void processFile(const string& filePath, ofstream& outFile) {
 			
 			if (functionName != "") {
 				outFile << "### " << functionName << endl;
+
+				if (currentComment != "") {
+					outFile << "*" << currentComment << "*" << endl;
+				}
 
 				string args = line.substr(argStart + 1, argEnd - argStart - 1);
 
