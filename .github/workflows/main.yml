@@ -1,6 +1,10 @@
 name: CI/CD Pipeline
 
 on: [push, pull_request]
+
+permissions:
+  contents: write
+
 jobs: # the things being executed
   build:
     name: Generate Docs
