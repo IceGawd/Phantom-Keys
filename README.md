@@ -94,6 +94,7 @@
 
 
 ### Area::renderLayer
+*Tiled maps have layers, this function renders a layer. *
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
 | RenderWindow& | window | N/A |
