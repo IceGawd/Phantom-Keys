@@ -264,7 +264,13 @@ int getValue(Enemy* f) {
 	return getValue((Fightable*) f);
 }
 
-// /*
+/**
+ * Is called whenever a key is pressed during the rhythm section
+ * @param {notes} The notes that need to be pressed during the rhythm game section
+ * @param {howGoodYouDoIt} A pointer to a variable that will be used to calculate damage and other things
+ * @param {maxGoodness} The maximum amount that can be added to howGoodYouDoIt per note
+ * @param {nt} The note type / key that the player is pressing
+ */
 void rhythmPress(vector<RhythmNote*>* notes, float* howGoodYouDoIt, float maxGoodness, NoteType nt) {
 	// lol check if correct button pressed
 	// cout << "maxGoodness: " << maxGoodness << endl;
@@ -284,18 +290,37 @@ void rhythmPress(vector<RhythmNote*>* notes, float* howGoodYouDoIt, float maxGoo
 			}
 		}
 	}
-	*howGoodYouDoIt -= maxGoodness / 3;
+	*howGoodYouDoIt -= maxGoodness / 3; // MISS PENALTY
 }
 
+/**
+ * Deals with up presses by calling the general rhythmPress. This is done as this function is passed as a function pointer for arrow presses.
+ * @param {passingArgument} Contains, in this order, the notes, a pointer to howGoodYouDoIt and maxGoodness
+ */
 void rhythmPressUp(vector<void*> passingArgument) {
 	rhythmPress((vector<RhythmNote*>*) passingArgument[0], (float*) passingArgument[1], *((float*) passingArgument[2]), UP);
 }
+
+/**
+ * Deals with left presses by calling the general rhythmPress. This is done as this function is passed as a function pointer for arrow presses.
+ * @param {passingArgument} Contains, in this order, the notes, a pointer to howGoodYouDoIt and maxGoodness
+ */
 void rhythmPressLeft(vector<void*> passingArgument) {
 	rhythmPress((vector<RhythmNote*>*) passingArgument[0], (float*) passingArgument[1], *((float*) passingArgument[2]), LEFT);
 }
+
+/**
+ * Deals with right presses by calling the general rhythmPress. This is done as this function is passed as a function pointer for arrow presses.
+ * @param {passingArgument} Contains, in this order, the notes, a pointer to howGoodYouDoIt and maxGoodness
+ */
 void rhythmPressRight(vector<void*> passingArgument) {
 	rhythmPress((vector<RhythmNote*>*) passingArgument[0], (float*) passingArgument[1], *((float*) passingArgument[2]), RIGHT);
 }
+
+/**
+ * Deals with down presses by calling the general rhythmPress. This is done as this function is passed as a function pointer for arrow presses.
+ * @param {passingArgument} Contains, in this order, the notes, a pointer to howGoodYouDoIt and maxGoodness
+ */
 void rhythmPressDown(vector<void*> passingArgument) {
 	rhythmPress((vector<RhythmNote*>*) passingArgument[0], (float*) passingArgument[1], *((float*) passingArgument[2]), DOWN);
 }
