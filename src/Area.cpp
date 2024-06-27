@@ -254,6 +254,9 @@ int Area::getIndexForID(int& ID) {
 	return tilesets.size() - 1;
 }
 
+/**
+ * Tiled maps have layers, this function renders a layer. 
+ */
 void Area::renderLayer(RenderWindow& window, const Layer::Ptr& layer, IntRect intrect) {
 	auto area = map->getTileCount();
 	auto tileSize = map->getTileSize();
