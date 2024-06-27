@@ -51,7 +51,7 @@
 | Vector2f | vec | A vector that you are finding the min/max of |
 | const vector<Vector2f>& | points | The points that we are getting the dot products of |
 
-**Return Type:** MinMax ( A datatype that holds the min and max dotproducts)
+**Return Type:** MinMax (A datatype that holds the min and max dotproducts)
 
 
 ### addUnique
@@ -885,44 +885,49 @@
 
 
 ### rhythmPress
+*Is called whenever a key is pressed during the rhythm section*
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
-| vector<RhythmNote*>* | notes | N/A |
-| float* | howGoodYouDoIt | N/A |
-| float | maxGoodness | N/A |
-| NoteType | nt | N/A |
+| vector<RhythmNote*>* | notes | The notes that need to be pressed during the rhythm game section |
+| float* | howGoodYouDoIt | A pointer to a variable that will be used to calculate damage and other things |
+| float | maxGoodness | The maximum amount that can be added to howGoodYouDoIt per note |
+| NoteType | nt | The note type / key that the player is pressing |
 
 **Return Type:** void (N/A)
 
 
 ### rhythmPressUp
+*Deals with up presses by calling the general rhythmPress. This is done as this function is passed as a function pointer for arrow presses.*
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
-| vector<void*> | passingArgument | N/A |
+| vector<void*> | passingArgument | Contains, in this order, the notes, a pointer to howGoodYouDoIt and maxGoodness |
 
 **Return Type:** void (N/A)
 
 
 ### rhythmPressLeft
+*Deals with left presses by calling the general rhythmPress. This is done as this function is passed as a function pointer for arrow presses.*
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
-| vector<void*> | passingArgument | N/A |
+| vector<void*> | passingArgument | Contains, in this order, the notes, a pointer to howGoodYouDoIt and maxGoodness |
 
 **Return Type:** void (N/A)
 
 
 ### rhythmPressRight
+*Deals with right presses by calling the general rhythmPress. This is done as this function is passed as a function pointer for arrow presses.*
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
-| vector<void*> | passingArgument | N/A |
+| vector<void*> | passingArgument | Contains, in this order, the notes, a pointer to howGoodYouDoIt and maxGoodness |
 
 **Return Type:** void (N/A)
 
 
 ### rhythmPressDown
+*Deals with down presses by calling the general rhythmPress. This is done as this function is passed as a function pointer for arrow presses.*
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
-| vector<void*> | passingArgument | N/A |
+| vector<void*> | passingArgument | Contains, in this order, the notes, a pointer to howGoodYouDoIt and maxGoodness |
 
 **Return Type:** void (N/A)
 
@@ -1279,7 +1284,7 @@
 | :------: | :---------------: | :-------------: | 
 | RenderWindow& | window | Window used to load the selector texture |
 
-**Return Type:**  ( Selector)
+**Return Type:**  (Selector)
 
 
 ### Selector::render
@@ -1297,7 +1302,7 @@
 | :------: | :---------------: | :-------------: | 
 | RenderWindow* | window | Window used to get the teams |
 
-**Return Type:** Fightable* ( Fighter that is selected)
+**Return Type:** Fightable* (Fighter that is selected)
 
 
 ### sDecrement
@@ -1577,7 +1582,7 @@
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
 
-**Return Type:** float ( A random float from 0.0 to 1.0)
+**Return Type:** float (A random float from 0.0 to 1.0)
 
 
 ### rand
@@ -1587,7 +1592,7 @@
 | float | std | The standard deviation for the bell curve |
 | float | m | The mean of the bell curve |
 
-**Return Type:** float ( A random number with mean m and standard deviation of std)
+**Return Type:** float (A random number with mean m and standard deviation of std)
 
 
 ### invNorm
@@ -1595,7 +1600,7 @@
 | :------: | :---------------: | :-------------: | 
 | float | x | cdf of a standard normal distribution |
 
-**Return Type:** float ( The z-value of x )
+**Return Type:** float (The z-value of x )
 
 
 ### RationalApproximation
