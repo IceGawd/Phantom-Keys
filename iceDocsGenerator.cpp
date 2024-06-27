@@ -50,6 +50,9 @@ void processFile(const string& filePath, ofstream& outFile) {
 			}
 			else if (returns != string::npos) {
 				returnsStr = trueLine.substr(7);
+				if (returnsStr[0] == ' ') {
+					returnsStr = returnsStr.substr(1);
+				}
 			}
 			else {
 				currentComment += trueLine;
