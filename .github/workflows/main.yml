@@ -17,14 +17,8 @@ jobs: # the things being executed
       run: |
         Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process -Force
         ./iceDocsGenerator.exe
-    - name: Configure Git
-      run: |
-        git config --global user.name 'github-actions[bot]'
-        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-    - name: Commit and push changes
-      run: |
-        git add README.md
-        git commit -m "Update README Docs"
-        git push
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Archive README.md
+      uses: actions/upload-artifact@v2
+      with:
+        name: readme
+        path: README.md
