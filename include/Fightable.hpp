@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "Stats.hpp"
 #include "Collideable.hpp"
 
@@ -19,7 +21,11 @@ struct Fightable : public Collideable {
 	int battleOriginY;
 	float sizeIncrease;
 
+	vector<Move*> exhaustQueue;
+
 	Fightable();
 
 	virtual void battle(RenderWindow* window, Fightable* turn, vector<GameObject*>& battleEntities);
+	void addToExhaustQueue(Move* move);
+	float getExhaust(Move* move);
 };

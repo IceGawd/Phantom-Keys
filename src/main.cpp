@@ -910,13 +910,14 @@ int main(int argc, char *argv[]) {
 					}
 
 					if (notes.empty()) {
-						if (maxGoodness == 0) {
+						if (maxGoodness == 0) { // First frame of rhythm stuff, use as initialization
 							rhythmStart = chrono::steady_clock().now();
 							for (pair<int, NoteType> pint : myTurn->moveEntered->stingerNotes) {
 								// cout << "NOTE MADE\n";
 								notes.push_back(new RhythmNote(&window, pint, &rhythmStart));
 							}
 							maxGoodness = 1.0 / notes.size();
+							howGoodYouDoIt = 0;
 						}
 						else {
 							cout << "SCORE: " << howGoodYouDoIt << endl;

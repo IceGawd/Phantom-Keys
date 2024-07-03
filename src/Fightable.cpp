@@ -32,3 +32,22 @@ void Fightable::battle(RenderWindow* window, Fightable* turn, vector<GameObject*
 	show_width = sw;
 	show_height = sh;
 }
+
+/**
+ * Adds a move to the exhaust queue
+ * @param {move} The move that is being added to the exhaust queue
+ */
+void Fightable::addToExhaustQueue(Move* move) {
+	exhaustQueue.push_back(move);
+}
+
+/**
+ * Gets the moves exhaust multiplier via the staling queue
+ * @param {move} The move that is being checked for its exhaust
+ * @return The exhaust multiplier to the move
+ */
+float Fightable::getExhaust(Move* move) {
+	for (int x = 0; x < exhaustQueue.size(); x++) {
+		
+	}
+}
