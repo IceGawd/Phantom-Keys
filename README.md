@@ -583,6 +583,24 @@
 **Return Type:** void (N/A)
 
 
+### Fightable::addToExhaustQueue
+*Adds a move to the exhaust queue*
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+| Move* | move | The move that is being added to the exhaust queue |
+
+**Return Type:** void (N/A)
+
+
+### Fightable::getExhaust
+*Gets the moves exhaust multiplier via the staling queue*
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+| Move* | move | The move that is being checked for its exhaust |
+
+**Return Type:** float (The exhaust multiplier to the move)
+
+
 ## src/FreeFuncs.cpp
 ## src/GameObject.cpp
 ### GameObject::GameObject
