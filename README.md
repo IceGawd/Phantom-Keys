@@ -583,6 +583,15 @@
 **Return Type:** void (N/A)
 
 
+### Fightable::battleInit
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+| RenderWindow& | window | N/A |
+| int | index | N/A |
+
+**Return Type:** void (N/A)
+
+
 ### Fightable::addToExhaustQueue
 *Adds a move to the exhaust queue*
 | **Type** | **Variable Name** | **Description** | 
