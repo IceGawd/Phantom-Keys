@@ -545,10 +545,7 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 
 			tempOrder.push_back(f);
 			total += f->stats.agility;
-			f->battleOriginX = (index == 0 && window.playerTeam.size() != 2) ? 300 : 175;
-			f->battleOriginY = (window.playerTeam.size() == 2) ? 115 + index * 230 : ((1.5 * index - 2.5) * index + 2) * 115;
-			f->battleX = f->battleOriginX;
-			f->battleY = f->battleOriginY;
+			f->battleInit(window, index);
 		}
 
 		while (tempOrder.size() > 0) {

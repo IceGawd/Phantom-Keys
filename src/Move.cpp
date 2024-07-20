@@ -64,6 +64,7 @@ void Move::dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defe
 		else {
 			battleEntities.push_back(new TextObject(window, "NO DAMAGE!", attacker, {150, 150, 150}));
 		}
+		attacker->addToExhaustQueue(this);
 	}
 	else {
 		cout << "MISS!\n";

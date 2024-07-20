@@ -19,6 +19,7 @@ class Entity {
 public:
 	Entity();
 	// ~Entity();
+	// NOTE: All destructors NEED to be virtual for it to be overrided
 	Entity(float px, float py, SDL_Texture* ptexture);
 	Entity(float px, float py, SDL_Texture* ptexture, int pw, int ph);
 	// Entity(const Entity& e);

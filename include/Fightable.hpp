@@ -26,6 +26,7 @@ struct Fightable : public Collideable {
 	Fightable();
 
 	virtual void battle(RenderWindow* window, Fightable* turn, vector<GameObject*>& battleEntities);
+	void battleInit(RenderWindow& window, int index);
 	void addToExhaustQueue(Move* move);
 	float getExhaust(Move* move);
 };

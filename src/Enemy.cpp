@@ -18,6 +18,7 @@ Enemy::Enemy(RenderWindow* window, EnemyType* e, int x, int y, Player* p) : et(e
 	moves = e->moves;
 }
 
+// TODO: Don't draw when player is not near the entity
 bool Enemy::draw(RenderWindow* window, World* world, vector<GameObject*>& entities) {
 	// cout << "drawn\n";
 	// /*
