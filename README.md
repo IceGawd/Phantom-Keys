@@ -71,6 +71,9 @@
 | string | path | N/A |
 | vector<EnemyType*> | enemyTypes | N/A |
 | string | bg | N/A |
+|  | ap<string | N/A |
+|  | ap<char | N/A |
+| Mix_Chunk*>>& | textNoise | N/A |
 
 **Return Type:**  (N/A)
 
@@ -94,7 +97,7 @@
 
 
 ### Area::renderLayer
-*Tiled maps have layers, this function renders a layer. *
+*Tiled tmxmaps have layers, this function renders a layer. *
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
 | RenderWindow& | window | N/A |
@@ -686,6 +689,23 @@
 
 
 ## src/ImageLayer.cpp
+## src/Interactable.cpp
+### Interactable::Interactable
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+| SDL_Rect | r | N/A |
+| TextSequence* | i | N/A |
+
+**Return Type:**  (N/A)
+
+
+### Interactable::~Interactable
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+
+**Return Type:**  (N/A)
+
+
 ## src/KeyFrame.cpp
 ### KeyFrame::KeyFrame
 | **Type** | **Variable Name** | **Description** | 
@@ -1078,6 +1098,14 @@
 | vector<Move*> | m | N/A |
 
 **Return Type:**  (N/A)
+
+
+### interactCheck
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+| vector<void*> | vv | N/A |
+
+**Return Type:** void (N/A)
 
 
 ### Player::draw
@@ -1479,6 +1507,13 @@
 **Return Type:**  (N/A)
 
 
+### TextBox::reset
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+
+**Return Type:** void (N/A)
+
+
 ### TextBox::draw
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
@@ -1553,6 +1588,13 @@
 | RenderWindow& | window | N/A |
 
 **Return Type:** bool (N/A)
+
+
+### TextSequence::reset
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+
+**Return Type:** void (N/A)
 
 
 ## src/TextSlice.cpp
@@ -1748,6 +1790,15 @@
 **Return Type:** void (N/A)
 
 
+### angleDiff
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+| float | angle1 | N/A |
+| float | angle2 | N/A |
+
+**Return Type:** float (N/A)
+
+
 ## src/World.cpp
 ### World::World
 | **Type** | **Variable Name** | **Description** | 
@@ -1755,6 +1806,9 @@
 | RenderWindow& | window | N/A |
 | Player* | player | N/A |
 | vector<EnemyType*> | enemyTypes | N/A |
+|  | ap<string | N/A |
+|  | ap<char | N/A |
+| Mix_Chunk*>>& | textNoise | N/A |
 
 **Return Type:**  (N/A)
 
