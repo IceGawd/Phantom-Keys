@@ -13,6 +13,7 @@
 
 class Fightable;
 class Enemy;
+class TextSequence;
 
 using namespace std;
 
@@ -38,6 +39,8 @@ public:
 	vector<Fightable*> playerTeam;
 	vector<Enemy*> enemyTeam;
 	queue<Fightable*> turnOrder;
+
+	TextSequence* ts = nullptr;
 
 	SDL_Window* window;
 	SDL_Renderer* renderer;

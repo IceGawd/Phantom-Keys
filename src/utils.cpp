@@ -88,8 +88,6 @@ float angleFromCoords(float x, float y) {
 
 float angleFromCoords(float x, float y, float (*foo)(vector<void*>), vector<void*> bonus) {
 	float angle;
-	float val = y / x;
-	bonus.push_back(&val);
 	if (x == 0) {
 		if (y >= 0) {
 			angle = 3.0 * M_PI / 2.0;
@@ -98,14 +96,19 @@ float angleFromCoords(float x, float y, float (*foo)(vector<void*>), vector<void
 			angle = M_PI / 2.0;
 		}
 	}
-	else if (x > 0) {
-		angle = -foo(bonus);
-		if (angle < 0) {
-			angle += 2.0 * M_PI;
-		}
-	}
 	else {
-		angle = M_PI - foo(bonus);
+		float val = y / x;
+		bonus.push_back(&val);
+
+		if (x > 0) {
+			angle = -foo(bonus);
+			if (angle < 0) {
+				angle += 2.0 * M_PI;
+			}
+		}
+		else {
+			angle = M_PI - foo(bonus);
+		}
 	}
 	return angle;
 }
@@ -146,4 +149,8 @@ void arrowChange(RenderWindow* window, vector<SDL_Scancode>& keys, bool* directi
 	if (unpressed) {
 		*direction = false;
 	}
+}
+
+float angleDiff(float angle1, float angle2) {
+	return min(2 * M_PI - abs(angle1 - angle2), (double) abs(angle1 - angle2));
 }

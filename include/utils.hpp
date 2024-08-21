@@ -34,6 +34,7 @@ float literalAtan(vector<void*> vv);
 float atanApprox(vector<void*> vv);
 
 void arrowChange(RenderWindow* window, vector<SDL_Scancode>& keys, bool* direction, void (*foo)(vector<void*>), vector<void*> passingArgument);
+float angleDiff(float angle1, float angle2);
 
 enum Gamestate {
 	OVERWORLD, 
@@ -72,5 +73,7 @@ enum NoteType {
 	UP, 
 	DOWN, 
 	LEFT, 
-	RIGHT
+	RIGHT, 
+	A, 
+	B
 };

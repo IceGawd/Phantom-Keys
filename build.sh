@@ -7,11 +7,16 @@ SDLINCLUDEDIR=C:/SDL2/include
 OBJDIR=obj/debug
 
 # Parse flags
+FULL=false
 RELEASE=false
 DOCSGENERATOR=false
 
-while getopts ":rd" opt; do
+while getopts ":frd" opt; do
   case $opt in
+    f)
+      echo "FULL COMPILE!"
+      FULL=true
+      ;;
     r)
       echo "COMPILING RELEASE VERSION!"
       RELEASE=true
@@ -45,7 +50,7 @@ for file in $SRCDIR/*.cpp $SRCDIR/*.c $SRCDIR/detail/*.cpp; do
   if [ -f "$file" ]; then
     objfile=$OBJDIR/$(basename ${file%.*}.o)
     # Check if the object file needs to be recompiled
-    if [ ! -f "$objfile" ] || [ "$file" -nt "$objfile" ]; then
+    if [ ! -f "$objfile" ] || [ "$file" -nt "$objfile" ] || $FULL; then
       echo "Compiling $file..."
       if $RELEASE; then
         g++ -c $file -o $objfile -std=c++14 -O3 -g -m64 -I $INCLUDEDIR -I $SDLINCLUDEDIR

@@ -23,6 +23,14 @@ RhythmNote::RhythmNote(RenderWindow* window, pair<int, NoteType> note, chrono::s
 			y = RenderWindow::HEIGHT - KEYSIZE - NOTEY;
 			ptexture = window->loadTexture("res/gfx/Battle/RhythmUI/down.png");
 			break;
+		case A:
+			y = RenderWindow::HEIGHT - KEYSIZE - 4 * NOTEY;
+			ptexture = window->loadTexture("res/gfx/Battle/RhythmUI/up.png");   // REPLACE WITH ACTUAL SPRITE
+			break;
+		case B:
+			y = RenderWindow::HEIGHT - KEYSIZE - 2 * NOTEY;
+			ptexture = window->loadTexture("res/gfx/Battle/RhythmUI/down.png"); // REPLACE WITH ACTUAL SPRITE
+			break;
 	}
 
 	setTexture(ptexture);
@@ -38,17 +46,17 @@ bool RhythmNote::draw(RenderWindow* window, World* world, vector<GameObject*>& e
 	chrono::duration<double> len = end - *start;
 	// cout << "count: " << len.count() << endl;
 	double frameDone = len.count() * 60.0; // POTENTIAL ERROR: ASSUMES 60 FPS
-	double frameDist = frame + FRAMESADVANCE - frameDone;
+	double frameDist = frame + FRAMESADVANCESPELL - frameDone;
 	// cout << "frameDist1: " << frameDist << endl;
 	// */
 
 	/*
-	frameDist = frame + FRAMESADVANCE - curFrames;
+	frameDist = frame + FRAMESADVANCESPELL - curFrames;
 	cout << "frameDist2: " << frameDist << endl;
 	curFrames++;
 	*/
 
-	x = NOTEX + frameDist * SPEED;
+	x = NOTEX + frameDist * SPEEDSPELL;
 
 	// cout << "x: " << x << endl;
 

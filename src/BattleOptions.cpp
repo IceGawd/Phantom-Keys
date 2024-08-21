@@ -60,6 +60,7 @@ void BattleOptions::customDraw(RenderWindow* window) {
 			int tempy = x / 2;
 
 			unsigned char bright = 255 * pow(pm->getExhaust(pm->moves[x]), 2);
+			// cout << options[x] << " <-> " << pm->getExhaust(pm->moves[x]) << " <-> " << (int) bright << endl;
 
 			window->drawScaledTextInBox(options[x], bright, bright, bright, 255, (40 + 120 * tempx) * scalingSizeFight, fightOptions->y + (9 + 27 * tempy) * scalingSizeFight, 70 * scalingSizeFight, 13 * scalingSizeFight, true);
 		}

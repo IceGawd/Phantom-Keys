@@ -1,23 +1,42 @@
 #include "TextBox.hpp"
 
 TextBox::TextBox(RenderWindow& window, vector<TextSlice> t) : text(t) {
-	const int ADJUSTMENT = 50;
-
 	setTexture(window.loadTexture("res/gfx/TextBox.png"));
 	fullPicSize();
-	cout << zoom << endl;
+	// cout << zoom << endl;
 	show_width = zoom * width;
 	show_height = zoom * height;
-	cout << show_width << endl;
+	// cout << show_width << endl;
 	x = (window.WIDTH - show_width) / 2;
 	y = window.HEIGHT - show_height - 35;
-	cout << x << endl;
+	// cout << x << endl;
 	setRect();
+	reset();
+}
+
+void TextBox::reset() {
+	curIndex = 1;
+	prevHeld = true;
+
 	for (TextSlice& ts : text) {
 		ts.XMIN = x + ADJUSTMENT;
 		ts.XMAX = x + show_width - ADJUSTMENT;
 		ts.x = ts.XMIN;
 		ts.y = y + 15;
+
+		for (SDL_Surface* s : ts.surfaces) {
+			SDL_FreeSurface(s);
+		}
+		for (Entity* e : ts.letters) {
+			delete e;
+		}
+
+		ts.surfaces.clear();
+		ts.letters.clear();
+
+		ts.frames = 0;
+		ts.sound = 0;
+		ts.waveMod = 0;
 	}
 }
 

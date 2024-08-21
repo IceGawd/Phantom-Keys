@@ -10,4 +10,5 @@ struct TextSequence {
 
 	TextSequence(vector<TextBox> t, map<char, Mix_Chunk*>* s);
 	bool draw(RenderWindow& window);
+	void reset();
 };

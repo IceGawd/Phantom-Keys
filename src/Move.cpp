@@ -50,6 +50,7 @@ void Move::dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defe
 		// cout << "mean: " << mean << endl;
 
 		int damagedone = (int) (rand(index * attacker->stats.rangebonus, mean * attacker->stats.damagebonus) * defender->stats.damagetaken + 1);
+		damagedone *= attacker->getExhaust(this);
 		cout << "Damage done: " << damagedone << endl;
 		if (damagedone > 0) {
 			defender->stats.hp -= damagedone;

@@ -20,6 +20,49 @@ Player::Player(RenderWindow* window, vector<Move*> m) {
 	moves = m;
 }
 
+void interactCheck(vector<void*> vv) {
+	Player* player = (Player*) vv[0];
+	World* world = (World*) vv[1];
+	RenderWindow* window = (RenderWindow*) vv[2];
+
+	float facingAngle;
+	if (player->row == 0) {
+		facingAngle = M_PI * player->column / 2;
+	}
+	else {
+		facingAngle = M_PI * (player->row - 1) / 2;
+	}
+
+	Interactable* closest = nullptr;
+	float diff = 0;
+
+	for (Interactable& i : world->current->interactables) {
+		float x = i.rect.x + i.rect.w / 2.0 - player->getHitbox().x - player->getHitbox().w / 2.0;
+		float y = i.rect.y + i.rect.h / 2.0 - player->getHitbox().y - player->getHitbox().h / 2.0;
+
+		cout << "x: " << x << " y: " << y << endl;
+
+		float angle = angleFromCoords(x, y);
+		cout << "facingAngle: " << facingAngle << " angle: " << angle << endl;
+		cout << "angleDiff(angle, facingAngle): " << angleDiff(angle, facingAngle) << endl;
+		if (angleDiff(angle, facingAngle) < M_PI / 4) {
+			float dist = distanceFrom(x, y);
+			cout << "dist: " << dist << endl;
+			if (dist < distanceFrom((i.rect.w + player->getHitbox().w) / 2.0, (i.rect.h + player->getHitbox().h) / 2.0)) {
+				if (closest == nullptr || diff > dist * angle) {
+					closest = &i;
+					diff = dist * angle;
+				}
+			}
+		}
+	}
+
+	if (closest != nullptr) {
+		closest->interactText->reset();
+		window->ts = closest->interactText;
+	}
+}
+
 bool Player::draw(RenderWindow* window, World* world, vector<GameObject*>& entities) {
 	Collideable::draw(window, world, entities);
 
@@ -28,6 +71,7 @@ bool Player::draw(RenderWindow* window, World* world, vector<GameObject*>& entit
 		arrowChange(window, window->cc.left, &input.left, nullptr, {});
 		arrowChange(window, window->cc.right, &input.right, nullptr, {});
 		arrowChange(window, window->cc.down, &input.down, nullptr, {});
+		arrowChange(window, window->cc.okay, &input.okay, interactCheck, {this, world, window});
 
 		double diagDirect = (input.diagonal()) ? 1 / sqrt(2) : 1;
 
@@ -103,6 +147,10 @@ bool Player::draw(RenderWindow* window, World* world, vector<GameObject*>& entit
 				}
 			}
 		}
+	}
+	else {
+		xvel = 0;
+		yvel = 0;
 	}
 
 	GameObject::draw(window, world, entities);

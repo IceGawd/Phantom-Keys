@@ -7,12 +7,14 @@
 
 #include "Player.hpp"
 #include "SpawnZone.hpp"
+#include "Interactable.hpp"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
 #include <iostream>
 #include <algorithm>
+#include <map>
 
 using namespace std;
 using namespace tmx;
@@ -33,10 +35,11 @@ struct Area {
 	vector<SpawnZone> spawnzones;
 	vector<Entity*> tilesetEntities;
 	vector<DiagonalTile> diagonalTileEntities;
-	Map* map;
+	vector<Interactable> interactables;
+	Map* tmxmap;
 	int playerIndex = -1; // CAN ONLY NOT BE -1 IF PLACE PLAYER IS CALLED
 
-	Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes, string bg);
+	Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes, string bg, map<string, map<char, Mix_Chunk*>>& textNoise);
 
 	void subRender(const Layer::Ptr& layer, RenderWindow& window, IntRect rect);
 	void render(RenderWindow& window, Player* player, World* world, vector<GameObject*>& entities);

@@ -5,6 +5,8 @@
 
 using namespace tmx;
 
+void interactCheck(vector<void*> vv);
+
 struct Player : public PartyMember {
 	int speed;
 	float traction;

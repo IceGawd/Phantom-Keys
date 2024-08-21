@@ -17,3 +17,10 @@ bool TextSequence::draw(RenderWindow& window) {
 	}
 	return curIndex == text.size();
 }
+
+void TextSequence::reset() {
+	curIndex = 0;
+	for (TextBox& tb : text) {
+		tb.reset();
+	}
+}

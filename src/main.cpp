@@ -425,7 +425,7 @@ int main(int argc, char *argv[]) {
 			}, 
 			{}
 		)}, 
-		{"Ram", new Move("Ram", 30, 0, true, false, 2, {BLUDGEONING, FORWARD}, 
+		{"Ram", new Move("Ram", 20, 0, true, false, 2, {BLUDGEONING, FORWARD}, 
 			{
 				KeyFrame(45, "overworld", 1, -200, 0, INFRONTENEMY, LINEAR), 
 				KeyFrame(20, "battleidle", 0, -200, 0, INFRONTENEMY, LINEAR), 
@@ -436,7 +436,7 @@ int main(int argc, char *argv[]) {
 			}, 
 			{}
 		)}, 
-		{"16th Notes", new Move("16th Notes", 10, 25, false, false, 2, {FORCE, FORWARD}, 
+		{"16th Notes", new Move("16th Notes", 30, 25, false, false, 2, {FORCE, FORWARD}, 
 			{
 				KeyFrame(45, "overworld", 1, -200, 0, INFRONTENEMY, LINEAR), 
 				KeyFrame(20, "battleidle", 0, -200, 0, INFRONTENEMY, LINEAR), 
@@ -523,16 +523,18 @@ int main(int argc, char *argv[]) {
 	vector<Entity*> emptyKeys;
 	vector<RhythmNote*> notes;
 
-	emptyKeys.push_back(new Entity(RhythmNote::NOTEX, RenderWindow::HEIGHT - RhythmNote::KEYSIZE - RhythmNote::NOTEY, window.loadTexture("res/gfx/Battle/RhythmUI/downhole.png"), RhythmNote::KEYSIZE, RhythmNote::KEYSIZE));
+	emptyKeys.push_back(new Entity(RhythmNote::NOTEX, RenderWindow::HEIGHT - 1 * RhythmNote::KEYSIZE - RhythmNote::NOTEY, window.loadTexture("res/gfx/Battle/RhythmUI/downhole.png"), RhythmNote::KEYSIZE, RhythmNote::KEYSIZE));
 	emptyKeys.push_back(new Entity(RhythmNote::NOTEX, RenderWindow::HEIGHT - 2 * RhythmNote::KEYSIZE - RhythmNote::NOTEY, window.loadTexture("res/gfx/Battle/RhythmUI/lefthole.png"), RhythmNote::KEYSIZE, RhythmNote::KEYSIZE));
 	emptyKeys.push_back(new Entity(RhythmNote::NOTEX, RenderWindow::HEIGHT - 3 * RhythmNote::KEYSIZE - RhythmNote::NOTEY, window.loadTexture("res/gfx/Battle/RhythmUI/righthole.png"), RhythmNote::KEYSIZE, RhythmNote::KEYSIZE));
 	emptyKeys.push_back(new Entity(RhythmNote::NOTEX, RenderWindow::HEIGHT - 4 * RhythmNote::KEYSIZE - RhythmNote::NOTEY, window.loadTexture("res/gfx/Battle/RhythmUI/uphole.png"), RhythmNote::KEYSIZE, RhythmNote::KEYSIZE));
 
+	emptyKeys.push_back(new Entity(RhythmNote::NOTEX - RhythmNote::KEYSIZE, RenderWindow::HEIGHT - 2 * RhythmNote::KEYSIZE - RhythmNote::NOTEY, window.loadTexture("res/gfx/Battle/RhythmUI/downhole.png"), 2 * RhythmNote::KEYSIZE, 2 * RhythmNote::KEYSIZE));
+	emptyKeys.push_back(new Entity(RhythmNote::NOTEX - RhythmNote::KEYSIZE, RenderWindow::HEIGHT - 4 * RhythmNote::KEYSIZE - RhythmNote::NOTEY, window.loadTexture("res/gfx/Battle/RhythmUI/uphole.png"), 2 * RhythmNote::KEYSIZE, 2 * RhythmNote::KEYSIZE));
+
 	overworldEntities.push_back(player); // PLAYER WAS DRAWN IN AREA RENDER (NOW EVERYTHING IS DRAWN THERE)
 	window.playerTeam.push_back(player);
 
-	World* world = new World(window, player, etVec);
-	TextSequence* ts = nullptr;
+	World* world = new World(window, player, etVec, textNoise);
 	BattleOptions* bo = new BattleOptions(window);
 	HealthBar* hb = new HealthBar(&window, 46 * bo->scalingSizeMain, bo->mainMenu->y + 5 * bo->scalingSizeMain, 390 * bo->scalingSizeMain, 45 * bo->scalingSizeMain);
 	Selector* selector = new Selector(window);
@@ -671,7 +673,7 @@ int main(int argc, char *argv[]) {
 					}
 				}
 
-				continue; // MIGHT HELLA CAUSE ISSUES
+				continue; // NOTE: MIGHT HELLA CAUSE ISSUES
 			}
 			else {
 				window.clear();
@@ -683,50 +685,7 @@ int main(int argc, char *argv[]) {
 					gameRunning = false;
 				}
 				SDL_Keycode kc = event.key.keysym.sym;
-				if (event.type == SDL_KEYDOWN) {
-					/*
-					if (kc == SDLK_w) {
-						player->input.up = true;
-					}
-					if (kc == SDLK_s) {
-						player->input.down = true;
-					}
-					if (kc == SDLK_a) {
-						player->input.left = true;
-					}
-					if (kc == SDLK_d) {
-						player->input.right = true;
-					}
-					/*
-					if (kc == SDLK_o) {
-						cout << "zoomout\n";
-						window.zoom /= 2;
-					}
-					if (kc == SDLK_p) {
-						cout << "zoomin\n";
-						window.zoom *= 2;
-					}
-					if (kc == SDLK_q) {
-						cout << "temp\n";
-						window.temp = !window.temp;
-					}
-					*/
-				}
 				if (event.type == SDL_KEYUP) {
-					/*
-					if (kc == SDLK_w) {
-						player->input.up = false;
-					}
-					if (kc == SDLK_s) {
-						player->input.down = false;
-					}
-					if (kc == SDLK_a) {
-						player->input.left = false;
-					}
-					if (kc == SDLK_d) {
-						player->input.right = false;
-					}
-					*/
 					if (kc == SDLK_BACKQUOTE) {
 						if (fastForward != 1) {
 							fastForward = 1;
@@ -827,70 +786,50 @@ int main(int argc, char *argv[]) {
 						hitting = myTurn->moveEntered->getHitting(myTurn, myTurn->target);
 						crit = myTurn->moveEntered->getCrit(myTurn);
 					}
+
+					// Counts the animation frames
 					transitionFrames++;
+
+					// Used for calculating which stage of the animation the sprite should be in
 					int curFrames = transitionFrames;
-					// cout << myTurn << endl;
-					// cout << myTurn->moveEntered << endl;
 					for (int x = 1; x < myTurn->moveEntered->animation.size(); x++) {
-						// cout << "a\n";
 						KeyFrame& kf = myTurn->moveEntered->animation.at(x);
+
+						// This checks if this keyframe has passed or is the sprite currently in that keyframe
 						curFrames -= kf.frame;
 						if (curFrames <= 0) {
 							KeyFrame& prev = myTurn->moveEntered->animation.at(x - 1);
-							// cout << "b\n";
 							curFrames += kf.frame;
 							kf.applyKeyframe(myTurn, prev, curFrames, myTurn->target, !playerTurn);
-
-							// cout << "curKey: " << kf << endl;
-							// cout << "prevKey: " << myTurn->moveEntered->animation.at(x - 1) << endl;
-							// cout << "curFrames: " << curFrames << endl;
-
 							if (kf.damage) {
-								// cout << "NOW crit: " << crit << endl;
 								if (curFrames == kf.framedelay) {
-									// cout << "DAMAGE\n";
 									myTurn->moveEntered->dealDamage(&window, myTurn, myTurn->target, battleEntities, hitting, crit, howGoodYouDoIt);
 								}
 								if (crit) {
-									// cout << "CRIT kf.framedelay: " << kf.framedelay << endl;
 									if (curFrames < kf.framedelay) {
-										// cout << "CRITHIT\n";
-										/*
-										window.x -= (myTurn->battleX - (RenderWindow::WIDTH - myTurn->show_width * myTurn->sizeIncrease) / 2 - window.x) / 2.0;
-										window.y -= (myTurn->battleY - (RenderWindow::HEIGHT - myTurn->show_height * myTurn->sizeIncrease) / 2 - window.y) / 2.0;
-										window.zoom += (2.0 - window.zoom) / 2.0;
-										// */
-										// /*
 										window.x = myTurn->battleX - (RenderWindow::WIDTH - myTurn->show_width * myTurn->sizeIncrease) / 2;
 										window.y = myTurn->battleY - (RenderWindow::HEIGHT - myTurn->show_height * myTurn->sizeIncrease) / 2;
 										window.zoom = 1.5;
 										sideScreenDarken++;
-										// */
 									}
 									else {
-										// /*
 										window.x = window.x / 2.0;
 										window.y = window.y / 2.0;
 										window.zoom += (1.0 - window.zoom) / 2.0;
 										sideScreenDarken = sideScreenDarken / 2;
-										// */
 									}
 								}
 							}
 							if (prev.damage && crit) {
-								// /*
 								window.x -= window.x / (kf.frame - curFrames + 1);
 								window.y -= window.y / (kf.frame - curFrames + 1);
 								window.zoom += (1.0 - window.zoom) / (kf.frame - curFrames + 1);
 								sideScreenDarken = 0;
-								// */
 							}
 							curFrames -= kf.frame;
 							break;
 						}
 					}
-					// cout << "myTurn->column: " << myTurn->column << endl;
-					// cout << "d\n";
 					if (curFrames > 0) {
 						cout << "joever\n";
 						window.turnstate = ENDTURN;
@@ -905,8 +844,8 @@ int main(int argc, char *argv[]) {
 				// TODO: Maybe poll for keys in seperate thread for higher responsiveness in laggy environments?
 				// TODO: Rhythm Game Text (miss, hit, etc.)
 				if (window.turnstate == RHYTHM) {
-					for (Entity* e : emptyKeys) {
-						window.render(e);
+					for (int keyIndex = 0; keyIndex < 4; keyIndex++) {
+						window.render(emptyKeys[keyIndex]);
 					}
 
 					if (notes.empty()) {
@@ -926,7 +865,7 @@ int main(int argc, char *argv[]) {
 							stingerStart = false;
 						}
 					}
-					else if (!stingerStart && round(((chrono::duration<double>) (chrono::steady_clock().now() - rhythmStart)).count() * FPS) > RhythmNote::FRAMESADVANCE) {
+					else if (!stingerStart && round(((chrono::duration<double>) (chrono::steady_clock().now() - rhythmStart)).count() * FPS) > RhythmNote::FRAMESADVANCESPELL) {
 						cout << "started\n";
 						stingerStart = true;
 						Mix_PlayChannel(-1, stingers[myTurn->moveEntered->name], 0);
@@ -1065,11 +1004,11 @@ int main(int argc, char *argv[]) {
 				}
 			}
 
-			if (ts != nullptr) {
+			if (window.ts != nullptr) {
 				// cout << "elc\n";
-				window.playerInput = ts->draw(window);
+				window.playerInput = window.ts->draw(window);
 				if (window.playerInput) {
-					ts = nullptr;
+					window.ts = nullptr;
 				}
 			}
 
