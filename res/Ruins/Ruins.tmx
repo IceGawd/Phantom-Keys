@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="200" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="35" nextobjectid="340">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="200" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="35" nextobjectid="344">
  <tileset firstgid="1" source="New Tilesets.tsx"/>
  <tileset firstgid="199" source="Asset.tsx"/>
  <layer id="14" name="Tile Layer 4" width="200" height="100">
@@ -1019,7 +1019,12 @@
   <object id="204" x="4485.33" y="2968.67" width="88" height="34"/>
   <object id="205" x="4634.67" y="2904.67" width="34" height="34.6667"/>
   <object id="207" x="801.833" y="894" width="29.6667" height="33.5"/>
-  <object id="208" x="644.167" y="890.667" width="120.333" height="29.5"/>
+  <object id="208" x="644.167" y="890.667" width="120.333" height="29.5">
+   <properties>
+    <property name="InspectNoise" value="Flute"/>
+    <property name="InspectText" value="Wow funny computer"/>
+   </properties>
+  </object>
   <object id="209" x="576" y="890.5" width="30.3333" height="36.5"/>
   <object id="210" x="928" y="881.333" width="30.5" height="43"/>
   <object id="211" x="928.5" y="944.5" width="30.5" height="80"/>
