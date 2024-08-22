@@ -1,6 +1,7 @@
 #include "Player.hpp"
 #include "World.hpp"
 
+// Player Init
 Player::Player(RenderWindow* window, vector<Move*> m) {
 	stats = Stats(12, 4, 8, 2, 4, 4);
 
