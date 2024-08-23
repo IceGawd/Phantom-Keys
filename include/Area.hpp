@@ -35,7 +35,7 @@ struct Area {
 	vector<SpawnZone> spawnzones;
 	vector<Entity*> tilesetEntities;
 	vector<DiagonalTile> diagonalTileEntities;
-	vector<Interactable> interactables;
+	vector<Interactable*> interactables;
 	Map* tmxmap;
 	int playerIndex = -1; // CAN ONLY NOT BE -1 IF PLACE PLAYER IS CALLED
 

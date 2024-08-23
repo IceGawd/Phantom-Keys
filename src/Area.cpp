@@ -159,8 +159,11 @@ Area::Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes, str
 					}
 
 					if (text != "" && noise != "") {
-						// cout << "text: " << text << ", " << "noise: " << noise << endl;
-						interactables.emplace_back((SDL_Rect) {int(rect.left), int(rect.top), int(rect.width), int(rect.height)}, new TextSequence({TextBox(window, {TextSlice(window, text, {255, 255, 255, 255}, {})})}, &textNoise[noise]));
+						// cout << "text: " << text << ", noise: " << noise << endl;
+						Interactable* i = new Interactable((SDL_Rect) {int(rect.left), int(rect.top), int(rect.width), int(rect.height)}, new TextSequence({TextBox(window, {TextSlice(window, text, {255, 255, 255, 255}, {})})}, &textNoise[noise]));
+						// cout << "made i\n";
+						interactables.push_back(i);
+						// cout << "pushback i\n";
 					}
 				}
 			}

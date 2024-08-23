@@ -25,9 +25,11 @@ void TextBox::reset() {
 		ts.y = y + 15;
 
 		for (SDL_Surface* s : ts.surfaces) {
+			// cout << "FREEING: " << s << endl;
 			SDL_FreeSurface(s);
 		}
 		for (Entity* e : ts.letters) {
+			// cout << "FREEING: " << e << endl;
 			delete e;
 		}
 

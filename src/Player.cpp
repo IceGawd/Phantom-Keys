@@ -22,6 +22,8 @@ Player::Player(RenderWindow* window, vector<Move*> m) {
 }
 
 void interactCheck(vector<void*> vv) {
+	// cout << "INTERACTCHECK! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n";
+
 	Player* player = (Player*) vv[0];
 	World* world = (World*) vv[1];
 	RenderWindow* window = (RenderWindow*) vv[2];
@@ -37,28 +39,37 @@ void interactCheck(vector<void*> vv) {
 	Interactable* closest = nullptr;
 	float diff = 0;
 
-	for (Interactable& i : world->current->interactables) {
-		float x = i.rect.x + i.rect.w / 2.0 - player->getHitbox().x - player->getHitbox().w / 2.0;
-		float y = i.rect.y + i.rect.h / 2.0 - player->getHitbox().y - player->getHitbox().h / 2.0;
+	for (Interactable* i : world->current->interactables) {
+		float x = i->rect.x + i->rect.w / 2.0 - player->getHitbox().x - player->getHitbox().w / 2.0;
+		float y = i->rect.y + i->rect.h / 2.0 - player->getHitbox().y - player->getHitbox().h / 2.0;
 
-		cout << "x: " << x << " y: " << y << endl;
+		// cout << "x: " << x << " y: " << y << endl;
 
 		float angle = angleFromCoords(x, y);
-		cout << "facingAngle: " << facingAngle << " angle: " << angle << endl;
-		cout << "angleDiff(angle, facingAngle): " << angleDiff(angle, facingAngle) << endl;
+		// cout << "facingAngle: " << facingAngle << " angle: " << angle << endl;
+		// cout << "angleDiff(angle, facingAngle): " << angleDiff(angle, facingAngle) << endl;
 		if (angleDiff(angle, facingAngle) < M_PI / 4) {
+			// cout << "gettingDist\n";
 			float dist = distanceFrom(x, y);
-			cout << "dist: " << dist << endl;
-			if (dist < distanceFrom((i.rect.w + player->getHitbox().w) / 2.0, (i.rect.h + player->getHitbox().h) / 2.0)) {
+			// cout << "dist: " << dist << endl;
+			if (dist < distanceFrom((i->rect.w + player->getHitbox().w) / 2.0, (i->rect.h + player->getHitbox().h) / 2.0)) {
 				if (closest == nullptr || diff > dist * angle) {
-					closest = &i;
+					closest = i;
 					diff = dist * angle;
 				}
 			}
 		}
 	}
 
+	// cout << "checking\n";
+
 	if (closest != nullptr) {
+		// cout << "resetting\n";
+		// cout << "PLAY THIS TEXT: " << closest << endl;
+		// cout << "PLAY THIS TEXT: " << closest->interactText << endl;
+		// cout << "PLAY THIS TEXT: " << closest->interactText->text.size() << endl;
+		// cout << "PLAY THIS TEXT: " << closest->interactText->text[0].text.size() << endl;
+		// cout << "PLAY THIS TEXT: " << closest->interactText->text[0].text[0].text << endl;
 		closest->interactText->reset();
 		window->ts = closest->interactText;
 	}
