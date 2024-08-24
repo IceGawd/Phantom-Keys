@@ -1091,6 +1091,57 @@
 
 
 ## src/Player.cpp
+### InputLinkedList::InputLinkedList
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+| int | i | N/A |
+
+**Return Type:**  (N/A)
+
+
+### InputLinkedList::~InputLinkedList
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+
+**Return Type:**  (N/A)
+
+
+### pushBack
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+| InputLinkedList* | ill | N/A |
+| int | i | N/A |
+
+**Return Type:** InputLinkedList* (N/A)
+
+
+### find
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+| InputLinkedList* | ill | N/A |
+| int | i | N/A |
+
+**Return Type:** InputLinkedList* (N/A)
+
+
+### pullForward
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+| InputLinkedList* | ill | N/A |
+| int | i | N/A |
+
+**Return Type:** InputLinkedList* (N/A)
+
+
+### addInput
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+| InputLinkedList* | ill | N/A |
+| int | i | N/A |
+
+**Return Type:** InputLinkedList* (N/A)
+
+
 ### Player::Player
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
@@ -1121,7 +1172,6 @@
 ### Player::changeDirection
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
-| Input& | input | N/A |
 
 **Return Type:** void (N/A)
 
