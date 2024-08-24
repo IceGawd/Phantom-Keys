@@ -2,6 +2,7 @@
 
 using namespace std;
 
+
 RenderWindow::RenderWindow(const char* title) : window(NULL), renderer(NULL) {
 	window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_FULLSCREEN_DESKTOP );
 

@@ -706,9 +706,11 @@ int main(int argc, char *argv[]) {
 			}
 
 			if (window.gamestate == OVERWORLD) {
-				// CAMERA
+				// LEGACY CAMERA
+				/*
 				window.x = player->x - (RenderWindow::WIDTH - player->show_width) / 2;
 				window.y = player->y - (RenderWindow::HEIGHT - player->show_height) / 2;
+				// */
 
 				world->current->render(window, player, world, overworldEntities);
 

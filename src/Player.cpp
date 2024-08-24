@@ -1,6 +1,68 @@
 #include "Player.hpp"
 #include "World.hpp"
 
+InputLinkedList::InputLinkedList(int i) {
+	input = i;
+}
+
+InputLinkedList::~InputLinkedList() {
+	if (prev != nullptr) {
+		prev->next = next;
+	}
+	if (next != nullptr) {
+		next->prev = prev;
+	}
+}
+
+InputLinkedList* pushBack(InputLinkedList* ill, int i) {
+	InputLinkedList* ret = ill->next;
+	InputLinkedList* val = find(ill, i);
+	InputLinkedList* last = ill;
+
+	while (last->next != nullptr) {
+		last = last->next;
+	}
+
+	if (val != ill) {
+		ret = ill;		
+	}
+
+	delete val;
+	last->next = new InputLinkedList(i);
+	last->next->prev = last;
+
+	return ret;
+}
+
+InputLinkedList* find(InputLinkedList* ill, int i) {
+	InputLinkedList* val = ill;
+
+	while (val->input != i) {
+		val = val->next;
+	}
+
+	return val;
+}
+
+InputLinkedList* pullForward(InputLinkedList* ill, int i) {
+	InputLinkedList* val = find(ill, i);
+
+	delete val;
+	return addInput(ill, i);
+}
+
+InputLinkedList* addInput(InputLinkedList* ill, int i) {
+	InputLinkedList* val = new InputLinkedList(i);
+
+	val->next = ill;
+
+	if (ill != nullptr) {
+		ill->prev = val;
+	}
+
+	return val;
+}
+
 // Player Init
 Player::Player(RenderWindow* window, vector<Move*> m) {
 	stats = Stats(12, 4, 8, 2, 4, 4);
@@ -19,6 +81,11 @@ Player::Player(RenderWindow* window, vector<Move*> m) {
 	column = 3;
 
 	moves = m;
+
+	ill = addInput(ill, 2);
+	ill = addInput(ill, 1);
+	ill = addInput(ill, 4);
+	ill = addInput(ill, 3);
 }
 
 void interactCheck(vector<void*> vv) {
@@ -112,38 +179,42 @@ bool Player::draw(RenderWindow* window, World* world, vector<GameObject*>& entit
 		else {
 			if (!previnput.right == input.right) {
 				if (input.right) {
-					row = 1;
+					ill = pullForward(ill, 1);
 				}
 				else {
-					changeDirection(input);
+					ill = pushBack(ill, 1);
 				}
+				changeDirection();
 				column = 0;
 			}
 			if (!previnput.up == input.up) {
 				if (input.up) {
-					row = 2;
+					ill = pullForward(ill, 2);
 				}
 				else {
-					changeDirection(input);
+					ill = pushBack(ill, 2);
 				}
+				changeDirection();
 				column = 0;
 			}
 			if (!previnput.left == input.left) {
 				if (input.left) {
-					row = 3;
+					ill = pullForward(ill, 3);
 				}
 				else {
-					changeDirection(input);
+					ill = pushBack(ill, 3);
 				}
+				changeDirection();
 				column = 0;
 			}
 			if (!previnput.down == input.down) {
 				if (input.down) {
-					row = 4;
+					ill = pullForward(ill, 4);
 				}
 				else {
-					changeDirection(input);
+					ill = pushBack(ill, 4);
 				}
+				changeDirection();
 				column = 0;
 			}
 		}
@@ -168,6 +239,9 @@ bool Player::draw(RenderWindow* window, World* world, vector<GameObject*>& entit
 	GameObject::draw(window, world, entities);
 	world->current->collision(*window, this);
 
+	window->x = x - (RenderWindow::WIDTH - show_width) / 2;
+	window->y = y - (RenderWindow::HEIGHT - show_height) / 2;
+
 	previnput = input;
 
 	setRect();
@@ -176,17 +250,6 @@ bool Player::draw(RenderWindow* window, World* world, vector<GameObject*>& entit
 	return false;
 }
 
-void Player::changeDirection(Input& input) {
-	if (input.right) {
-		row = 1;
-	}
-	if (input.up) {
-		row = 2;
-	}
-	if (input.left) {
-		row = 3;
-	}
-	if (input.down) {
-		row = 4;
-	}
+void Player::changeDirection() {
+	row = ill->input;
 }
