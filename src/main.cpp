@@ -339,7 +339,7 @@ inline SDL_Texture* threadCircularApplication(RenderWindow& window, Uint32*& new
 		SDL_FreeSurface(temp_window_surface);
 
 		window_texture = SDL_CreateTextureFromSurface(window.renderer, window_surface);
-		texture_rect = {window.xOrigin, window.yOrigin, texture_rect.w, texture_rect.h};
+		texture_rect = {0, 0, texture_rect.w, texture_rect.h};
 	}
 	SDL_Texture* trueDiagonalTexture = SDL_CreateTexture(window.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, texture_rect.w, texture_rect.h);
 	SDL_LockTexture(trueDiagonalTexture, NULL, reinterpret_cast<void**>(&pixels), &pitch);
