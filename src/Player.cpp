@@ -147,7 +147,7 @@ void interactCheck(vector<void*> vv) {
 	}
 }
 
-bool Player::draw(RenderWindow* window, World* world, vector<GameObject*>& entities) {
+void Player::act(RenderWindow* window, World* world, vector<GameObject*>& entities) {
 	Collideable::draw(window, world, entities);
 
 	if (window->playerInput) {
@@ -181,56 +181,80 @@ bool Player::draw(RenderWindow* window, World* world, vector<GameObject*>& entit
 				row = 0;
 			}
 		}
-		else {
-			if (!previnput.right == input.right) {
-				if (input.right) {
-					// cout << "pressed right\n";
-					ill = pullForward(ill, 1);
-				}
-				else {
-					// cout << "released right\n";
-					ill = pushBack(ill, 1);
-				}
-				changeDirection();
-				column = 0;
-			}
-			if (!previnput.up == input.up) {
-				if (input.up) {
-					// cout << "pressed up\n";
-					ill = pullForward(ill, 2);
-				}
-				else {
-					// cout << "released up\n";
-					ill = pushBack(ill, 2);
-				}
-				changeDirection();
-				column = 0;
-			}
-			if (!previnput.left == input.left) {
+
+		if (!previnput.right == input.right) {
+			if (input.right) {
+				// cout << "pressed right\n";
+				ill = pullForward(ill, 1);
 				if (input.left) {
-					// cout << "pressed left\n";
-					ill = pullForward(ill, 3);
-				}
-				else {
-					// cout << "released left\n";
 					ill = pushBack(ill, 3);
 				}
-				changeDirection();
-				column = 0;
 			}
-			if (!previnput.down == input.down) {
-				if (input.down) {
-					// cout << "pressed down\n";
-					ill = pullForward(ill, 4);
+			else {
+				// cout << "released right\n";
+				// ill = pushBack(ill, 1);
+				if (input.left) {
+					ill = pullForward(ill, 3);
 				}
-				else {
-					// cout << "released down\n";
+			}
+			changeDirection();
+			column = 0;
+		}
+		if (!previnput.up == input.up) {
+			if (input.up) {
+				// cout << "pressed up\n";
+				ill = pullForward(ill, 2);
+				if (input.down) {
 					ill = pushBack(ill, 4);
 				}
-				changeDirection();
-				column = 0;
 			}
+			else {
+				// cout << "released up\n";
+				// ill = pushBack(ill, 2);
+				if (input.down) {
+					ill = pullForward(ill, 4);
+				}
+			}
+			changeDirection();
+			column = 0;
 		}
+		if (!previnput.left == input.left) {
+			if (input.left) {
+				// cout << "pressed left\n";
+				ill = pullForward(ill, 3);
+				if (input.right) {
+					ill = pushBack(ill, 1);
+				}
+			}
+			else {
+				// cout << "released left\n";
+				// ill = pushBack(ill, 3);
+				if (input.right) {
+					ill = pullForward(ill, 1);
+				}
+			}
+			changeDirection();
+			column = 0;
+		}
+		if (!previnput.down == input.down) {
+			if (input.down) {
+				// cout << "pressed down\n";
+				ill = pullForward(ill, 4);
+				if (input.up) {
+					ill = pushBack(ill, 2);
+				}
+			}
+			else {
+				// cout << "released down\n";
+				// ill = pushBack(ill, 4);
+				if (input.up) {
+					ill = pullForward(ill, 2);
+				}
+			}
+			changeDirection();
+			column = 0;
+		}
+
 		float currSpeed = sqrt(pow(xvel, 2) + pow(yvel, 2));
 		float ch = currSpeed / (speed * traction / (1 - traction));
 		frames += ch;
@@ -258,6 +282,9 @@ bool Player::draw(RenderWindow* window, World* world, vector<GameObject*>& entit
 	previnput = input;
 
 	setRect();
+}
+
+bool Player::draw(RenderWindow* window, World* world, vector<GameObject*>& entities) {
 	window->render(this);
 
 	// Check properties lol
@@ -276,7 +303,7 @@ bool Player::draw(RenderWindow* window, World* world, vector<GameObject*>& entit
 		temp = temp->prev;
 	}
 	cout << temp->input << endl;
-	*/
+	// */
 
 	return false;
 }
@@ -284,19 +311,32 @@ bool Player::draw(RenderWindow* window, World* world, vector<GameObject*>& entit
 void Player::changeDirection() {
 	bool noVert = (input.right && input.left);
 	bool noHori = (input.up && input.down);
-	InputLinkedList* current = ill;
 
 	if (noVert != noHori) {
 		if (noVert) {
-			row = (input.up) ? 2 : 4;
+			if (input.up) {
+				row = 2;
+				return;
+			}
+			if (input.down) {
+				row = 4;
+				return;
+			}
 		}
 		if (noHori) {
-			row = (input.right) ? 1 : 3;
-		}
-		while ((noVert && (current->input == 1 || current->input == 3)) || (noHori && (current->input == 2 || current->input == 4))) {
-			current = current->next;
+			if (input.right) {
+				row = 1;
+				return;
+			}
+			if (input.left) {
+				row = 3;
+				return;
+			}
 		}
 	}
+	// */
 
-	row = current->input;
+	// cout << "SET DIRECTION: " << ill->input << " <<<<<<<<<<<<<<<<<<<" << endl;
+
+	row = ill->input;
 }

@@ -1,0 +1,210 @@
+actualWidth: 2560 actualHeight: 1440
+actualWidth: 2560 actualHeight: 1440
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
+Forward check
+3 4 1 2
+Backwards check
+2 1 4 3
