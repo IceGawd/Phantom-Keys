@@ -1159,6 +1159,16 @@
 **Return Type:** void (N/A)
 
 
+### Player::act
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+| RenderWindow* | window | N/A |
+| World* | world | N/A |
+| vector<GameObject*>& | entities | N/A |
+
+**Return Type:** void (N/A)
+
+
 ### Player::draw
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
