@@ -76,7 +76,7 @@ Area::Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes, str
 
 	for (int x = 0; x < tilesets.size(); x++) {
 		const Tileset& ts = tilesets[x];
-		cout << ts.getImagePath() << endl;
+		// cout << ts.getImagePath() << endl;
 
 		auto tilevector = ts.getTiles();
 
@@ -86,17 +86,19 @@ Area::Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes, str
 		temp->height = tileSize.y;
 		temp->show_width = tileSize.x;
 		temp->show_height = tileSize.y;
-		cout << "tileSize.x " << tileSize.x << " tileSize.y " << tileSize.y << endl;
+		// cout << "tileSize.x " << tileSize.x << " tileSize.y " << tileSize.y << endl;
 		temp->setRect();
 		tilesetEntities.push_back(temp);
 
-		cout << "FIRST: " << ts.getFirstGID() << " LAST: " << ts.getLastGID() << endl;
+		/*
+		// cout << "FIRST: " << ts.getFirstGID() << " LAST: " << ts.getLastGID() << endl;
 		for (auto tile : tilevector) {
-			cout << tile.ID << " ";
+			// cout << tile.ID << " ";
 		}
-		cout << "\n";
+		// cout << "\n";
+		*/
 	}
-	cout << endl;
+	// cout << endl;
 
 	// /*
 	const vector<Layer::Ptr>& layers = tmxmap->getLayers();
@@ -115,11 +117,11 @@ Area::Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes, str
 			}
 		}
 		if (layer->getName().find("Spawn") != string::npos) {
-			cout << "spawn\n";
+			// cout << "spawn\n";
 			vector<EnemyType*> types;
 			for (EnemyType* et : enemyTypes) {
 				if (layer->getName().find(et->name) != string::npos) {
-					cout << et->name << "\n";
+					// cout << et->name << "\n";
 					types.push_back(et);
 				}
 			}
@@ -212,7 +214,7 @@ void Area::diagonalTileFinder(RenderWindow& window, const Layer::Ptr& layer) {
 					imgPartRect.w = tileSize.x;
 					imgPartRect.h = tileSize.y;
 
-					cout << "tileSize.x " << tileSize.x << " tileSize.y " << tileSize.y << endl;
+					// cout << "tileSize.x " << tileSize.x << " tileSize.y " << tileSize.y << endl;
 
 					SDL_Texture* diagonalTexture = window.getAreaTexture(imgPartRect, tilesetEntities[index]->texture.get());
 					SDL_Texture* trueDiagonalTexture = SDL_CreateTexture(window.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, tileSize.x, tileSize.y);
@@ -229,18 +231,18 @@ void Area::diagonalTileFinder(RenderWindow& window, const Layer::Ptr& layer) {
 					SDL_DestroyTexture(diagonalTexture);
 
 					// /*
-					cout << pixels << endl;
-					cout << pitch << endl;
+					// cout << pixels << endl;
+					// cout << pitch << endl;
 
 					int rowlength = pitch / sizeof(unsigned int);
 
 					/*
 					for (int xTemp = 0; xTemp < tileSize.x * tileSize.y; xTemp++) {
-						cout << pixels[xTemp] << " ";
+						// cout << pixels[xTemp] << " ";
 					}
-					cout << endl;
+					// cout << endl;
 
-					cout << "hlelo\n";
+					// cout << "hlelo\n";
 					*/
 
 					for (int yTemp = 1; yTemp < rowlength; yTemp++) {
@@ -300,7 +302,6 @@ void Area::renderLayer(RenderWindow& window, const Layer::Ptr& layer, IntRect in
 	// cout << layer->getName() << endl;
 
 	if (layer->getType() == Layer::Type::Tile) {
-		// cout << "TILELAYER\n\n";
 		TileLayer& tl = layer->getLayerAs<TileLayer>();
 
 		auto tilevector = tl.getTiles();
@@ -317,7 +318,6 @@ void Area::renderLayer(RenderWindow& window, const Layer::Ptr& layer, IntRect in
 					int index = getIndexForID(ID);
 
 					int cols = tilesets[index].getColumnCount();
-					// cout << "cols: " << cols << endl;
 					Vector2u coords = getTilesetCoords(cols, ID);
 // /*
 					if (tile.flipFlags % 4 == 2) {
@@ -333,8 +333,6 @@ void Area::renderLayer(RenderWindow& window, const Layer::Ptr& layer, IntRect in
 					}
 					else {
 // */
-						// cout << "coords.x " << coords.x << " coords.y " << coords.y << endl;
-
 						tilesetEntities[index]->x = x * tileSize.x + offset.x;
 						tilesetEntities[index]->y = y * tileSize.y + offset.y;
 						tilesetEntities[index]->column = coords.x;
@@ -343,7 +341,6 @@ void Area::renderLayer(RenderWindow& window, const Layer::Ptr& layer, IntRect in
 						tilesetEntities[index]->setRect();
 
 						window.render(tilesetEntities[index]);
-						// cout << "rendered" << endl;
 					}
 				}
 			}
@@ -353,7 +350,6 @@ void Area::renderLayer(RenderWindow& window, const Layer::Ptr& layer, IntRect in
 				y++;
 			}
 		}
-		// cout << "\n";
 	}
 	else if (layer->getType() == Layer::Type::Object) {
 		ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
@@ -383,7 +379,6 @@ void Area::renderLayer(RenderWindow& window, const Layer::Ptr& layer, IntRect in
 				tilesetEntities[index]->setRect();
 
 				window.render(tilesetEntities[index], false, 0, rect.height);
-				// cout << "HAHAHA\n";
 				// window.drawText(to_string(object.getFlipFlags()), 0, 0, 255, 50, tilesetEntities[index]->x - window.x, tilesetEntities[index]->y - window.y, tileSize.x, tileSize.y);
 				tilesetEntities[index]->show_width = tileSize.x;
 				tilesetEntities[index]->show_height = tileSize.y;
@@ -419,9 +414,14 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 	}
 	*/
 	// /*
+
+	// cout << "Player: " << player << endl;
+
 	for (SpawnZone& sz : spawnzones) {
 		sz.spawnEnemies(&window, player, entities);
 	}
+
+	// cout << "Spawnzone\n";
 
 	auto tileSize = tmxmap->getTileSize();
 
@@ -444,10 +444,15 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 	SDL_Rect actual = {0, 0, 0, 0};
 	SDL_Rect* intersect = &actual;
 
+	// cout << "Pre sub render\n";
+
 	for (int x = 0; x < playerIndex; x++) {
 		const Layer::Ptr& layer = layers[x];
 		subRender(layer, window, irect);
 	}
+
+	// cout << "Post sub render\n";
+
 	for (int x = playerIndex + 1; x < layers.size() - 1; x++) {
 		const Layer::Ptr& layer = layers[x];
 		const Layer::Ptr& perhaps = layers[x + 1];
@@ -479,6 +484,9 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 		}
 	}
 
+	// cout << "entities.size() " << entities.size() << endl;
+	// cout << "Pre going to battle\n";
+
 	GameObject* toBattle = nullptr;
 	for (int y = 0; y < entities.size(); y++) {
 		GameObject* go = entities[y];
@@ -489,6 +497,7 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 		}
 	}
 
+	// cout << "Post going to battle\n";
 
 	for (int x : checkOut) {
 		const Layer::Ptr& layer = layers[x];
@@ -503,6 +512,8 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 		}
 	}
 
+	// cout << "Pre another subrender???\n";
+
 	for (int x = playerIndex + 1; x < layers.size(); x++) {
 		if (find(checkOut.begin(), checkOut.end(), x) == checkOut.end()) {
 			const Layer::Ptr& layer = layers[x];
@@ -510,6 +521,8 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 		}
 	}
 	// */
+
+	// cout << "Post another subrender???\n";
 
 	// /* BATTLETRANSITION
 	if (toBattle != nullptr && window.gamestate == BATTLETRANSITION) {
@@ -537,11 +550,11 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 		// Select Enemies
 		if (enemies >= battling->zone->dudes.size()) {
 			window.enemyTeam = battling->zone->dudes;
-			cout << "copy???\n";
+			// cout << "copy???\n";
 		}
 		else {
 			window.enemyTeam.push_back(battling);
-			cout << "added " << battling << endl;
+			// cout << "added " << battling << endl;
 			enemies--;
 
 			while (enemies != 0) {
@@ -551,7 +564,7 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 						toAdd = d;
 					}
 				}
-				cout << "added " << toAdd << endl;
+				// cout << "added " << toAdd << endl;
 				window.enemyTeam.push_back(toAdd);
 				enemies--;
 			}
@@ -596,9 +609,10 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 			window.turnOrder.push(toAdd);
 		}
 	}
+
+	// cout << "Area render ender bender fender commender bend her lend mer-men bear end <<<<<<<<<<<<<<<\n";
 	// */
 }
-
 void Area::placePlayer(Player* player) {
 	const vector<Layer::Ptr>& layers = tmxmap->getLayers();
 
@@ -628,8 +642,8 @@ void Area::placePlayer(Player* player) {
 	}
 }
 
-// TODO: sigh... angled collision once again sucks so we gotta fix (out of bounds clip can occur)
 void Area::collision(RenderWindow& window, Collideable* player) {
+	// cout << "start collide: " << player << endl;
 	const vector<Layer::Ptr>& layers = tmxmap->getLayers();
 
 	int iters = 1;
@@ -665,7 +679,7 @@ void Area::collision(RenderWindow& window, Collideable* player) {
 							if (minpercent > 1) {
 								minpercent = 1;
 							}
-							cout << minpercent << endl;
+							// cout << minpercent << endl;
 							player->x -= player->xvel * minpercent;
 							player->y -= player->yvel * minpercent;
 							*/
@@ -752,13 +766,13 @@ void Area::collision(RenderWindow& window, Collideable* player) {
 						if (!seperated) {
 							Vector2f mtv;
 							/*
-							cout << "polygon\n";
+							// cout << "polygon\n";
 							for (int x = 0; x < polygonPoints.size(); x++) {
-								cout << "x: " << polygonPoints[x].x << " y: " << polygonPoints[x].y << endl;
+								// cout << "x: " << polygonPoints[x].x << " y: " << polygonPoints[x].y << endl;
 							}
-							cout << "player\n";
+							// cout << "player\n";
 							for (int x = 0; x < playerPoints.size(); x++) {
-								cout << "x: " << playerPoints[x].x << " y: " << playerPoints[x].y << endl;
+								// cout << "x: " << playerPoints[x].x << " y: " << playerPoints[x].y << endl;
 							}
 							*/
 							/*
@@ -795,6 +809,7 @@ void Area::collision(RenderWindow& window, Collideable* player) {
 		}
 
 		if (mtvs.size() == 0) {
+			// cout << "end empty collide: " << player << endl;
 			return;
 		}
 		else {
@@ -822,4 +837,5 @@ void Area::collision(RenderWindow& window, Collideable* player) {
 			iters = mtvs.size() + 1;
 		}
 	}
+	// cout << "end collision 2: " << player << endl;
 }

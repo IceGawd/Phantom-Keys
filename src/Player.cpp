@@ -17,17 +17,18 @@ InputLinkedList::~InputLinkedList() {
 InputLinkedList* pushBack(InputLinkedList* ill, int i) {
 	InputLinkedList* ret = ill->next;
 	InputLinkedList* val = find(ill, i);
+
+	if (val != ill) {
+		ret = ill;		
+	}
+	delete val;
+
 	InputLinkedList* last = ill;
 
 	while (last->next != nullptr) {
 		last = last->next;
 	}
 
-	if (val != ill) {
-		ret = ill;		
-	}
-
-	delete val;
 	last->next = new InputLinkedList(i);
 	last->next->prev = last;
 
@@ -46,6 +47,10 @@ InputLinkedList* find(InputLinkedList* ill, int i) {
 
 InputLinkedList* pullForward(InputLinkedList* ill, int i) {
 	InputLinkedList* val = find(ill, i);
+
+	if (ill == val) {
+		ill = val->next;
+	}
 
 	delete val;
 	return addInput(ill, i);
@@ -179,9 +184,11 @@ bool Player::draw(RenderWindow* window, World* world, vector<GameObject*>& entit
 		else {
 			if (!previnput.right == input.right) {
 				if (input.right) {
+					// cout << "pressed right\n";
 					ill = pullForward(ill, 1);
 				}
 				else {
+					// cout << "released right\n";
 					ill = pushBack(ill, 1);
 				}
 				changeDirection();
@@ -189,9 +196,11 @@ bool Player::draw(RenderWindow* window, World* world, vector<GameObject*>& entit
 			}
 			if (!previnput.up == input.up) {
 				if (input.up) {
+					// cout << "pressed up\n";
 					ill = pullForward(ill, 2);
 				}
 				else {
+					// cout << "released up\n";
 					ill = pushBack(ill, 2);
 				}
 				changeDirection();
@@ -199,9 +208,11 @@ bool Player::draw(RenderWindow* window, World* world, vector<GameObject*>& entit
 			}
 			if (!previnput.left == input.left) {
 				if (input.left) {
+					// cout << "pressed left\n";
 					ill = pullForward(ill, 3);
 				}
 				else {
+					// cout << "released left\n";
 					ill = pushBack(ill, 3);
 				}
 				changeDirection();
@@ -209,9 +220,11 @@ bool Player::draw(RenderWindow* window, World* world, vector<GameObject*>& entit
 			}
 			if (!previnput.down == input.down) {
 				if (input.down) {
+					// cout << "pressed down\n";
 					ill = pullForward(ill, 4);
 				}
 				else {
+					// cout << "released down\n";
 					ill = pushBack(ill, 4);
 				}
 				changeDirection();
@@ -247,9 +260,43 @@ bool Player::draw(RenderWindow* window, World* world, vector<GameObject*>& entit
 	setRect();
 	window->render(this);
 
+	// Check properties lol
+	/*
+	InputLinkedList* temp = ill;
+	cout << "Forward check\n";
+	while (temp->next != nullptr) {
+		cout << temp->input << " ";
+		temp = temp->next;
+	}
+	cout << temp->input << endl;
+
+	cout << "Backwards check\n";
+	while (temp->prev != nullptr) {
+		cout << temp->input << " ";
+		temp = temp->prev;
+	}
+	cout << temp->input << endl;
+	*/
+
 	return false;
 }
 
 void Player::changeDirection() {
-	row = ill->input;
+	bool noVert = (input.right && input.left);
+	bool noHori = (input.up && input.down);
+	InputLinkedList* current = ill;
+
+	if (noVert != noHori) {
+		if (noVert) {
+			row = (input.up) ? 2 : 4;
+		}
+		if (noHori) {
+			row = (input.right) ? 1 : 3;
+		}
+		while ((noVert && (current->input == 1 || current->input == 3)) || (noHori && (current->input == 2 || current->input == 4))) {
+			current = current->next;
+		}
+	}
+
+	row = current->input;
 }

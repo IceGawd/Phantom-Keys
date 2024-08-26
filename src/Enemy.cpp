@@ -6,9 +6,9 @@ Enemy::Enemy(RenderWindow* window, EnemyType* e, int x, int y, Player* p) : et(e
 	this->x = x;
 	this->y = y;
 
-	cout << "i live\n";
-	cout << "x: " << x << endl;
-	cout << "y: " << y << endl;
+	// cout << "i live\n";
+	// cout << "x: " << x << endl;
+	// cout << "y: " << y << endl;
 
 	sheets["overworld"] = SpriteSheet(window->loadTexture(et->path.c_str()), et->width, et->height, 10);
 	changeSpriteSheet("overworld");
@@ -138,6 +138,8 @@ bool Enemy::draw(RenderWindow* window, World* world, vector<GameObject*>& entiti
 	SDL_Rect b = player->getRect();
 	SDL_Rect i;
 
+	// cout << "final checks\n";
+
 	if (SDL_IntersectRect(&a, &b, &i) == SDL_TRUE && playerDist < (min(player->show_height, player->show_width) + min(show_height, show_width)) / 2) {
 		window->gamestate = BATTLETRANSITION;
 		return true;
@@ -160,7 +162,7 @@ void Enemy::changeSpriteSheet(string newSheet) {
 
 void Enemy::battle(RenderWindow* window, Fightable* turn, vector<GameObject*>& battleEntities) {
 	if (turn == this && window->turnstate == CHOOSEOPTION) {
-		cout << "Enemy Attacks!\n";
+		// cout << "Enemy Attacks!\n";
 		moveEntered = moves.at((int) (moves.size() * random()));
 		target = window->playerTeam.at((int) (window->playerTeam.size() * random()));
 		// cout << "donemove\n";
