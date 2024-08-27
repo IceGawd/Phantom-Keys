@@ -421,6 +421,8 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 		sz.spawnEnemies(&window, player, entities);
 	}
 
+	player->act(&window, world, entities);
+
 	// cout << "Spawnzone\n";
 
 	auto tileSize = tmxmap->getTileSize();

@@ -29,6 +29,7 @@ struct Player : public PartyMember {
 	InputLinkedList* ill = nullptr;
 
 	Player(RenderWindow* window, vector<Move*> m);
+	void act(RenderWindow* window, World* world, vector<GameObject*>& entities);
 	virtual bool draw(RenderWindow* window, World* world, vector<GameObject*>& entities);
 	void changeDirection();
 };
