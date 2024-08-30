@@ -181,78 +181,79 @@ void Player::act(RenderWindow* window, World* world, vector<GameObject*>& entiti
 				row = 0;
 			}
 		}
-
-		if (!previnput.right == input.right) {
-			if (input.right) {
-				// cout << "pressed right\n";
-				ill = pullForward(ill, 1);
-				if (input.left) {
-					ill = pushBack(ill, 3);
-				}
-			}
-			else {
-				// cout << "released right\n";
-				// ill = pushBack(ill, 1);
-				if (input.left) {
-					ill = pullForward(ill, 3);
-				}
-			}
-			changeDirection();
-			column = 0;
-		}
-		if (!previnput.up == input.up) {
-			if (input.up) {
-				// cout << "pressed up\n";
-				ill = pullForward(ill, 2);
-				if (input.down) {
-					ill = pushBack(ill, 4);
-				}
-			}
-			else {
-				// cout << "released up\n";
-				// ill = pushBack(ill, 2);
-				if (input.down) {
-					ill = pullForward(ill, 4);
-				}
-			}
-			changeDirection();
-			column = 0;
-		}
-		if (!previnput.left == input.left) {
-			if (input.left) {
-				// cout << "pressed left\n";
-				ill = pullForward(ill, 3);
+		else {
+			if (!previnput.right == input.right) {
 				if (input.right) {
-					ill = pushBack(ill, 1);
-				}
-			}
-			else {
-				// cout << "released left\n";
-				// ill = pushBack(ill, 3);
-				if (input.right) {
+					// cout << "pressed right\n";
 					ill = pullForward(ill, 1);
+					if (input.left) {
+						ill = pushBack(ill, 3);
+					}
 				}
-			}
-			changeDirection();
-			column = 0;
-		}
-		if (!previnput.down == input.down) {
-			if (input.down) {
-				// cout << "pressed down\n";
-				ill = pullForward(ill, 4);
-				if (input.up) {
-					ill = pushBack(ill, 2);
+				else {
+					// cout << "released right\n";
+					ill = pushBack(ill, 1);
+					if (input.left) {
+						ill = pullForward(ill, 3);
+					}
 				}
+				changeDirection();
+				column = 0;
 			}
-			else {
-				// cout << "released down\n";
-				// ill = pushBack(ill, 4);
+			if (!previnput.up == input.up) {
 				if (input.up) {
+					// cout << "pressed up\n";
 					ill = pullForward(ill, 2);
+					if (input.down) {
+						ill = pushBack(ill, 4);
+					}
 				}
+				else {
+					// cout << "released up\n";
+					ill = pushBack(ill, 2);
+					if (input.down) {
+						ill = pullForward(ill, 4);
+					}
+				}
+				changeDirection();
+				column = 0;
 			}
-			changeDirection();
-			column = 0;
+			if (!previnput.left == input.left) {
+				if (input.left) {
+					// cout << "pressed left\n";
+					ill = pullForward(ill, 3);
+					if (input.right) {
+						ill = pushBack(ill, 1);
+					}
+				}
+				else {
+					// cout << "released left\n";
+					ill = pushBack(ill, 3);
+					if (input.right) {
+						ill = pullForward(ill, 1);
+					}
+				}
+				changeDirection();
+				column = 0;
+			}
+			if (!previnput.down == input.down) {
+				if (input.down) {
+					// cout << "pressed down\n";
+					ill = pullForward(ill, 4);
+					if (input.up) {
+						ill = pushBack(ill, 2);
+					}
+				}
+				else {
+					// cout << "released down\n";
+					ill = pushBack(ill, 4);
+					if (input.up) {
+						ill = pullForward(ill, 2);
+					}
+				}
+				changeDirection();
+				column = 0;
+			}
 		}
 
 		float currSpeed = sqrt(pow(xvel, 2) + pow(yvel, 2));
