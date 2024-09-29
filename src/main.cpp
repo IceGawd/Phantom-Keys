@@ -532,7 +532,7 @@ int main(int argc, char *argv[]) {
 	window.playerTeam.push_back(player);
 
 	World* world = new World(window, player, etVec);
-	TextSequence* ts = nullptr;
+	// TextSequence* ts = nullptr;
 	BattleOptions* bo = new BattleOptions(window);
 	HealthBar* hb = new HealthBar(&window, 46 * bo->scalingSizeMain, bo->mainMenu->y + 5 * bo->scalingSizeMain, 390 * bo->scalingSizeMain, 45 * bo->scalingSizeMain);
 	Selector* selector = new Selector(window);
@@ -582,20 +582,27 @@ int main(int argc, char *argv[]) {
 			TextSlice(window, "REEEEEEEEEEEEAL", {255, 255, 255, 255}, {DIAGONAL_RAINBOW, WAVEY}), 
 		})
 	}, &textNoise["Trumpet"]);
+	// */
 
-	/*
+	// /*
 	TextSequence* ts = new TextSequence({
+		TextBox(window, {
+			TextSlice(window, "I have follow notifs now so please follow so I can see it works", {255, 255, 255, 255}, {DIAGONAL_RAINBOW, WAVEY}), 
+			TextSlice(window, "and for no other reason", {255, 255, 255, 255}, {}), 
+		}),
 		TextBox(window, {
 			TextSlice(window, "ooooohh.....      ooooooohhhhhhhh... OOOOOHHH! ", {125, 125, 125, 255}, {DIAGONAL_RAINBOW, GHOST}), 
 			TextSlice(window, "MWEE HEE HEE HEE YOU FOOL", {255, 0, 255, 255}, {DIAGONAL_RAINBOW, SHAKY})
-		}), TextBox(window, {
+		}), 
+		TextBox(window, {
 			TextSlice(window, "EAT A SANDWICH SKINNY. MWEE HEE HEE!!!", {255, 0, 255, 255}, {DIAGONAL_RAINBOW, WAVEY})
-		}), TextBox(window, {
+		}), 
+		TextBox(window, {
 			TextSlice(window, "By the way im gay :) ", {255, 255, 255, 255}, {RAINBOW}), 
 			TextSlice(window, "Or bi but find out ;)", {255, 255, 255, 255}, {DIAGONAL_RAINBOW}), 
 		})
 	}, &textNoise["Trumpet"]);
-	*/
+	// */
 	// TextSequence* ts = new TextSequence({TextBox(window, {TextSlice(window, "Hello every person type or thing, I need to make a long text to test out the scrolling features. ", {255, 255, 255, 255}, {WAVEY}), TextSlice(window, "Its ice god here", {0, 120, 200, 255}, {SHAKY})})}, &textNoise["Trumpet"]);
 
 	bool prevBack = true;
