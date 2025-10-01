@@ -62,6 +62,75 @@ void addUnique(Vector2f vec, vector<float>& anglesToCheck) {
 	}
 }
 
+void Area::layerInit(RenderWindow& window, const Layer::Ptr& layer) {
+	if (layer->getVisible()) {
+		if (layer->getType() == Layer::Type::Group) {
+			LayerGroup& lg = layer->getLayerAs<LayerGroup>();
+			const vector<Layer::Ptr>& layerception = lg.getLayers();
+			for (const Layer::Ptr& interlayer : layerception) {
+				layerInit(window, interlayer);
+			}
+		}
+		else {
+			diagonalTileFinder(window, layer);
+		}
+	}
+	if (layer->getName().find("Spawn") != string::npos) {
+		// cout << "spawn\n";
+		vector<EnemyType*> types;
+		for (EnemyType* et : enemyTypes) {
+			if (layer->getName().find(et->name) != string::npos) {
+				// cout << et->name << "\n";
+				types.push_back(et);
+			}
+		}
+		ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
+		auto objectvector = og.getObjects();
+
+		for (auto object : objectvector) {
+			if (object.getShape() == Object::Shape::Rectangle) {
+				auto rect = object.getAABB();
+				SDL_Rect oobj = {int(rect.left), int(rect.top), int(rect.width), int(rect.height)};
+				spawnzones.push_back(SpawnZone(oobj, types));					
+			}
+		}
+	}
+	
+	// ADD INTERACTABLES
+	if (layer->getName().find("Collision") != string::npos) {
+		ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
+		auto objectvector = og.getObjects();
+
+		for (auto object : objectvector) {
+			// TODO: Implemnent for all shapes and sizes ;)
+			if (object.getShape() == Object::Shape::Rectangle) {
+				auto rect = object.getAABB();
+
+				string text = "";
+				string noise = "";
+
+				auto properties = object.getProperties();
+				for (auto property : properties) {
+					if (property.getName() == "InspectText") {
+						text = property.getStringValue();
+					}
+					if (property.getName() == "InspectNoise") {
+						noise = property.getStringValue();
+					}
+				}
+
+				if (text != "" && noise != "") {
+					// cout << "text: " << text << ", noise: " << noise << endl;
+					Interactable* i = new Interactable((SDL_Rect) {int(rect.left), int(rect.top), int(rect.width), int(rect.height)}, new TextSequence({TextBox(window, {TextSlice(window, text, {255, 255, 255, 255}, {})})}, &textNoise[noise]));
+					// cout << "made i\n";
+					interactables.push_back(i);
+					// cout << "pushback i\n";
+				}
+			}
+		}
+	}
+}
+
 Area::Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes, string bg, map<string, map<char, Mix_Chunk*>>& textNoise) {
 	battleBackground = new Entity(0, 0, window.loadTexture(bg.c_str()));
 	battleBackground->show_width = RenderWindow::WIDTH;
@@ -104,72 +173,7 @@ Area::Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes, str
 	const vector<Layer::Ptr>& layers = tmxmap->getLayers();
 
 	for (const Layer::Ptr& layer : layers) {
-		if (layer->getVisible()) {
-			if (layer->getType() == Layer::Type::Group) {
-				LayerGroup& lg = layer->getLayerAs<LayerGroup>();
-				const vector<Layer::Ptr>& layerception = lg.getLayers();
-				for (const Layer::Ptr& interlayer : layerception) {
-					diagonalTileFinder(window, interlayer);
-				}
-			}
-			else {
-				diagonalTileFinder(window, layer);
-			}
-		}
-		if (layer->getName().find("Spawn") != string::npos) {
-			// cout << "spawn\n";
-			vector<EnemyType*> types;
-			for (EnemyType* et : enemyTypes) {
-				if (layer->getName().find(et->name) != string::npos) {
-					// cout << et->name << "\n";
-					types.push_back(et);
-				}
-			}
-			ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
-			auto objectvector = og.getObjects();
-
-			for (auto object : objectvector) {
-				if (object.getShape() == Object::Shape::Rectangle) {
-					auto rect = object.getAABB();
-					SDL_Rect oobj = {int(rect.left), int(rect.top), int(rect.width), int(rect.height)};
-					spawnzones.push_back(SpawnZone(oobj, types));					
-				}
-			}
-		}
-		
-		// ADD INTERACTABLES
-		if (layer->getName().find("Collision") != string::npos) {
-			ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
-			auto objectvector = og.getObjects();
-
-			for (auto object : objectvector) {
-				// TODO: Implemnent for all shapes and sizes ;)
-				if (object.getShape() == Object::Shape::Rectangle) {
-					auto rect = object.getAABB();
-
-					string text = "";
-					string noise = "";
-
-					auto properties = object.getProperties();
-					for (auto property : properties) {
-						if (property.getName() == "InspectText") {
-							text = property.getStringValue();
-						}
-						if (property.getName() == "InspectNoise") {
-							noise = property.getStringValue();
-						}
-					}
-
-					if (text != "" && noise != "") {
-						// cout << "text: " << text << ", noise: " << noise << endl;
-						Interactable* i = new Interactable((SDL_Rect) {int(rect.left), int(rect.top), int(rect.width), int(rect.height)}, new TextSequence({TextBox(window, {TextSlice(window, text, {255, 255, 255, 255}, {})})}, &textNoise[noise]));
-						// cout << "made i\n";
-						interactables.push_back(i);
-						// cout << "pushback i\n";
-					}
-				}
-			}
-		}
+		layerInit(window, layer)
 	}
 	// */
 }
@@ -615,6 +619,7 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 	// cout << "Area render ender bender fender commender bend her lend mer-men bear end <<<<<<<<<<<<<<<\n";
 	// */
 }
+
 void Area::placePlayer(Player* player) {
 	const vector<Layer::Ptr>& layers = tmxmap->getLayers();
 

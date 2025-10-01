@@ -192,7 +192,7 @@ void Player::act(RenderWindow* window, World* world, vector<GameObject*>& entiti
 			}
 			else {
 				// cout << "released right\n";
-				// ill = pushBack(ill, 1);
+				ill = pushBack(ill, 1);
 				if (input.left) {
 					ill = pullForward(ill, 3);
 				}
@@ -210,7 +210,7 @@ void Player::act(RenderWindow* window, World* world, vector<GameObject*>& entiti
 			}
 			else {
 				// cout << "released up\n";
-				// ill = pushBack(ill, 2);
+				ill = pushBack(ill, 2);
 				if (input.down) {
 					ill = pullForward(ill, 4);
 				}
@@ -228,7 +228,7 @@ void Player::act(RenderWindow* window, World* world, vector<GameObject*>& entiti
 			}
 			else {
 				// cout << "released left\n";
-				// ill = pushBack(ill, 3);
+				ill = pushBack(ill, 3);
 				if (input.right) {
 					ill = pullForward(ill, 1);
 				}
@@ -246,7 +246,7 @@ void Player::act(RenderWindow* window, World* world, vector<GameObject*>& entiti
 			}
 			else {
 				// cout << "released down\n";
-				// ill = pushBack(ill, 4);
+				ill = pushBack(ill, 4);
 				if (input.up) {
 					ill = pullForward(ill, 2);
 				}
