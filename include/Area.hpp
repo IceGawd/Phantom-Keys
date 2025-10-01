@@ -44,10 +44,13 @@ struct Area {
 	void subRender(const Layer::Ptr& layer, RenderWindow& window, IntRect rect);
 	void render(RenderWindow& window, Player* player, World* world, vector<GameObject*>& entities);
 	void renderLayer(RenderWindow& window, const Layer::Ptr& layer, IntRect intrect);
+	void layerInit(RenderWindow& window, vector<EnemyType*> enemyTypes, map<string, map<char, Mix_Chunk*>>& textNoise, const Layer::Ptr& layer);
 	void diagonalTileFinder(RenderWindow& window, const Layer::Ptr& layer);
 	int getIndexForID(int& ID);
 	void placePlayer(Player* player);
+	void placePlayer(Player* player, const vector<Layer::Ptr>& layers);
 	void collision(RenderWindow& window, Collideable* player);
+	void collision(RenderWindow& window, Collideable* player, const vector<Layer::Ptr>& layers);
 };
 
 Vector2u getTilesetCoords(int columns, int id);

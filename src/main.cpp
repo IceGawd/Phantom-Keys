@@ -534,7 +534,10 @@ int main(int argc, char *argv[]) {
 	overworldEntities.push_back(player); // PLAYER WAS DRAWN IN AREA RENDER (NOW EVERYTHING IS DRAWN THERE)
 	window.playerTeam.push_back(player);
 
+	// cout << "preworld\n";
 	World* world = new World(window, player, etVec, textNoise);
+	// cout << "postworld\n";
+
 	BattleOptions* bo = new BattleOptions(window);
 	HealthBar* hb = new HealthBar(&window, 46 * bo->scalingSizeMain, bo->mainMenu->y + 5 * bo->scalingSizeMain, 390 * bo->scalingSizeMain, 45 * bo->scalingSizeMain);
 	Selector* selector = new Selector(window);

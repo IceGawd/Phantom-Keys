@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # Define directories
 SRCDIR=src
 INCLUDEDIR=include

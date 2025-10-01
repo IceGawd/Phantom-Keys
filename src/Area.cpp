@@ -58,17 +58,18 @@ void addUnique(Vector2f vec, vector<float>& anglesToCheck) {
 		float angle = M_PI / 2 - atan(vec.y / vec.x);
 		if (find(anglesToCheck.begin(), anglesToCheck.end(), angle) == anglesToCheck.end()) {
 			anglesToCheck.push_back(angle);
-		}		
+		}
 	}
 }
 
-void Area::layerInit(RenderWindow& window, const Layer::Ptr& layer) {
+void Area::layerInit(RenderWindow& window, vector<EnemyType*> enemyTypes, map<string, map<char, Mix_Chunk*>>& textNoise, const Layer::Ptr& layer) {
+	// cout << "layerInit\n";
 	if (layer->getVisible()) {
 		if (layer->getType() == Layer::Type::Group) {
 			LayerGroup& lg = layer->getLayerAs<LayerGroup>();
 			const vector<Layer::Ptr>& layerception = lg.getLayers();
 			for (const Layer::Ptr& interlayer : layerception) {
-				layerInit(window, interlayer);
+				layerInit(window, enemyTypes, textNoise, interlayer);
 			}
 		}
 		else {
@@ -98,37 +99,40 @@ void Area::layerInit(RenderWindow& window, const Layer::Ptr& layer) {
 	
 	// ADD INTERACTABLES
 	if (layer->getName().find("Collision") != string::npos) {
-		ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
-		auto objectvector = og.getObjects();
+		if (layer->getType() != Layer::Type::Group) {
+			ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
+			auto objectvector = og.getObjects();
 
-		for (auto object : objectvector) {
-			// TODO: Implemnent for all shapes and sizes ;)
-			if (object.getShape() == Object::Shape::Rectangle) {
-				auto rect = object.getAABB();
+			for (auto object : objectvector) {
+				// TODO: Implemnent for all shapes and sizes ;)
+				if (object.getShape() == Object::Shape::Rectangle) {
+					auto rect = object.getAABB();
 
-				string text = "";
-				string noise = "";
+					string text = "";
+					string noise = "";
 
-				auto properties = object.getProperties();
-				for (auto property : properties) {
-					if (property.getName() == "InspectText") {
-						text = property.getStringValue();
+					auto properties = object.getProperties();
+					for (auto property : properties) {
+						if (property.getName() == "InspectText") {
+							text = property.getStringValue();
+						}
+						if (property.getName() == "InspectNoise") {
+							noise = property.getStringValue();
+						}
 					}
-					if (property.getName() == "InspectNoise") {
-						noise = property.getStringValue();
-					}
-				}
 
-				if (text != "" && noise != "") {
-					// cout << "text: " << text << ", noise: " << noise << endl;
-					Interactable* i = new Interactable((SDL_Rect) {int(rect.left), int(rect.top), int(rect.width), int(rect.height)}, new TextSequence({TextBox(window, {TextSlice(window, text, {255, 255, 255, 255}, {})})}, &textNoise[noise]));
-					// cout << "made i\n";
-					interactables.push_back(i);
-					// cout << "pushback i\n";
+					if (text != "" && noise != "") {
+						// cout << "text: " << text << ", noise: " << noise << endl;
+						Interactable* i = new Interactable((SDL_Rect) {int(rect.left), int(rect.top), int(rect.width), int(rect.height)}, new TextSequence({TextBox(window, {TextSlice(window, text, {255, 255, 255, 255}, {})})}, &textNoise[noise]));
+						// cout << "made i\n";
+						interactables.push_back(i);
+						// cout << "pushback i\n";
+					}
 				}
 			}
 		}
 	}
+	// cout << "layerInit end\n";
 }
 
 Area::Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes, string bg, map<string, map<char, Mix_Chunk*>>& textNoise) {
@@ -173,7 +177,7 @@ Area::Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes, str
 	const vector<Layer::Ptr>& layers = tmxmap->getLayers();
 
 	for (const Layer::Ptr& layer : layers) {
-		layerInit(window, layer)
+		layerInit(window, enemyTypes, textNoise, layer);
 	}
 	// */
 }
@@ -623,9 +627,20 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 void Area::placePlayer(Player* player) {
 	const vector<Layer::Ptr>& layers = tmxmap->getLayers();
 
+	placePlayer(player, layers);
+}
+
+
+void Area::placePlayer(Player* player, const vector<Layer::Ptr>& layers) {
+	// cout << "placePlayer start\n";
 	for (int x = 0; x < layers.size(); x++) {
 		const Layer::Ptr& layer = layers[x];
-		if (layer->getName() == "Sprite") {
+		if (layer->getType() == Layer::Type::Group) {
+			LayerGroup& lg = layer->getLayerAs<LayerGroup>();
+			const vector<Layer::Ptr>& layerception = lg.getLayers();
+			placePlayer(player, layerception);
+		}
+		else if (layer->getName() == "Sprite") {
 			playerIndex = x;
 			auto offset = layer->getOffset();
 			// cout << "nice\n";
@@ -647,19 +662,28 @@ void Area::placePlayer(Player* player) {
 			player->y = y + offset.y;
 		}
 	}
+	// cout << "placePlayer end\n";
 }
 
 void Area::collision(RenderWindow& window, Collideable* player) {
-	// cout << "start collide: " << player << endl;
 	const vector<Layer::Ptr>& layers = tmxmap->getLayers();
+	collision(window, player, layers);
+}
 
+void Area::collision(RenderWindow& window, Collideable* player, const vector<Layer::Ptr>& layers) {
+	// cout << "start collide: " << player << endl;
 	int iters = 1;
 
 	for (int i = 0; i < iters; i++) {
 		vector<Vector2f> mtvs; // Minimum Translation Vectors
 
 		for (const Layer::Ptr& layer : layers) {
-			if (layer->getName().find("Collision") != string::npos) {
+			if (layer->getType() == Layer::Type::Group) {
+				LayerGroup& lg = layer->getLayerAs<LayerGroup>();
+				const vector<Layer::Ptr>& layerception = lg.getLayers();
+				collision(window, player, layerception);
+			}
+			else if (layer->getName().find("Collision") != string::npos) {
 				// cout << "caosl\n";
 				ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
 				auto objectvector = og.getObjects();
