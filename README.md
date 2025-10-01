@@ -64,6 +64,15 @@
 **Return Type:** void (N/A)
 
 
+### Area::layerInit
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+| RenderWindow& | window | N/A |
+| const Layer::Ptr& | layer | N/A |
+
+**Return Type:** void (N/A)
+
+
 ### Area::Area
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
