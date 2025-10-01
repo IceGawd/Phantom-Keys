@@ -68,6 +68,10 @@
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
 | RenderWindow& | window | N/A |
+| vector<EnemyType*> | enemyTypes | N/A |
+|  | ap<string | N/A |
+|  | ap<char | N/A |
+| Mix_Chunk*>>& | textNoise | N/A |
 | const Layer::Ptr& | layer | N/A |
 
 **Return Type:** void (N/A)
@@ -145,11 +149,30 @@
 **Return Type:** void (N/A)
 
 
+### Area::placePlayer
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+| Player* | player | N/A |
+| const vector<Layer::Ptr>& | layers | N/A |
+
+**Return Type:** void (N/A)
+
+
 ### Area::collision
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
 | RenderWindow& | window | N/A |
 | Collideable* | player | N/A |
+
+**Return Type:** void (N/A)
+
+
+### Area::collision
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+| RenderWindow& | window | N/A |
+| Collideable* | player | N/A |
+| const vector<Layer::Ptr>& | layers | N/A |
 
 **Return Type:** void (N/A)
 
