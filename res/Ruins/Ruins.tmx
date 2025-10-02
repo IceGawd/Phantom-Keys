@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="200" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="41" nextobjectid="421">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="200" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="43" nextobjectid="439">
  <tileset firstgid="1" source="New Tilesets.tsx"/>
  <tileset firstgid="199" source="Asset.tsx"/>
  <layer id="14" name="Background" width="200" height="100">
@@ -947,50 +947,6 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
   </layer>
-  <objectgroup id="40" name="Foreground" visible="0">
-   <object id="359" x="481" y="960.5" width="62.5" height="94.5"/>
-   <object id="360" x="544.5" y="961.5" width="62.5" height="93.5"/>
-   <object id="361" x="800.5" y="960" width="63" height="95.5"/>
-   <object id="362" x="864" y="960.5" width="63.5" height="94.5"/>
-   <object id="363" x="480.5" y="1185" width="63.5" height="94.5"/>
-   <object id="364" x="544" y="1185" width="63" height="94"/>
-   <object id="365" x="481" y="1408.5" width="62.5" height="95.5"/>
-   <object id="366" x="543.5" y="1408.5" width="63.5" height="94.5"/>
-   <object id="367" x="801" y="1409" width="63.5" height="93.5"/>
-   <object id="368" x="865.5" y="1409.5" width="62" height="93.5"/>
-   <object id="369" x="865" y="2016.5" width="414" height="64.5"/>
-   <object id="370" x="864.5" y="2112" width="415.5" height="64"/>
-   <object id="371" x="1280.5" y="2112" width="256.5" height="96"/>
-   <object id="372" x="1472" y="2016.5" width="63" height="64"/>
-   <object id="373" x="1472.5" y="1887.5" width="63" height="95.5"/>
-   <object id="374" x="1280" y="1760" width="65" height="96"/>
-   <object id="375" x="1472" y="1760" width="63.5" height="96.5"/>
-   <object id="378" x="1313" y="1315.5" width="31.5" height="92.5"/>
-   <object id="379" x="1472.5" y="1281" width="32.5" height="127"/>
-   <object id="380" x="1632" y="1281" width="32" height="127.5"/>
-   <object id="381" x="1793" y="1344.5" width="30.5" height="64"/>
-   <object id="382" x="1952.5" y="1280.5" width="31" height="126"/>
-   <object id="383" x="2113" y="1312.5" width="30.5" height="95.5"/>
-   <object id="384" x="2176" y="1408.5" width="31" height="63.5"/>
-   <object id="385" x="2400.5" y="1408" width="30.5" height="62.5"/>
-   <object id="386" x="2272" y="1345.5" width="33" height="63"/>
-   <object id="387" x="2497" y="1344.5" width="30" height="62"/>
-   <object id="388" x="2495.5" y="1472.5" width="32" height="64.5"/>
-   <object id="389" x="2592.5" y="1408.5" width="32" height="64"/>
-   <object id="390" x="2624" y="1409" width="31.5" height="63"/>
-   <object id="391" x="2720.5" y="1345" width="32" height="62.5"/>
-   <object id="392" x="2720" y="1473.5" width="32.5" height="63.5"/>
-   <object id="393" x="2784" y="1408.5" width="31" height="64"/>
-   <object id="394" x="2816" y="1633" width="32.5" height="61.5"/>
-   <object id="395" x="2976" y="1600.5" width="32.5" height="96.5"/>
-   <object id="396" x="2815.5" y="1729.5" width="33" height="125"/>
-   <object id="397" x="2976.5" y="1761.5" width="31.5" height="94"/>
-   <object id="398" x="2816" y="1889.5" width="33" height="126.5"/>
-   <object id="399" x="2976.5" y="1921" width="32" height="95"/>
-   <object id="406" x="2880" y="3041.33" width="256.667" height="29.3333"/>
-   <object id="407" x="3584" y="3042" width="256" height="29.3333"/>
-   <object id="408" x="4287.33" y="3040.67" width="257.333" height="32"/>
-  </objectgroup>
   <objectgroup id="30" name="Cryopod Object">
    <object id="144" gid="202" x="943" y="1975" width="32" height="32"/>
    <object id="145" gid="1073742026" x="1013.5" y="1944" width="32" height="32" rotation="180"/>
@@ -1115,7 +1071,11 @@
    <object id="133" gid="204" x="1498" y="1688" width="32" height="32"/>
    <object id="135" gid="204" x="1310" y="2170.67" width="32" height="32"/>
    <object id="136" gid="1073742028" x="1488" y="2164.67" width="32" height="32" rotation="180"/>
-   <object id="141" gid="204" x="1184" y="1944.67" width="32" height="32"/>
+   <object id="141" gid="204" x="1184" y="1944.67" width="32" height="32">
+    <properties>
+     <property name="height" type="float" value="2.5"/>
+    </properties>
+   </object>
    <object id="143" gid="204" x="880" y="1916" width="32" height="32"/>
    <object id="150" gid="202" x="1335.33" y="2145.83" width="32" height="32"/>
    <object id="151" gid="202" x="1424" y="2198.5" width="32" height="32"/>
@@ -1124,52 +1084,6 @@
   </objectgroup>
  </group>
  <group id="36" name="Collisions">
-  <objectgroup id="27" name="Pillars BGnoFG" visible="0">
-   <object id="267" x="2817" y="1840.25" width="31" height="33"/>
-   <object id="268" x="2978" y="1840.75" width="31" height="33"/>
-   <object id="271" x="865.667" y="2060" width="411.333" height="32"/>
-   <object id="282" x="1283.33" y="1966.66" width="58.666" height="32"/>
-   <object id="283" x="1473.33" y="1965.34" width="63.3327" height="32"/>
-   <object id="304" x="446" y="1027.5" width="33" height="36.5"/>
-   <object id="305" x="449.5" y="1255.75" width="33" height="36.5"/>
-   <object id="306" x="448.5" y="1477.75" width="33" height="36.5"/>
-   <object id="326" x="1282" y="1703.33" width="58.666" height="32"/>
-   <object id="327" x="1473.33" y="1700.67" width="58.666" height="32"/>
-  </objectgroup>
-  <objectgroup id="24" name="Cryopod BGnoFG" visible="0">
-   <object id="255" x="789.5" y="1023.67" width="169.167" height="34.1667"/>
-   <object id="259" x="2976.17" y="1679.58" width="31" height="33"/>
-   <object id="260" x="2816.17" y="1680.08" width="31" height="33"/>
-   <object id="261" x="2816.17" y="2001.08" width="31" height="33"/>
-   <object id="262" x="2975.67" y="2001.08" width="31" height="33"/>
-   <object id="272" x="866.334" y="2156" width="411.333" height="32"/>
-   <object id="273" x="866.333" y="1960.67" width="411.333" height="32"/>
-   <object id="280" x="1281" y="1836.66" width="60.666" height="32"/>
-   <object id="281" x="1473" y="1832.67" width="63.3327" height="32"/>
-   <object id="285" x="1473.67" y="2065.33" width="63.3327" height="32"/>
-   <object id="298" x="447.5" y="905.5" width="31" height="48"/>
-   <object id="300" x="478.416" y="1030.42" width="137.167" height="34.1667"/>
-   <object id="301" x="483.916" y="1256.92" width="130.667" height="34.1667"/>
-   <object id="302" x="481.166" y="1478.42" width="136.167" height="34.1667"/>
-   <object id="303" x="793.667" y="1476.92" width="165.667" height="34.1667"/>
-   <object id="307" x="927.5" y="905" width="32.5" height="32"/>
-   <object id="308" x="447.25" y="1165" width="32.5" height="32"/>
-   <object id="309" x="447.25" y="1384.5" width="32.5" height="32"/>
-  </objectgroup>
-  <objectgroup id="29" name="Cryopod Object BGnoFG" visible="0">
-   <object id="321" x="865.666" y="2156.66" width="411.333" height="32"/>
-   <object id="322" x="865.665" y="1961.34" width="411.333" height="32"/>
-   <object id="323" x="1280.33" y="1837.33" width="60.666" height="32"/>
-   <object id="324" x="1472.33" y="1833.34" width="63.3327" height="32"/>
-   <object id="325" x="1473" y="2065.99" width="63.3327" height="32"/>
-  </objectgroup>
-  <objectgroup id="31" name="Pillar Object BGnoFG" visible="0">
-   <object id="328" x="863.502" y="2058.66" width="411.333" height="32"/>
-   <object id="329" x="1281.17" y="1965.33" width="58.666" height="32"/>
-   <object id="330" x="1471.17" y="1964" width="63.3327" height="32"/>
-   <object id="331" x="1279.84" y="1701.99" width="58.666" height="32"/>
-   <object id="332" x="1471.17" y="1699.34" width="58.666" height="32"/>
-  </objectgroup>
   <objectgroup id="18" name="Collisions Masks">
    <object id="12" x="575.5" y="807" width="254.5" height="88.7273"/>
    <object id="20" x="960.136" y="859.5" width="139.864" height="292.364"/>
@@ -1406,7 +1320,7 @@
     </properties>
    </object>
   </objectgroup>
-  <objectgroup id="33" name="Spawn Tuba Snail">
+  <objectgroup id="33" name="Spawn Tuba Snail" visible="0">
    <object id="333" x="1473" y="1218" width="670" height="159"/>
   </objectgroup>
  </group>
