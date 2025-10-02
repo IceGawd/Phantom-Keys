@@ -72,9 +72,17 @@
 |  | ap<string | N/A |
 |  | ap<char | N/A |
 | Mix_Chunk*>>& | textNoise | N/A |
-| const Layer::Ptr& | layer | N/A |
+| const Layer* | layer | N/A |
 
 **Return Type:** void (N/A)
+
+
+### flattenLayers
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+| const vector<Layer::Ptr>& | layers | N/A |
+
+**Return Type:** vector<Layer*> (N/A)
 
 
 ### Area::Area
@@ -91,12 +99,19 @@
 **Return Type:**  (N/A)
 
 
+### Area::~Area
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+
+**Return Type:**  (N/A)
+
+
 ### Area::diagonalTileFinder
 *Tiles in Tiled can be diagonally flipped, which cannot be done with simple flips and rotations. This function finds which tiles get diagonally flipped and creates a new texutre that is the diagonally flipped version of it.*
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
 | RenderWindow& | window | A renderwindow is used to create the diagonally flipped textures |
-| const Layer::Ptr& | layer | The layer with tiles |
+| const Layer* | layer | The layer with tiles |
 
 **Return Type:** void (N/A)
 
@@ -114,7 +129,7 @@
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
 | RenderWindow& | window | N/A |
-| const Layer::Ptr& | layer | N/A |
+| const Layer* | layer | N/A |
 | IntRect | intrect | N/A |
 
 **Return Type:** void (N/A)
@@ -123,7 +138,7 @@
 ### Area::subRender
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
-| const Layer::Ptr& | layer | N/A |
+| const Layer* | layer | N/A |
 | RenderWindow& | window | N/A |
 | IntRect | rect | N/A |
 
@@ -153,7 +168,7 @@
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
 | Player* | player | N/A |
-| const vector<Layer::Ptr>& | layers | N/A |
+| const vector<Layer*>& | layers | N/A |
 
 **Return Type:** void (N/A)
 
@@ -172,7 +187,7 @@
 | :------: | :---------------: | :-------------: | 
 | RenderWindow& | window | N/A |
 | Collideable* | player | N/A |
-| const vector<Layer::Ptr>& | layers | N/A |
+| const vector<Layer*>& | layers | N/A |
 
 **Return Type:** void (N/A)
 
