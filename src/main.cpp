@@ -1062,9 +1062,11 @@ int main(int argc, char *argv[]) {
 			SDL_Delay(delay);
 			delay = 0;
 		}
+		else {
+			cout << "delay: " << delay << endl;
+		}
 		// cout << "THIS FRAME TOOK: " << round(((chrono::duration<double>) (chrono::steady_clock().now() - start)).count() * 1000) << endl;
 
-		// cout << "delay: " << delay << endl;
 		// */
 	}
 

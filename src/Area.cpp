@@ -62,20 +62,12 @@ void addUnique(Vector2f vec, vector<float>& anglesToCheck) {
 	}
 }
 
-void Area::layerInit(RenderWindow& window, vector<EnemyType*> enemyTypes, map<string, map<char, Mix_Chunk*>>& textNoise, const Layer::Ptr& layer) {
+void Area::layerInit(RenderWindow& window, vector<EnemyType*> enemyTypes, map<string, map<char, Mix_Chunk*>>& textNoise, const Layer* layer) {
 	// cout << "layerInit\n";
 	if (layer->getVisible()) {
-		if (layer->getType() == Layer::Type::Group) {
-			LayerGroup& lg = layer->getLayerAs<LayerGroup>();
-			const vector<Layer::Ptr>& layerception = lg.getLayers();
-			for (const Layer::Ptr& interlayer : layerception) {
-				layerInit(window, enemyTypes, textNoise, interlayer);
-			}
-		}
-		else {
-			diagonalTileFinder(window, layer);
-		}
+		diagonalTileFinder(window, layer);
 	}
+
 	if (layer->getName().find("Spawn") != string::npos) {
 		// cout << "spawn\n";
 		vector<EnemyType*> types;
@@ -85,7 +77,7 @@ void Area::layerInit(RenderWindow& window, vector<EnemyType*> enemyTypes, map<st
 				types.push_back(et);
 			}
 		}
-		ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
+		const ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
 		auto objectvector = og.getObjects();
 
 		for (auto object : objectvector) {
@@ -100,7 +92,7 @@ void Area::layerInit(RenderWindow& window, vector<EnemyType*> enemyTypes, map<st
 	// ADD INTERACTABLES
 	if (layer->getName().find("Collision") != string::npos) {
 		if (layer->getType() != Layer::Type::Group) {
-			ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
+			const ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
 			auto objectvector = og.getObjects();
 
 			for (auto object : objectvector) {
@@ -133,6 +125,24 @@ void Area::layerInit(RenderWindow& window, vector<EnemyType*> enemyTypes, map<st
 		}
 	}
 	// cout << "layerInit end\n";
+}
+
+vector<Layer*> flattenLayers(const vector<Layer::Ptr>& layers) {
+	vector<Layer*> result;
+
+	for (const auto& layer : layers) {
+		if (!layer) continue;
+
+		if (layer->getType() == Layer::Type::Group) {
+			const auto& inner = layer->getLayerAs<LayerGroup>().getLayers();
+			auto flat = flattenLayers(inner);
+			result.insert(result.end(), flat.begin(), flat.end());
+		} else {
+			result.push_back(layer.get()); // just borrow the pointer
+		}
+	}
+
+	return result;
 }
 
 Area::Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes, string bg, map<string, map<char, Mix_Chunk*>>& textNoise) {
@@ -174,12 +184,23 @@ Area::Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes, str
 	// cout << endl;
 
 	// /*
-	const vector<Layer::Ptr>& layers = tmxmap->getLayers();
+	layers = flattenLayers(tmxmap->getLayers());
 
-	for (const Layer::Ptr& layer : layers) {
+	for (const Layer* layer : layers) {
 		layerInit(window, enemyTypes, textNoise, layer);
 	}
 	// */
+}
+
+Area::~Area() {
+	delete battleBackground;
+	for (Entity* e : tilesetEntities) {
+		delete e;
+	}
+	for (Interactable* i : interactables) {
+		delete i;
+	}
+	delete tmxmap;
 }
 
 /**
@@ -187,14 +208,14 @@ Area::Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes, str
  * @param {window} A renderwindow is used to create the diagonally flipped textures
  * @param {layer} The layer with tiles
  */
-void Area::diagonalTileFinder(RenderWindow& window, const Layer::Ptr& layer) {
+void Area::diagonalTileFinder(RenderWindow& window, const Layer* layer) {
 	auto area = tmxmap->getTileCount();
 	auto tileSize = tmxmap->getTileSize();
 
 	const vector<Tileset>& tilesets = tmxmap->getTilesets();
 
 	if (layer->getType() == Layer::Type::Tile) {
-		TileLayer& tl = layer->getLayerAs<TileLayer>();
+		const TileLayer& tl = layer->getLayerAs<TileLayer>();
 		auto tilevector = tl.getTiles();
 
 		int x = 0;
@@ -301,7 +322,7 @@ int Area::getIndexForID(int& ID) {
 /**
  * Tiled tmxmaps have layers, this function renders a layer. 
  */
-void Area::renderLayer(RenderWindow& window, const Layer::Ptr& layer, IntRect intrect) {
+void Area::renderLayer(RenderWindow& window, const Layer* layer, IntRect intrect) {
 	auto area = tmxmap->getTileCount();
 	auto tileSize = tmxmap->getTileSize();
 	auto offset = layer->getOffset();
@@ -310,7 +331,7 @@ void Area::renderLayer(RenderWindow& window, const Layer::Ptr& layer, IntRect in
 	// cout << layer->getName() << endl;
 
 	if (layer->getType() == Layer::Type::Tile) {
-		TileLayer& tl = layer->getLayerAs<TileLayer>();
+		const TileLayer& tl = layer->getLayerAs<TileLayer>();
 
 		auto tilevector = tl.getTiles();
 		int x = 0;
@@ -360,7 +381,7 @@ void Area::renderLayer(RenderWindow& window, const Layer::Ptr& layer, IntRect in
 		}
 	}
 	else if (layer->getType() == Layer::Type::Object) {
-		ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
+		const ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
 
 		auto objectvector = og.getObjects();
 
@@ -396,18 +417,9 @@ void Area::renderLayer(RenderWindow& window, const Layer::Ptr& layer, IntRect in
 	}
 }
 
-void Area::subRender(const Layer::Ptr& layer, RenderWindow& window, IntRect rect) {
+void Area::subRender(const Layer* layer, RenderWindow& window, IntRect rect) {
 	if (layer->getVisible()) {
-		if (layer->getType() == Layer::Type::Group) {
-			LayerGroup& lg = layer->getLayerAs<LayerGroup>();
-			const vector<Layer::Ptr>& layerception = lg.getLayers();
-			for (const Layer::Ptr& interlayer : layerception) {
-				renderLayer(window, interlayer, rect);
-			}
-		}
-		else {
-			renderLayer(window, layer, rect);
-		}
+		renderLayer(window, layer, rect);
 	}
 }
 
@@ -425,17 +437,17 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 
 	// cout << "Player: " << player << endl;
 
+	/*
 	for (SpawnZone& sz : spawnzones) {
 		sz.spawnEnemies(&window, player, entities);
 	}
+	*/
 
 	player->act(&window, world, entities);
 
 	// cout << "Spawnzone\n";
 
 	auto tileSize = tmxmap->getTileSize();
-
-	const vector<Layer::Ptr>& layers = tmxmap->getLayers();
 
 	int left = window.x / int(tileSize.x);
 	int top = window.y / int(tileSize.y);
@@ -457,18 +469,19 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 	// cout << "Pre sub render\n";
 
 	for (int x = 0; x < playerIndex; x++) {
-		const Layer::Ptr& layer = layers[x];
+		const Layer* layer = layers[x];
 		subRender(layer, window, irect);
 	}
 
 	// cout << "Post sub render\n";
 
+	/*
 	for (int x = playerIndex + 1; x < layers.size() - 1; x++) {
-		const Layer::Ptr& layer = layers[x];
-		const Layer::Ptr& perhaps = layers[x + 1];
+		const Layer* layer = layers[x];
+		const Layer* perhaps = layers[x + 1];
 		if (perhaps->getName().find("BGFG") != string::npos) {
 			// cout << "BTG9910\n";
-			ObjectGroup& og = perhaps->getLayerAs<ObjectGroup>();
+			const ObjectGroup& og = perhaps->getLayerAs<ObjectGroup>();
 			auto objectvector = og.getObjects();
 			bool checked = false;
 			for (int y = 0; y < entities.size(); y++) {
@@ -493,6 +506,7 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 			x++;
 		}
 	}
+	*/
 
 	// cout << "entities.size() " << entities.size() << endl;
 	// cout << "Pre going to battle\n";
@@ -510,7 +524,7 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 	// cout << "Post going to battle\n";
 
 	for (int x : checkOut) {
-		const Layer::Ptr& layer = layers[x];
+		const Layer* layer = layers[x];
 		subRender(layer, window, irect);
 		for (int y = 0; y < entities.size(); y++) {
 			GameObject* go = entities[y];
@@ -526,7 +540,7 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 
 	for (int x = playerIndex + 1; x < layers.size(); x++) {
 		if (find(checkOut.begin(), checkOut.end(), x) == checkOut.end()) {
-			const Layer::Ptr& layer = layers[x];
+			const Layer* layer = layers[x];
 			subRender(layer, window, irect);
 		}
 	}
@@ -625,26 +639,19 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 }
 
 void Area::placePlayer(Player* player) {
-	const vector<Layer::Ptr>& layers = tmxmap->getLayers();
-
 	placePlayer(player, layers);
 }
 
 
-void Area::placePlayer(Player* player, const vector<Layer::Ptr>& layers) {
+void Area::placePlayer(Player* player, const vector<Layer*>& layers) {
 	// cout << "placePlayer start\n";
 	for (int x = 0; x < layers.size(); x++) {
-		const Layer::Ptr& layer = layers[x];
-		if (layer->getType() == Layer::Type::Group) {
-			LayerGroup& lg = layer->getLayerAs<LayerGroup>();
-			const vector<Layer::Ptr>& layerception = lg.getLayers();
-			placePlayer(player, layerception);
-		}
-		else if (layer->getName() == "Sprite") {
+		const Layer* layer = layers[x];
+		if (layer->getName() == "Sprite") {
 			playerIndex = x;
 			auto offset = layer->getOffset();
 			// cout << "nice\n";
-			ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
+			const ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
 
 			auto objectvector = og.getObjects();
 
@@ -666,26 +673,20 @@ void Area::placePlayer(Player* player, const vector<Layer::Ptr>& layers) {
 }
 
 void Area::collision(RenderWindow& window, Collideable* player) {
-	const vector<Layer::Ptr>& layers = tmxmap->getLayers();
 	collision(window, player, layers);
 }
 
-void Area::collision(RenderWindow& window, Collideable* player, const vector<Layer::Ptr>& layers) {
+void Area::collision(RenderWindow& window, Collideable* player, const vector<Layer*>& layers) {
 	// cout << "start collide: " << player << endl;
 	int iters = 1;
 
 	for (int i = 0; i < iters; i++) {
 		vector<Vector2f> mtvs; // Minimum Translation Vectors
 
-		for (const Layer::Ptr& layer : layers) {
-			if (layer->getType() == Layer::Type::Group) {
-				LayerGroup& lg = layer->getLayerAs<LayerGroup>();
-				const vector<Layer::Ptr>& layerception = lg.getLayers();
-				collision(window, player, layerception);
-			}
-			else if (layer->getName().find("Collision") != string::npos) {
+		for (const Layer* layer : layers) {
+			if (layer->getName().find("Collision") != string::npos) {
 				// cout << "caosl\n";
-				ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
+				const ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
 				auto objectvector = og.getObjects();
 
 				for (auto object : objectvector) {

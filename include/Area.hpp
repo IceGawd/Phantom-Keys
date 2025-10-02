@@ -36,21 +36,23 @@ struct Area {
 	vector<Entity*> tilesetEntities;
 	vector<DiagonalTile> diagonalTileEntities;
 	vector<Interactable*> interactables;
+	vector<Layer*> layers;
 	Map* tmxmap;
 	int playerIndex = -1; // CAN ONLY NOT BE -1 IF PLACE PLAYER IS CALLED
 
 	Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes, string bg, map<string, map<char, Mix_Chunk*>>& textNoise);
+	~Area();
 
-	void subRender(const Layer::Ptr& layer, RenderWindow& window, IntRect rect);
+	void subRender(const Layer* layer, RenderWindow& window, IntRect rect);
 	void render(RenderWindow& window, Player* player, World* world, vector<GameObject*>& entities);
-	void renderLayer(RenderWindow& window, const Layer::Ptr& layer, IntRect intrect);
-	void layerInit(RenderWindow& window, vector<EnemyType*> enemyTypes, map<string, map<char, Mix_Chunk*>>& textNoise, const Layer::Ptr& layer);
-	void diagonalTileFinder(RenderWindow& window, const Layer::Ptr& layer);
+	void renderLayer(RenderWindow& window, const Layer* layer, IntRect intrect);
+	void layerInit(RenderWindow& window, vector<EnemyType*> enemyTypes, map<string, map<char, Mix_Chunk*>>& textNoise, const Layer* layer);
+	void diagonalTileFinder(RenderWindow& window, const Layer* layer);
 	int getIndexForID(int& ID);
 	void placePlayer(Player* player);
-	void placePlayer(Player* player, const vector<Layer::Ptr>& layers);
+	void placePlayer(Player* player, const vector<Layer*>& layers);
 	void collision(RenderWindow& window, Collideable* player);
-	void collision(RenderWindow& window, Collideable* player, const vector<Layer::Ptr>& layers);
+	void collision(RenderWindow& window, Collideable* player, const vector<Layer*>& layers);
 };
 
 Vector2u getTilesetCoords(int columns, int id);
