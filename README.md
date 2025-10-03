@@ -124,23 +124,36 @@
 **Return Type:** int (N/A)
 
 
+### Area::renderObject
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+| RenderWindow& | window | N/A |
+| const Layer* | layer | N/A |
+| const Object& | object | N/A |
+
+**Return Type:** void (N/A)
+
+
+### Area::renderTile
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+| RenderWindow& | window | N/A |
+| const Layer* | layer | N/A |
+| IntRect& | intrect | N/A |
+| const TileLayer::Tile& | tile | N/A |
+| int | x | N/A |
+| int | y | N/A |
+
+**Return Type:** void (N/A)
+
+
 ### Area::renderLayer
 *Tiled tmxmaps have layers, this function renders a layer. *
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
 | RenderWindow& | window | N/A |
 | const Layer* | layer | N/A |
-| IntRect | intrect | N/A |
-
-**Return Type:** void (N/A)
-
-
-### Area::subRender
-| **Type** | **Variable Name** | **Description** | 
-| :------: | :---------------: | :-------------: | 
-| const Layer* | layer | N/A |
-| RenderWindow& | window | N/A |
-| IntRect | rect | N/A |
+| IntRect& | intrect | N/A |
 
 **Return Type:** void (N/A)
 
