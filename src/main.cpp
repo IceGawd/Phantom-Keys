@@ -611,7 +611,6 @@ int main(int argc, char *argv[]) {
 	const int THREADS = 50;
 
 	double delay = 0;
-	double normalDelay = 0;
 
 	bool hitting = false;
 	bool crit = true;
@@ -626,6 +625,13 @@ int main(int argc, char *argv[]) {
 
 	while (gameRunning) {
 		auto start = chrono::steady_clock().now();
+
+
+		while (SDL_PollEvent(&event)) {
+			if (event.type == SDL_QUIT) {
+				gameRunning = false;
+			}
+		}
 
 		for (int framesDone = 0; framesDone < fastForward; framesDone++) {
 			// cout << "frame\n";
@@ -680,7 +686,6 @@ int main(int argc, char *argv[]) {
 			}
 			else {
 				window.clear();
-				normalDelay = (normalDelay + delay) / 2;
 			}
 
 			while (SDL_PollEvent(&event)) {
@@ -710,10 +715,8 @@ int main(int argc, char *argv[]) {
 
 			if (window.gamestate == OVERWORLD) {
 				// LEGACY CAMERA
-				/*
-				window.x = player->x - (RenderWindow::WIDTH - player->show_width) / 2;
-				window.y = player->y - (RenderWindow::HEIGHT - player->show_height) / 2;
-				// */
+				// window.x = player->x - (RenderWindow::WIDTH - player->show_width) / 2;
+				// window.y = player->y - (RenderWindow::HEIGHT - player->show_height) / 2;
 
 				world->current->render(window, player, world, overworldEntities);
 
@@ -885,14 +888,7 @@ int main(int argc, char *argv[]) {
 					arrowChange(&window, window.cc.left, &player->input.left, rhythmPressLeft, {&notes, &howGoodYouDoIt, &maxGoodness});
 					arrowChange(&window, window.cc.right, &player->input.right, rhythmPressRight, {&notes, &howGoodYouDoIt, &maxGoodness});
 					arrowChange(&window, window.cc.down, &player->input.down, rhythmPressDown, {&notes, &howGoodYouDoIt, &maxGoodness});
-					// */
-
-					/*
-					arrowChange(&window, window.cc.up, &player->input.up, rhythmPressUp, {&notes});
-					arrowChange(&window, window.cc.left, &player->input.left, rhythmPressLeft, {&notes});
-					arrowChange(&window, window.cc.right, &player->input.right, rhythmPressRight, {&notes});
-					arrowChange(&window, window.cc.down, &player->input.down, rhythmPressDown, {&notes});
-					*/
+					// 
 
 					for (int x = 0; x < notes.size(); x++) {
 						RhythmNote* rn = notes.at(x);
@@ -924,7 +920,7 @@ int main(int argc, char *argv[]) {
 					selector->snap = true;
 					bool fighterLoss = true;
 					bool fighterWin = true;
-					// /*
+
 					for (Fightable* f : window.playerTeam) {
 						// cout << "Fighter hp: " << f->stats.hp << endl;
 						fighterLoss = fighterLoss && (f->stats.hp <= 0);
@@ -933,7 +929,7 @@ int main(int argc, char *argv[]) {
 						// cout << "Enemy hp: " << e->stats.hp << endl;						
 						fighterWin = fighterWin && (e->stats.hp <= 0);
 					}
-					// */
+
 					if (fighterLoss) {
 						cout << "YOU LOSE!\n";
 						gameRunning = false;
@@ -978,14 +974,7 @@ int main(int argc, char *argv[]) {
 							window.turnOrder.push(myTurn);
 						} while (window.turnOrder.front()->stats.hp <= 0);
 
-						// /*
 						for (int x = 0; x < window.enemyTeam.size(); x++) {
-							/*
-							cout << "x: " << x << endl;
-							for (Enemy* e : window.enemyTeam) {
-								cout << e << endl;
-							}
-							*/
 							// cout << "window.enemyTeam.size(): " << window.enemyTeam.size() << endl;
 							Enemy* e = window.enemyTeam.at(x);
 							if (e->stats.hp <= 0) {
@@ -1004,7 +993,6 @@ int main(int argc, char *argv[]) {
 								// cout << "window.enemyTeam.size(): " << window.enemyTeam.size() << endl;
 							}
 						}
-						// */
 					}
 				}
 			}

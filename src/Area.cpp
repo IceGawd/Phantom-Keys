@@ -437,11 +437,11 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 
 	// cout << "Player: " << player << endl;
 
-	/*
+	// /*
 	for (SpawnZone& sz : spawnzones) {
 		sz.spawnEnemies(&window, player, entities);
 	}
-	*/
+	// */
 
 	player->act(&window, world, entities);
 
@@ -523,6 +523,7 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 
 	// cout << "Post going to battle\n";
 
+	/*
 	for (int x : checkOut) {
 		const Layer* layer = layers[x];
 		subRender(layer, window, irect);
@@ -535,6 +536,7 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 			}
 		}
 	}
+	*/
 
 	// cout << "Pre another subrender???\n";
 
