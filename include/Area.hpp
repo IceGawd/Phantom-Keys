@@ -37,15 +37,18 @@ struct Area {
 	vector<DiagonalTile> diagonalTileEntities;
 	vector<Interactable*> interactables;
 	vector<Layer*> layers;
+	vector<pair<const Layer*, int>> heightLayers; // Super minor optimization: ints over Layers so we can for loop till next index
+	int maxHeight;
 	Map* tmxmap;
 	int playerIndex = -1; // CAN ONLY NOT BE -1 IF PLACE PLAYER IS CALLED
 
 	Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes, string bg, map<string, map<char, Mix_Chunk*>>& textNoise);
 	~Area();
 
-	void subRender(const Layer* layer, RenderWindow& window, IntRect rect);
 	void render(RenderWindow& window, Player* player, World* world, vector<GameObject*>& entities);
-	void renderLayer(RenderWindow& window, const Layer* layer, IntRect intrect);
+	void renderObject(RenderWindow& window, const Layer* layer, const Object& object); // Medium optimization: stop rendering objects out of range
+	void renderTile(RenderWindow& window, const Layer* layer, IntRect& intrect, const TileLayer::Tile& tile, int x, int y);
+	void renderLayer(RenderWindow& window, const Layer* layer, IntRect& intrect);
 	void layerInit(RenderWindow& window, vector<EnemyType*> enemyTypes, map<string, map<char, Mix_Chunk*>>& textNoise, const Layer* layer);
 	void diagonalTileFinder(RenderWindow& window, const Layer* layer);
 	int getIndexForID(int& ID);
