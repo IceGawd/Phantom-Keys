@@ -38,6 +38,9 @@ struct Area {
 	vector<Interactable*> interactables;
 	vector<Layer*> layers;
 	vector<pair<const Layer*, int>> heightLayers; // Super minor optimization: ints over Layers so we can for loop till next index
+	vector<pair<pair<const Layer*, const Object*>, int>> heightObjects;
+	vector<pair<pair<const Layer*, const Object*>, int>> heightObjectsSorted;
+	int obj_index;
 	int maxHeight;
 	Map* tmxmap;
 	int playerIndex = -1; // CAN ONLY NOT BE -1 IF PLACE PLAYER IS CALLED

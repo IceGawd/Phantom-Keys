@@ -87,9 +87,7 @@ void Area::layerInit(RenderWindow& window, vector<EnemyType*> enemyTypes, map<st
 			}
 		}
 	}
-	
-	// ADD INTERACTABLES
-	if (layer->getName().find("Collision") != string::npos) {
+	else if (layer->getName().find("Collision") != string::npos) { // ADD INTERACTABLES
 		if (layer->getType() != Layer::Type::Group) {
 			const ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
 			auto objectvector = og.getObjects();
@@ -123,6 +121,21 @@ void Area::layerInit(RenderWindow& window, vector<EnemyType*> enemyTypes, map<st
 			}
 		}
 	}
+	else if (layer->getType() == Layer::Type::Object) {
+		const ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
+		auto objectvector = og.getObjects();
+
+		for (int o = 0; o < objectvector.size(); o++) {
+			const vector<Property>& properties = objectvector.at(o).getProperties();
+			for (const Property& property : properties) {
+				if (property.getName() == "height") {
+					heightObjects.emplace_back(make_pair(layer, &(og.getObjects().at(o))), property.getIntValue());
+					maxHeight = max(maxHeight, property.getIntValue());
+				}
+			}
+
+		}
+	}
 
 	const vector<Property>& properties = layer->getProperties();
 	for (const Property& property : properties) {
@@ -149,6 +162,15 @@ vector<Layer*> flattenLayers(const vector<Layer::Ptr>& layers) {
 	}
 
 	return result;
+}
+
+int getKey(const pair<pair<const Layer*, const Object*>, int>& a) {
+	const Object* oa = a.first.second;
+
+	// Use AABB for y + height
+	auto ra = oa->getAABB();
+
+	return int(ra.top + ra.height) + a.second;
 }
 
 Area::Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes, string bg, map<string, map<char, Mix_Chunk*>>& textNoise) {
@@ -196,6 +218,15 @@ Area::Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes, str
 	for (const Layer* layer : layers) {
 		layerInit(window, enemyTypes, textNoise, layer);
 	}
+
+	heightObjectsSorted = heightObjects; // copy the vector
+
+	sort(heightObjectsSorted.begin(), heightObjectsSorted.end(),
+		[](const pair<pair<const Layer*, const Object*>, int>& a, const pair<pair<const Layer*, const Object*>, int>& b) {
+			return getKey(a) < getKey(b);
+		}
+	);
+
 	// */
 }
 
@@ -428,8 +459,13 @@ void Area::renderLayer(RenderWindow& window, const Layer* layer, IntRect& intrec
 
 			const vector<Object>& objectvector = og.getObjects();
 
-			for (const Object& object : objectvector) {
-				renderObject(window, layer, object);
+			for (int o = 0; o < objectvector.size(); o++) {
+				if (obj_index < heightObjects.size() && heightObjects[obj_index].first.second == &(og.getObjects().at(o))) {
+					obj_index++;
+				}
+				else {
+					renderObject(window, layer, objectvector.at(o));
+				}
 			}
 		}
 	}
@@ -450,6 +486,9 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 	// cout << "Player: " << player << endl;
 
 	// /*
+
+	obj_index = 0;
+
 	for (SpawnZone& sz : spawnzones) {
 		sz.spawnEnemies(&window, player, entities);
 	}
@@ -494,13 +533,14 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 	});
 
 	int goIndex = 0;
+	int obIndex = 0;
 
 	int x = 0;
 	int y = 0;
 
 	while (y < area.y + maxHeight) {
 		for (pair<const Layer*, int> layer_height : heightLayers) {
-			int mY = y - layer_height.second;
+			int mY = y - layer_height.second - layer_height.first->getOffset().y / tileSize.y; // NOTE OFFSETS DONT WORK YET CUZ I DONT WANNA MAKE EM WORK RN
 			if (mY >= 0 && mY < area.y) {
 				const TileLayer::Tile& tile = layer_height.first->getLayerAs<TileLayer>().getTiles().at(mY * area.x + x);
 				if (x >= irect.left && (x - irect.left) <= irect.width && mY >= irect.top && (mY - irect.top) <= irect.height) {
@@ -514,11 +554,27 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 			x = 0;
 			y++;
 
-			while (goIndex < entities.size() && entities[goIndex]->y + entities[goIndex]->show_height < y * tileSize.y) {
-				if (entities[goIndex]->draw(&window, world, entities)) {
-					toBattle = entities[goIndex];
+			while (true) {
+				bool objectsLeft = obIndex < heightObjectsSorted.size() && getKey(heightObjectsSorted[obIndex]) < y * tileSize.y;
+				bool gameobjLeft = goIndex < entities.size() && entities[goIndex]->y + entities[goIndex]->show_height < y * tileSize.y;
+
+				if (objectsLeft && gameobjLeft) {
+					objectsLeft = getKey(heightObjectsSorted[obIndex]) < entities[goIndex]->y + entities[goIndex]->show_height;
 				}
-				goIndex++;
+				
+				if (objectsLeft) {
+					renderObject(window, heightObjectsSorted[obIndex].first.first, *(heightObjectsSorted[obIndex].first.second));
+					obIndex++;
+				}
+				else if (gameobjLeft) {
+					if (entities[goIndex]->draw(&window, world, entities)) {
+						toBattle = entities[goIndex];
+					}
+					goIndex++;
+				}
+				else {
+					break;
+				}
 			}
 		}
 	}
@@ -532,6 +588,9 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 			hl++;
 		}
 	}
+
+	assert(hl == heightLayers.size());
+	assert(obj_index == heightObjects.size());
 	// */
 
 	// cout << "Post another subrender???\n";
