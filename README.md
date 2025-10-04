@@ -85,6 +85,16 @@
 **Return Type:** vector<Layer*> (N/A)
 
 
+### getKey
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+| const pair<pair<const | Layer* | N/A |
+| const | Object*> | N/A |
+| int>& | a | N/A |
+
+**Return Type:** int (N/A)
+
+
 ### Area::Area
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
