@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="200" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="48" nextobjectid="486">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="200" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="48" nextobjectid="490">
  <tileset firstgid="1" source="New Tilesets.tsx"/>
  <tileset firstgid="199" source="Asset.tsx"/>
  <layer id="14" name="Background" width="200" height="100">
@@ -738,10 +738,10 @@
    <object id="156" gid="203" x="1298.67" y="1916.67" width="32" height="32"/>
   </objectgroup>
   <objectgroup id="16" name="Sprite" offsetx="-182.667" offsety="-320.667">
-   <object id="480" gid="195" x="3072" y="1888" width="32" height="32"/>
-   <object id="481" gid="177" x="3072" y="1856" width="32" height="32"/>
-   <object id="482" gid="178" x="3104" y="1856" width="32" height="32"/>
-   <object id="483" gid="196" x="3104" y="1888" width="32" height="32"/>
+   <object id="486" gid="195" x="864" y="1344" width="32" height="32"/>
+   <object id="487" gid="177" x="864" y="1312" width="32" height="32"/>
+   <object id="488" gid="178" x="896" y="1312" width="32" height="32"/>
+   <object id="489" gid="196" x="896" y="1344" width="32" height="32"/>
   </objectgroup>
   <layer id="44" name="ShelfBases" width="200" height="100">
    <properties>
@@ -1564,7 +1564,7 @@
   </objectgroup>
  </group>
  <group id="36" name="Collisions">
-  <objectgroup id="18" name="Collisions Masks" visible="0">
+  <objectgroup id="18" name="Collisions Masks">
    <object id="12" x="575.5" y="807" width="254.5" height="88.7273"/>
    <object id="20" x="960.136" y="859.5" width="139.864" height="292.364"/>
    <object id="22" x="1024.32" y="1344" width="34.1818" height="65.5"/>

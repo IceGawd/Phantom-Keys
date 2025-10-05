@@ -168,13 +168,14 @@ int getKey(const pair<pair<const Layer*, const Object*>, int>& a) {
 	const Object* oa = a.first.second;
 	auto rect = oa->getAABB();
 
+	// /*
 	// Extract rotation (in degrees) from Tiled object
 	float rotationDeg = oa->getRotation();
 	float rotationRad = rotationDeg * (M_PI / 180.0f);
 
 	// Original top-left corner
 	float x = rect.left;
-	float y = rect.top;
+	float y = rect.top + rect.height;
 	float w = rect.width;
 	float h = rect.height;
 
@@ -190,20 +191,18 @@ int getKey(const pair<pair<const Layer*, const Object*>, int>& a) {
 	float sinr = sin(rotationRad);
 	float cosr = cos(rotationRad);
 
-	float minY = numeric_limits<float>::max();
 	float maxY = numeric_limits<float>::lowest();
 
 	for (int i = 0; i < 4; i++) {
-		float rx = x + corners[i].x * cosr - corners[i].y * sinr;
-		float ry = y + corners[i].x * sinr + corners[i].y * cosr;
-		minY = min(minY, ry);
-		maxY = max(maxY, ry);
+		maxY = max(maxY, y + corners[i].x * sinr + corners[i].y * cosr);
 	}
 
 	// "Bottom" of the rotated rectangle in world space
 	float bottomY = maxY;
 
 	return int(bottomY) + a.second;
+	// */
+	// return int(rect.top + rect.height) + a.second;
 }
 
 Area::Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes, string bg, map<string, map<char, Mix_Chunk*>>& textNoise) {
