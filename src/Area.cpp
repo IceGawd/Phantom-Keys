@@ -166,11 +166,44 @@ vector<Layer*> flattenLayers(const vector<Layer::Ptr>& layers) {
 
 int getKey(const pair<pair<const Layer*, const Object*>, int>& a) {
 	const Object* oa = a.first.second;
+	auto rect = oa->getAABB();
 
-	// Use AABB for y + height
-	auto ra = oa->getAABB();
+	// Extract rotation (in degrees) from Tiled object
+	float rotationDeg = oa->getRotation();
+	float rotationRad = rotationDeg * (M_PI / 180.0f);
 
-	return int(ra.top + ra.height) + a.second;
+	// Original top-left corner
+	float x = rect.left;
+	float y = rect.top;
+	float w = rect.width;
+	float h = rect.height;
+
+	// Rotation pivot: top-left corner (Tiled's convention)
+	SDL_FPoint corners[4] = {
+		{0,  0}, // top-left
+		{w,  0}, // top-right
+		{0, -h}, // bottom-left
+		{w, -h}  // bottom-right
+	};
+
+	// Rotate each corner
+	float sinr = sin(rotationRad);
+	float cosr = cos(rotationRad);
+
+	float minY = numeric_limits<float>::max();
+	float maxY = numeric_limits<float>::lowest();
+
+	for (int i = 0; i < 4; i++) {
+		float rx = x + corners[i].x * cosr - corners[i].y * sinr;
+		float ry = y + corners[i].x * sinr + corners[i].y * cosr;
+		minY = min(minY, ry);
+		maxY = max(maxY, ry);
+	}
+
+	// "Bottom" of the rotated rectangle in world space
+	float bottomY = maxY;
+
+	return int(bottomY) + a.second;
 }
 
 Area::Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes, string bg, map<string, map<char, Mix_Chunk*>>& textNoise) {
@@ -420,6 +453,7 @@ void Area::renderTile(RenderWindow& window, const Layer* layer, IntRect& intrect
 			tilesetEntities[index]->column = coords.x;
 			tilesetEntities[index]->row = coords.y;
 			tilesetEntities[index]->flip = tile.flipFlags;
+			tilesetEntities[index]->angle = 0;
 			tilesetEntities[index]->setRect();
 
 			window.render(tilesetEntities[index]);
@@ -529,7 +563,7 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 	GameObject* toBattle = nullptr;
 
 	sort(entities.begin(), entities.end(), [](const GameObject* a, const GameObject* b) {
-		return a->y + a->show_height < b->y + b->show_height;
+		return a->y + a->show_height - abs(a->yvel) < b->y + b->show_height - abs(b->yvel);
 	});
 
 	int goIndex = 0;
@@ -555,8 +589,8 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 			y++;
 
 			while (true) {
-				bool objectsLeft = obIndex < heightObjectsSorted.size() && getKey(heightObjectsSorted[obIndex]) < y * tileSize.y;
-				bool gameobjLeft = goIndex < entities.size() && entities[goIndex]->y + entities[goIndex]->show_height < y * tileSize.y;
+				bool objectsLeft = obIndex < heightObjectsSorted.size() && getKey(heightObjectsSorted[obIndex]) < (y + 0.1) * tileSize.y;
+				bool gameobjLeft = goIndex < entities.size() && entities[goIndex]->y + entities[goIndex]->show_height - abs(entities[goIndex]->yvel) < (y + 0.1) * tileSize.y;
 
 				if (objectsLeft && gameobjLeft) {
 					objectsLeft = getKey(heightObjectsSorted[obIndex]) < entities[goIndex]->y + entities[goIndex]->show_height;
