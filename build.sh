@@ -7,14 +7,17 @@ SRCDIR=src
 INCLUDEDIR=include
 SDLINCLUDEDIR=C:/SDL2/include
 OBJDIR=obj/debug
+RESOURCEDIR=res
+OUTDIR=bin/debug/res
 
 # Parse flags
 FULL=false
 RELEASE=false
 DOCSGENERATOR=false
 GDBDEBUG=false
+SYNC=false
 
-while getopts ":frdg" opt; do
+while getopts ":frdgs" opt; do
 	case $opt in
 		f)
 			echo "FULL COMPILE!"
@@ -32,6 +35,10 @@ while getopts ":frdg" opt; do
 			echo "COMPILING WITH GDB DEBUG MODE!"
 			GDBDEBUG=true
 			;;
+		s)
+			echo "SYNCING!"
+			SYNC=true
+			;;
 		\?)
 			echo "Invalid option: -$OPTARG" >&2
 			exit 1
@@ -47,8 +54,10 @@ fi
 
 if $RELEASE; then
 	OBJDIR=obj/release
+	OUTDIR=bin/release/res
 elif $GDBDEBUG; then
 	OBJDIR=obj/gdb
+	OUTDIR=bin/gdb/res
 fi
 
 # Create the output directory if it doesn't exist
@@ -82,4 +91,16 @@ elif $GDBDEBUG; then
 	g++ obj/gdb/*.o -o bin/gdb/main -L C:/SDL2/lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 else
 	g++ obj/debug/*.o -o bin/debug/main -L C:/SDL2/lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
+fi
+
+if $SYNC; then
+	mkdir -p "$OUTDIR"
+
+	echo "Syncing resources between '$RESOURCEDIR' and '$OUTDIR'..."
+
+	rsync -ru --delete "$RESOURCEDIR"/ "$OUTDIR"/
+
+	rsync -ru "$OUTDIR"/ "$RESOURCEDIR"/
+
+	echo "Resource sync complete!"
 fi

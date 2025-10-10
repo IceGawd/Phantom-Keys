@@ -38,8 +38,8 @@ struct Area {
 	vector<Interactable*> interactables;
 	vector<Layer*> layers;
 	vector<pair<const Layer*, int>> heightLayers; // Super minor optimization: ints over Layers so we can for loop till next index
-	vector<pair<pair<const Layer*, const Object*>, int>> heightObjects;
-	vector<pair<pair<const Layer*, const Object*>, int>> heightObjectsSorted;
+	vector<pair<pair<const Layer*, int>, int>> heightObjects;
+	vector<pair<pair<const Layer*, int>, int>> heightObjectsSorted;
 	int obj_index;
 	int maxHeight;
 	Map* tmxmap;
@@ -48,6 +48,7 @@ struct Area {
 	Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes, string bg, map<string, map<char, Mix_Chunk*>>& textNoise);
 	~Area();
 
+	int getKey(const pair<pair<const Layer*, int>, int>& a);
 	void render(RenderWindow& window, Player* player, World* world, vector<GameObject*>& entities);
 	void renderObject(RenderWindow& window, const Layer* layer, const Object& object); // Medium optimization: stop rendering objects out of range
 	void renderTile(RenderWindow& window, const Layer* layer, IntRect& intrect, const TileLayer::Tile& tile, int x, int y);

@@ -121,27 +121,29 @@ void Area::layerInit(RenderWindow& window, vector<EnemyType*> enemyTypes, map<st
 			}
 		}
 	}
-	else if (layer->getType() == Layer::Type::Object) {
-		const ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
-		auto objectvector = og.getObjects();
+	else if (layer->getVisible()) {
+		if (layer->getType() == Layer::Type::Object) {
+			const ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
+			auto objectvector = og.getObjects();
 
-		for (int o = 0; o < objectvector.size(); o++) {
-			const vector<Property>& properties = objectvector.at(o).getProperties();
+			for (int o = 0; o < objectvector.size(); o++) {
+				const vector<Property>& properties = objectvector.at(o).getProperties();
+				for (const Property& property : properties) {
+					if (property.getName() == "height") {
+						heightObjects.emplace_back(make_pair(layer, o), property.getIntValue());
+						maxHeight = max(maxHeight, property.getIntValue());
+					}
+				}
+			}
+		}
+		else { // Only Tile objects can have standard height (for now)
+			const vector<Property>& properties = layer->getProperties();
 			for (const Property& property : properties) {
 				if (property.getName() == "height") {
-					heightObjects.emplace_back(make_pair(layer, &(og.getObjects().at(o))), property.getIntValue());
+					heightLayers.emplace_back(layer, property.getIntValue());
 					maxHeight = max(maxHeight, property.getIntValue());
 				}
 			}
-
-		}
-	}
-
-	const vector<Property>& properties = layer->getProperties();
-	for (const Property& property : properties) {
-		if (property.getName() == "height") {
-			heightLayers.emplace_back(layer, property.getIntValue());
-			maxHeight = max(maxHeight, property.getIntValue());
 		}
 	}
 }
@@ -164,27 +166,30 @@ vector<Layer*> flattenLayers(const vector<Layer::Ptr>& layers) {
 	return result;
 }
 
-int getKey(const pair<pair<const Layer*, const Object*>, int>& a) {
-	const Object* oa = a.first.second;
-	auto rect = oa->getAABB();
+int Area::getKey(const pair<pair<const Layer*, int>, int>& a) {
+	auto tileSize = tmxmap->getTileSize();
+	const ObjectGroup& og = a.first.first->getLayerAs<ObjectGroup>();
+	auto objectvector = og.getObjects();
+	const Object& oa = objectvector.at(a.first.second);
+	auto rect = oa.getAABB();
 
 	// /*
 	// Extract rotation (in degrees) from Tiled object
-	float rotationDeg = oa->getRotation();
+	float rotationDeg = oa.getRotation();
 	float rotationRad = rotationDeg * (M_PI / 180.0f);
 
-	// Original top-left corner
+	// Original bottom-left corner
 	float x = rect.left;
-	float y = rect.top + rect.height;
+	float y = rect.top; // "top" means the bottom corner... for some ungodly reason
 	float w = rect.width;
 	float h = rect.height;
 
-	// Rotation pivot: top-left corner (Tiled's convention)
+	// Rotation pivot: bottom-left corner (Tiled's convention)
 	SDL_FPoint corners[4] = {
-		{0,  0}, // top-left
-		{w,  0}, // top-right
-		{0, -h}, // bottom-left
-		{w, -h}  // bottom-right
+		{0,  0}, // bottom-left
+		{w,  0}, // bottom-right
+		{0, -h}, // top-left
+		{w, -h}  // top-right
 	};
 
 	// Rotate each corner
@@ -200,7 +205,7 @@ int getKey(const pair<pair<const Layer*, const Object*>, int>& a) {
 	// "Bottom" of the rotated rectangle in world space
 	float bottomY = maxY;
 
-	return int(bottomY) + a.second;
+	return int(bottomY) + a.second * tileSize.y;
 	// */
 	// return int(rect.top + rect.height) + a.second;
 }
@@ -254,10 +259,11 @@ Area::Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes, str
 	heightObjectsSorted = heightObjects; // copy the vector
 
 	sort(heightObjectsSorted.begin(), heightObjectsSorted.end(),
-		[](const pair<pair<const Layer*, const Object*>, int>& a, const pair<pair<const Layer*, const Object*>, int>& b) {
+		[this](const auto& a, const auto& b) {
 			return getKey(a) < getKey(b);
-		}
-	);
+		});
+
+	cout << endl;
 
 	// */
 }
@@ -493,7 +499,7 @@ void Area::renderLayer(RenderWindow& window, const Layer* layer, IntRect& intrec
 			const vector<Object>& objectvector = og.getObjects();
 
 			for (int o = 0; o < objectvector.size(); o++) {
-				if (obj_index < heightObjects.size() && heightObjects[obj_index].first.second == &(og.getObjects().at(o))) {
+				if (obj_index < heightObjects.size() && heightObjects[obj_index].first.first == layer && heightObjects[obj_index].first.second == o) {
 					obj_index++;
 				}
 				else {
@@ -592,11 +598,11 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 				bool gameobjLeft = goIndex < entities.size() && entities[goIndex]->y + entities[goIndex]->show_height - abs(entities[goIndex]->yvel) < (y + 0.1) * tileSize.y;
 
 				if (objectsLeft && gameobjLeft) {
-					objectsLeft = getKey(heightObjectsSorted[obIndex]) < entities[goIndex]->y + entities[goIndex]->show_height;
+					objectsLeft = getKey(heightObjectsSorted[obIndex]) < entities[goIndex]->y + entities[goIndex]->show_height - abs(entities[goIndex]->yvel);
 				}
 				
 				if (objectsLeft) {
-					renderObject(window, heightObjectsSorted[obIndex].first.first, *(heightObjectsSorted[obIndex].first.second));
+					renderObject(window, heightObjectsSorted[obIndex].first.first, heightObjectsSorted[obIndex].first.first->getLayerAs<ObjectGroup>().getObjects().at(heightObjectsSorted[obIndex].first.second));
 					obIndex++;
 				}
 				else if (gameobjLeft) {

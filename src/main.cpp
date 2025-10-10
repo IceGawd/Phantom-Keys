@@ -626,13 +626,6 @@ int main(int argc, char *argv[]) {
 	while (gameRunning) {
 		auto start = chrono::steady_clock().now();
 
-
-		while (SDL_PollEvent(&event)) {
-			if (event.type == SDL_QUIT) {
-				gameRunning = false;
-			}
-		}
-
 		for (int framesDone = 0; framesDone < fastForward; framesDone++) {
 			// cout << "frame\n";
 			if (window.gamestate == BATTLETRANSITION) {
