@@ -49,6 +49,7 @@ void Fightable::battleInit(RenderWindow& window, int index) {
 void Fightable::addToExhaustQueue(Move* move) {
 	exhaustQueue.push_back(move);
 	if (exhaustQueue.size() > moves.size() / 2.0) {
+		// cout << "REMOVING " << exhaustQueue.at(0) << " FROM QUEUE\n";
 		exhaustQueue.erase(exhaustQueue.begin());
 	}
 }
