@@ -11,7 +11,7 @@ TextObject::TextObject(RenderWindow* window, int n, Fightable* gotHit, bool crit
 	yvel = -pow(pow(radius, 2) - pow(xvel, 2), 0.25);
 
 	double ratio = 0.1 + 1.0 * n / gotHit->stats.hpMax;
-	ratio = 1.414 * ratio / (ratio + 0.414);
+	ratio = sqrt(2) * ratio / (ratio + sqrt(2) - 1);
 	ratio = 50.0 * ratio / height;
 	ratio *= crit ? 1.5 : 1;
 

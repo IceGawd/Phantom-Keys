@@ -47,7 +47,7 @@ while getopts ":frdgs" opt; do
 done
 
 if $DOCSGENERATOR; then
-	 g++ -c iceDocsGenerator.cpp -std=c++14 -g -m64 -o obj/iceDocsGenerator.o
+	 g++ -c iceDocsGenerator.cpp -std=c++17 -g -m64 -o obj/iceDocsGenerator.o
 	 g++ obj/iceDocsGenerator.o -o iceDocsGenerator
 	 exit 0
 fi
@@ -71,11 +71,11 @@ for file in $SRCDIR/*.cpp $SRCDIR/*.c $SRCDIR/detail/*.cpp; do
 		if [ ! -f "$objfile" ] || [ "$file" -nt "$objfile" ] || $FULL; then
 			echo "Compiling $file..."
 			if $RELEASE; then
-				g++ -c $file -o $objfile -std=c++14 -O3 -g -m64 -I $INCLUDEDIR -I $SDLINCLUDEDIR
+				g++ -c $file -o $objfile -std=c++17 -O3 -g -m64 -I $INCLUDEDIR -I $SDLINCLUDEDIR
 			elif $GDBDEBUG; then
-				g++ -c $file -o $objfile -std=c++14 -g3 -O0 -fno-omit-frame-pointer -m64 -I $INCLUDEDIR -I $SDLINCLUDEDIR
+				g++ -c $file -o $objfile -std=c++17 -g3 -O0 -fno-omit-frame-pointer -m64 -I $INCLUDEDIR -I $SDLINCLUDEDIR
 			else
-				g++ -c $file -o $objfile -std=c++14 -g -m64 -I $INCLUDEDIR -I $SDLINCLUDEDIR
+				g++ -c $file -o $objfile -std=c++17 -g -m64 -I $INCLUDEDIR -I $SDLINCLUDEDIR
 			fi
 		else
 			echo "Skipping $file, object file is up to date."

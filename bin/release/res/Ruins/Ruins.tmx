@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="200" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="48" nextobjectid="524">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="200" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="48" nextobjectid="525">
  <tileset firstgid="1" source="New Tilesets.tsx"/>
  <tileset firstgid="199" source="Asset.tsx"/>
  <layer id="14" name="Background" width="200" height="100">
@@ -1566,7 +1566,7 @@
   </objectgroup>
  </group>
  <group id="36" name="Collisions">
-  <objectgroup id="18" name="Collisions Masks" visible="0">
+  <objectgroup id="18" name="Collisions Masks">
    <object id="12" x="575.5" y="807" width="254.5" height="88.7273"/>
    <object id="20" x="960.136" y="859.5" width="139.864" height="292.364"/>
    <object id="22" x="1024.32" y="1344" width="34.1818" height="65.5"/>
@@ -1817,8 +1817,17 @@
    </object>
    <object id="478" x="2464" y="2592" width="32" height="96"/>
    <object id="479" x="2592" y="2688" width="32" height="96"/>
+   <object id="524" x="1504" y="1138.67" width="128" height="35.3333">
+    <properties>
+     <property name="InspectNoise" value="Flute"/>
+     <property name="InspectText" value="Press Space To interact... but I guess you knew that"/>
+    </properties>
+   </object>
   </objectgroup>
-  <objectgroup id="33" name="Spawn Tuba Snail" visible="0">
+  <objectgroup id="33" name="Spawn">
+   <properties>
+    <property name="enemy" value="Tuba Snail"/>
+   </properties>
    <object id="333" x="1473" y="1218" width="670" height="159"/>
   </objectgroup>
  </group>

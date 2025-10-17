@@ -1819,7 +1819,7 @@
    <object id="479" x="2592" y="2688" width="32" height="96"/>
   </objectgroup>
   <objectgroup id="33" name="Spawn Tuba Snail" visible="0">
-   <object id="333" x="1473" y="1218" width="670" height="159"/>
+   <object id="333" x="1473" y="1184" width="670" height="193"/>
   </objectgroup>
  </group>
 </map>

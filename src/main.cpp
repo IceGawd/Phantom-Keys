@@ -940,7 +940,6 @@ int main(int argc, char *argv[]) {
 							// cout << "deleting " << e << endl;
 							overworldEntities.erase(remove(overworldEntities.begin(), overworldEntities.end(), e));
 							e->zone->dudes.erase(remove(e->zone->dudes.begin(), e->zone->dudes.end(), e));
-							e->zone->spawned--;
 							// cout << "pre delete call\n";
 							// cout << "post delete call\n";
 							window.enemyTeam.erase(window.enemyTeam.begin());
@@ -976,7 +975,6 @@ int main(int argc, char *argv[]) {
 								// cout << "a\n";
 								e->zone->dudes.erase(remove(e->zone->dudes.begin(), e->zone->dudes.end(), e));
 								// cout << "b\n";
-								e->zone->spawned--;
 								// cout << "c\n";
 								window.enemyTeam.erase(remove(window.enemyTeam.begin(), window.enemyTeam.end(), e));
 								// cout << "d\n";

@@ -21,6 +21,14 @@ struct EnemyType {
 	int sightradius; // Radius from home where player will get noticed
 	int homeradius; // Radius from home where enemy is comfortable going
 	bool homeloyalty; // Will the enemy change home after chasing player out of home zone or no?
+	float turn_kp = 0.05f; // How aggressively we turn (proportional)
+	float turn_damp = 0.85f; // Damping to avoid oscillation (0..1)
+	float speed_lerp = 0.15f; // How quickly speed tracks desiredspeed
+	float min_face_speed_factor = 0.15f; // Fraction of max speed when nearly sideways
+	float lead_enabled = true; // Enable predictive lead
+	float max_intercept_time = 1.2f; // Cap on predicted time
+	float chaos = 50f; // How much randomness should they have in their movement
+
 	string path;
 	int width;
 	int height;
