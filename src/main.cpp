@@ -534,7 +534,10 @@ int main(int argc, char *argv[]) {
 	overworldEntities.push_back(player); // PLAYER WAS DRAWN IN AREA RENDER (NOW EVERYTHING IS DRAWN THERE)
 	window.playerTeam.push_back(player);
 
+	// cout << "preworld\n";
 	World* world = new World(window, player, etVec, textNoise);
+	// cout << "postworld\n";
+
 	BattleOptions* bo = new BattleOptions(window);
 	HealthBar* hb = new HealthBar(&window, 46 * bo->scalingSizeMain, bo->mainMenu->y + 5 * bo->scalingSizeMain, 390 * bo->scalingSizeMain, 45 * bo->scalingSizeMain);
 	Selector* selector = new Selector(window);
@@ -608,7 +611,6 @@ int main(int argc, char *argv[]) {
 	const int THREADS = 50;
 
 	double delay = 0;
-	double normalDelay = 0;
 
 	bool hitting = false;
 	bool crit = true;
@@ -677,7 +679,6 @@ int main(int argc, char *argv[]) {
 			}
 			else {
 				window.clear();
-				normalDelay = (normalDelay + delay) / 2;
 			}
 
 			while (SDL_PollEvent(&event)) {
@@ -707,10 +708,8 @@ int main(int argc, char *argv[]) {
 
 			if (window.gamestate == OVERWORLD) {
 				// LEGACY CAMERA
-				/*
-				window.x = player->x - (RenderWindow::WIDTH - player->show_width) / 2;
-				window.y = player->y - (RenderWindow::HEIGHT - player->show_height) / 2;
-				// */
+				// window.x = player->x - (RenderWindow::WIDTH - player->show_width) / 2;
+				// window.y = player->y - (RenderWindow::HEIGHT - player->show_height) / 2;
 
 				world->current->render(window, player, world, overworldEntities);
 
@@ -882,14 +881,7 @@ int main(int argc, char *argv[]) {
 					arrowChange(&window, window.cc.left, &player->input.left, rhythmPressLeft, {&notes, &howGoodYouDoIt, &maxGoodness});
 					arrowChange(&window, window.cc.right, &player->input.right, rhythmPressRight, {&notes, &howGoodYouDoIt, &maxGoodness});
 					arrowChange(&window, window.cc.down, &player->input.down, rhythmPressDown, {&notes, &howGoodYouDoIt, &maxGoodness});
-					// */
-
-					/*
-					arrowChange(&window, window.cc.up, &player->input.up, rhythmPressUp, {&notes});
-					arrowChange(&window, window.cc.left, &player->input.left, rhythmPressLeft, {&notes});
-					arrowChange(&window, window.cc.right, &player->input.right, rhythmPressRight, {&notes});
-					arrowChange(&window, window.cc.down, &player->input.down, rhythmPressDown, {&notes});
-					*/
+					// 
 
 					for (int x = 0; x < notes.size(); x++) {
 						RhythmNote* rn = notes.at(x);
@@ -921,7 +913,7 @@ int main(int argc, char *argv[]) {
 					selector->snap = true;
 					bool fighterLoss = true;
 					bool fighterWin = true;
-					// /*
+
 					for (Fightable* f : window.playerTeam) {
 						// cout << "Fighter hp: " << f->stats.hp << endl;
 						fighterLoss = fighterLoss && (f->stats.hp <= 0);
@@ -930,7 +922,7 @@ int main(int argc, char *argv[]) {
 						// cout << "Enemy hp: " << e->stats.hp << endl;						
 						fighterWin = fighterWin && (e->stats.hp <= 0);
 					}
-					// */
+
 					if (fighterLoss) {
 						cout << "YOU LOSE!\n";
 						gameRunning = false;
@@ -948,7 +940,6 @@ int main(int argc, char *argv[]) {
 							// cout << "deleting " << e << endl;
 							overworldEntities.erase(remove(overworldEntities.begin(), overworldEntities.end(), e));
 							e->zone->dudes.erase(remove(e->zone->dudes.begin(), e->zone->dudes.end(), e));
-							e->zone->spawned--;
 							// cout << "pre delete call\n";
 							// cout << "post delete call\n";
 							window.enemyTeam.erase(window.enemyTeam.begin());
@@ -975,14 +966,7 @@ int main(int argc, char *argv[]) {
 							window.turnOrder.push(myTurn);
 						} while (window.turnOrder.front()->stats.hp <= 0);
 
-						// /*
 						for (int x = 0; x < window.enemyTeam.size(); x++) {
-							/*
-							cout << "x: " << x << endl;
-							for (Enemy* e : window.enemyTeam) {
-								cout << e << endl;
-							}
-							*/
 							// cout << "window.enemyTeam.size(): " << window.enemyTeam.size() << endl;
 							Enemy* e = window.enemyTeam.at(x);
 							if (e->stats.hp <= 0) {
@@ -991,7 +975,6 @@ int main(int argc, char *argv[]) {
 								// cout << "a\n";
 								e->zone->dudes.erase(remove(e->zone->dudes.begin(), e->zone->dudes.end(), e));
 								// cout << "b\n";
-								e->zone->spawned--;
 								// cout << "c\n";
 								window.enemyTeam.erase(remove(window.enemyTeam.begin(), window.enemyTeam.end(), e));
 								// cout << "d\n";
@@ -1001,7 +984,6 @@ int main(int argc, char *argv[]) {
 								// cout << "window.enemyTeam.size(): " << window.enemyTeam.size() << endl;
 							}
 						}
-						// */
 					}
 				}
 			}
@@ -1059,9 +1041,11 @@ int main(int argc, char *argv[]) {
 			SDL_Delay(delay);
 			delay = 0;
 		}
+		else {
+			cout << "delay: " << delay << endl;
+		}
 		// cout << "THIS FRAME TOOK: " << round(((chrono::duration<double>) (chrono::steady_clock().now() - start)).count() * 1000) << endl;
 
-		// cout << "delay: " << delay << endl;
 		// */
 	}
 

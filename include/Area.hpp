@@ -36,18 +36,30 @@ struct Area {
 	vector<Entity*> tilesetEntities;
 	vector<DiagonalTile> diagonalTileEntities;
 	vector<Interactable*> interactables;
+	vector<Layer*> layers;
+	vector<pair<const Layer*, int>> heightLayers; // Super minor optimization: ints over Layers so we can for loop till next index
+	vector<pair<pair<const Layer*, int>, int>> heightObjects;
+	vector<pair<pair<const Layer*, int>, int>> heightObjectsSorted;
+	int obj_index;
+	int maxHeight;
 	Map* tmxmap;
 	int playerIndex = -1; // CAN ONLY NOT BE -1 IF PLACE PLAYER IS CALLED
 
 	Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes, string bg, map<string, map<char, Mix_Chunk*>>& textNoise);
+	~Area();
 
-	void subRender(const Layer::Ptr& layer, RenderWindow& window, IntRect rect);
+	int getKey(const pair<pair<const Layer*, int>, int>& a);
 	void render(RenderWindow& window, Player* player, World* world, vector<GameObject*>& entities);
-	void renderLayer(RenderWindow& window, const Layer::Ptr& layer, IntRect intrect);
-	void diagonalTileFinder(RenderWindow& window, const Layer::Ptr& layer);
+	void renderObject(RenderWindow& window, const Layer* layer, const Object& object); // Medium optimization: stop rendering objects out of range
+	void renderTile(RenderWindow& window, const Layer* layer, IntRect& intrect, const TileLayer::Tile& tile, int x, int y);
+	void renderLayer(RenderWindow& window, const Layer* layer, IntRect& intrect);
+	void layerInit(RenderWindow& window, vector<EnemyType*> enemyTypes, map<string, map<char, Mix_Chunk*>>& textNoise, const Layer* layer);
+	void diagonalTileFinder(RenderWindow& window, const Layer* layer);
 	int getIndexForID(int& ID);
 	void placePlayer(Player* player);
+	void placePlayer(Player* player, const vector<Layer*>& layers);
 	void collision(RenderWindow& window, Collideable* player);
+	void collision(RenderWindow& window, Collideable* player, const vector<Layer*>& layers);
 };
 
 Vector2u getTilesetCoords(int columns, int id);

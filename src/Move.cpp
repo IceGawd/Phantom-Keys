@@ -36,7 +36,7 @@ void Move::dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defe
 		int critAccountedDamage = damage;
 		// crit = true;
 		if (crit) {
-			cout << "Critical hit!\n";
+			// cout << "Critical hit!\n";
 			battleEntities.push_back(new TextObject(window, "CRITICAL HIT!", attacker, {255, 150, 0}));
 			critAccountedDamage *= attacker->stats.critincrease;
 		}
@@ -51,13 +51,13 @@ void Move::dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defe
 
 		int damagedone = (int) (rand(index * attacker->stats.rangebonus, mean * attacker->stats.damagebonus) * defender->stats.damagetaken + 1);
 		damagedone *= attacker->getExhaust(this);
-		cout << "Damage done: " << damagedone << endl;
+		// cout << "Damage done: " << damagedone << endl;
 		if (damagedone > 0) {
 			defender->stats.hp -= damagedone;
 			battleEntities.push_back(new TextObject(window, damagedone, defender, crit));
 			if (physical) { // NOTE: Not true, ranged weapons dont recoil, ranged is technically physical
 				int recoil = (int) (damagedone * defender->stats.vitality / 9.0);
-				cout << "Recoil: " << recoil << endl;
+				// cout << "Recoil: " << recoil << endl;
 				attacker->stats.hp -= recoil;
 				battleEntities.push_back(new TextObject(window, recoil, attacker, crit));
 			}
@@ -65,10 +65,11 @@ void Move::dealDamage(RenderWindow* window, Fightable* attacker, Fightable* defe
 		else {
 			battleEntities.push_back(new TextObject(window, "NO DAMAGE!", attacker, {150, 150, 150}));
 		}
+		// cout << "added " << name << " to queue\n";
 		attacker->addToExhaustQueue(this);
 	}
 	else {
-		cout << "MISS!\n";
+		// cout << "MISS!\n";
 		battleEntities.push_back(new TextObject(window, "MISS!", attacker, {150, 150, 150}));
 	}
 }

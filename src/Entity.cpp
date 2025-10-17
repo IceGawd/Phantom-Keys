@@ -27,8 +27,10 @@ Entity::Entity(float px, float py, SDL_Texture* ptexture) : x(px), y(py) {
 }
 
 void Entity::setTexture(SDL_Texture* ptexture) {
-	texture = shared_ptr<SDL_Texture>(ptexture, sdl_deleter());
-	SDL_SetTextureBlendMode(ptexture, SDL_BLENDMODE_BLEND);
+	if (!texture || texture.get() != ptexture) {
+		texture = shared_ptr<SDL_Texture>(ptexture, sdl_deleter());
+		SDL_SetTextureBlendMode(ptexture, SDL_BLENDMODE_BLEND);
+	}
 }
 
 // COPY CONSTRUCTOR

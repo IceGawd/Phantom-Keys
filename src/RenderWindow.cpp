@@ -10,7 +10,7 @@ RenderWindow::RenderWindow(const char* title) : window(NULL), renderer(NULL) {
 		cout << "Window failed to Init: " << SDL_GetError() << "\n"; 
 	}
 
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 	zephyrea = TTF_OpenFont("res/gfx/PixAntiqua.ttf", 36);
 

@@ -8,5 +8,7 @@ World::World(RenderWindow& window, Player* player, vector<EnemyType*> enemyTypes
 
 void World::switchArea(string s, Player* player) {
 	current = areas[s];
+	// cout << "preplace\n";
 	current->placePlayer(player);
+	// cout << "postplace\n";
 };

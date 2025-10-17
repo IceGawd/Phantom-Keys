@@ -58,8 +58,156 @@ void addUnique(Vector2f vec, vector<float>& anglesToCheck) {
 		float angle = M_PI / 2 - atan(vec.y / vec.x);
 		if (find(anglesToCheck.begin(), anglesToCheck.end(), angle) == anglesToCheck.end()) {
 			anglesToCheck.push_back(angle);
-		}		
+		}
 	}
+}
+
+void Area::layerInit(RenderWindow& window, vector<EnemyType*> enemyTypes, map<string, map<char, Mix_Chunk*>>& textNoise, const Layer* layer) {
+	if (layer->getVisible()) {
+		diagonalTileFinder(window, layer);
+	}
+
+	if (layer->getName().find("Spawn") != string::npos) {
+		// cout << "spawn\n";
+		vector<EnemyType*> types;
+		for (EnemyType* et : enemyTypes) {
+			if (layer->getName().find(et->name) != string::npos) {
+				// cout << et->name << "\n";
+				types.push_back(et);
+			}
+		}
+		const ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
+		auto objectvector = og.getObjects();
+
+		for (auto object : objectvector) {
+			if (object.getShape() == Object::Shape::Rectangle) {
+				auto rect = object.getAABB();
+				SDL_Rect oobj = {int(rect.left), int(rect.top), int(rect.width), int(rect.height)};
+				spawnzones.push_back(SpawnZone(oobj, types));					
+			}
+		}
+	}
+	else if (layer->getName().find("Collision") != string::npos) { // ADD INTERACTABLES
+		if (layer->getType() != Layer::Type::Group) {
+			const ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
+			auto objectvector = og.getObjects();
+
+			for (auto object : objectvector) {
+				// TODO: Implemnent for all shapes and sizes ;)
+				if (object.getShape() == Object::Shape::Rectangle) {
+					auto rect = object.getAABB();
+
+					string text = "";
+					string noise = "";
+
+					const vector<Property>& properties = object.getProperties();
+					for (const Property& property : properties) {
+						if (property.getName() == "InspectText") {
+							text = property.getStringValue();
+						}
+						if (property.getName() == "InspectNoise") {
+							noise = property.getStringValue();
+						}
+					}
+
+					if (text != "" && noise != "") {
+						// cout << "text: " << text << ", noise: " << noise << endl;
+						Interactable* i = new Interactable((SDL_Rect) {int(rect.left), int(rect.top), int(rect.width), int(rect.height)}, new TextSequence({TextBox(window, {TextSlice(window, text, {255, 255, 255, 255}, {})})}, &textNoise[noise]));
+						// cout << "made i\n";
+						interactables.push_back(i);
+						// cout << "pushback i\n";
+					}
+				}
+			}
+		}
+	}
+	else if (layer->getVisible()) {
+		if (layer->getType() == Layer::Type::Object) {
+			const ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
+			auto objectvector = og.getObjects();
+
+			for (int o = 0; o < objectvector.size(); o++) {
+				const vector<Property>& properties = objectvector.at(o).getProperties();
+				for (const Property& property : properties) {
+					if (property.getName() == "height") {
+						heightObjects.emplace_back(make_pair(layer, o), property.getIntValue());
+						maxHeight = max(maxHeight, property.getIntValue());
+					}
+				}
+			}
+		}
+		else { // Only Tile objects can have standard height (for now)
+			const vector<Property>& properties = layer->getProperties();
+			for (const Property& property : properties) {
+				if (property.getName() == "height") {
+					heightLayers.emplace_back(layer, property.getIntValue());
+					maxHeight = max(maxHeight, property.getIntValue());
+				}
+			}
+		}
+	}
+}
+
+vector<Layer*> flattenLayers(const vector<Layer::Ptr>& layers) {
+	vector<Layer*> result;
+
+	for (const auto& layer : layers) {
+		if (!layer) continue;
+
+		if (layer->getType() == Layer::Type::Group) {
+			const auto& inner = layer->getLayerAs<LayerGroup>().getLayers();
+			auto flat = flattenLayers(inner);
+			result.insert(result.end(), flat.begin(), flat.end());
+		} else {
+			result.push_back(layer.get()); // just borrow the pointer
+		}
+	}
+
+	return result;
+}
+
+int Area::getKey(const pair<pair<const Layer*, int>, int>& a) {
+	auto tileSize = tmxmap->getTileSize();
+	const ObjectGroup& og = a.first.first->getLayerAs<ObjectGroup>();
+	auto objectvector = og.getObjects();
+	const Object& oa = objectvector.at(a.first.second);
+	auto rect = oa.getAABB();
+
+	// /*
+	// Extract rotation (in degrees) from Tiled object
+	float rotationDeg = oa.getRotation();
+	float rotationRad = rotationDeg * (M_PI / 180.0f);
+
+	// Original bottom-left corner
+	float x = rect.left;
+	float y = rect.top; // "top" means the bottom corner... for some ungodly reason
+	float w = rect.width;
+	float h = rect.height;
+
+	// Rotation pivot: bottom-left corner (Tiled's convention)
+	SDL_FPoint corners[4] = {
+		{0,  0}, // bottom-left
+		{w,  0}, // bottom-right
+		{0, -h}, // top-left
+		{w, -h}  // top-right
+	};
+
+	// Rotate each corner
+	float sinr = sin(rotationRad);
+	float cosr = cos(rotationRad);
+
+	float maxY = numeric_limits<float>::lowest();
+
+	for (int i = 0; i < 4; i++) {
+		maxY = max(maxY, y + corners[i].x * sinr + corners[i].y * cosr);
+	}
+
+	// "Bottom" of the rotated rectangle in world space
+	float bottomY = maxY;
+
+	return int(bottomY) + a.second * tileSize.y;
+	// */
+	// return int(rect.top + rect.height) + a.second;
 }
 
 Area::Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes, string bg, map<string, map<char, Mix_Chunk*>>& textNoise) {
@@ -101,77 +249,34 @@ Area::Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes, str
 	// cout << endl;
 
 	// /*
-	const vector<Layer::Ptr>& layers = tmxmap->getLayers();
+	layers = flattenLayers(tmxmap->getLayers());
 
-	for (const Layer::Ptr& layer : layers) {
-		if (layer->getVisible()) {
-			if (layer->getType() == Layer::Type::Group) {
-				LayerGroup& lg = layer->getLayerAs<LayerGroup>();
-				const vector<Layer::Ptr>& layerception = lg.getLayers();
-				for (const Layer::Ptr& interlayer : layerception) {
-					diagonalTileFinder(window, interlayer);
-				}
-			}
-			else {
-				diagonalTileFinder(window, layer);
-			}
-		}
-		if (layer->getName().find("Spawn") != string::npos) {
-			// cout << "spawn\n";
-			vector<EnemyType*> types;
-			for (EnemyType* et : enemyTypes) {
-				if (layer->getName().find(et->name) != string::npos) {
-					// cout << et->name << "\n";
-					types.push_back(et);
-				}
-			}
-			ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
-			auto objectvector = og.getObjects();
-
-			for (auto object : objectvector) {
-				if (object.getShape() == Object::Shape::Rectangle) {
-					auto rect = object.getAABB();
-					SDL_Rect oobj = {int(rect.left), int(rect.top), int(rect.width), int(rect.height)};
-					spawnzones.push_back(SpawnZone(oobj, types));					
-				}
-			}
-		}
-		
-		// ADD INTERACTABLES
-		if (layer->getName().find("Collision") != string::npos) {
-			ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
-			auto objectvector = og.getObjects();
-
-			for (auto object : objectvector) {
-				// TODO: Implemnent for all shapes and sizes ;)
-				if (object.getShape() == Object::Shape::Rectangle) {
-					auto rect = object.getAABB();
-
-					string text = "";
-					string noise = "";
-
-					auto properties = object.getProperties();
-					for (auto property : properties) {
-						if (property.getName() == "InspectText") {
-							text = property.getStringValue();
-						}
-						if (property.getName() == "InspectNoise") {
-							noise = property.getStringValue();
-						}
-					}
-
-					if (text != "" && noise != "") {
-						// cout << "text: " << text << ", noise: " << noise << endl;
-						Interactable* i = new Interactable((SDL_Rect) {int(rect.left), int(rect.top), int(rect.width), int(rect.height)}, new TextSequence({TextBox(window, {TextSlice(window, text, {255, 255, 255, 255}, {})})}, &textNoise[noise]));
-						// cout << "made i\n";
-						interactables.push_back(i);
-						// cout << "pushback i\n";
-					}
-				}
-			}
-		}
+	maxHeight = 0;
+	for (const Layer* layer : layers) {
+		layerInit(window, enemyTypes, textNoise, layer);
 	}
+
+	heightObjectsSorted = heightObjects; // copy the vector
+
+	sort(heightObjectsSorted.begin(), heightObjectsSorted.end(),
+		[this](const auto& a, const auto& b) {
+			return getKey(a) < getKey(b);
+		});
+
+	cout << endl;
+
 	// */
+}
+
+Area::~Area() {
+	delete battleBackground;
+	for (Entity* e : tilesetEntities) {
+		delete e;
+	}
+	for (Interactable* i : interactables) {
+		delete i;
+	}
+	delete tmxmap;
 }
 
 /**
@@ -179,14 +284,14 @@ Area::Area(RenderWindow& window, string path, vector<EnemyType*> enemyTypes, str
  * @param {window} A renderwindow is used to create the diagonally flipped textures
  * @param {layer} The layer with tiles
  */
-void Area::diagonalTileFinder(RenderWindow& window, const Layer::Ptr& layer) {
+void Area::diagonalTileFinder(RenderWindow& window, const Layer* layer) {
 	auto area = tmxmap->getTileCount();
 	auto tileSize = tmxmap->getTileSize();
 
 	const vector<Tileset>& tilesets = tmxmap->getTilesets();
 
 	if (layer->getType() == Layer::Type::Tile) {
-		TileLayer& tl = layer->getLayerAs<TileLayer>();
+		const TileLayer& tl = layer->getLayerAs<TileLayer>();
 		auto tilevector = tl.getTiles();
 
 		int x = 0;
@@ -290,115 +395,117 @@ int Area::getIndexForID(int& ID) {
 	return tilesets.size() - 1;
 }
 
-/**
- * Tiled tmxmaps have layers, this function renders a layer. 
- */
-void Area::renderLayer(RenderWindow& window, const Layer::Ptr& layer, IntRect intrect) {
-	auto area = tmxmap->getTileCount();
-	auto tileSize = tmxmap->getTileSize();
-	auto offset = layer->getOffset();
+void Area::renderObject(RenderWindow& window, const Layer* layer, const Object& object) {
+	if (object.getTileID() != 0) {
+		const Vector2u& tileSize = tmxmap->getTileSize();
+		const Vector2i& offset = layer->getOffset();
 
-	const vector<Tileset>& tilesets = tmxmap->getTilesets();
-	// cout << layer->getName() << endl;
+		const vector<Tileset>& tilesets = tmxmap->getTilesets();
 
-	if (layer->getType() == Layer::Type::Tile) {
-		TileLayer& tl = layer->getLayerAs<TileLayer>();
+		int ID = object.getTileID();
+		int index = getIndexForID(ID);
 
-		auto tilevector = tl.getTiles();
-		int x = 0;
-		int y = 0;
+		int cols = tilesets[index].getColumnCount();
+		Vector2u coords = getTilesetCoords(cols, ID);
 
-		// cout << left << endl;
+		const FloatRect& rect = object.getAABB();
 
-		for (auto tile : tilevector) {
-			if (x >= intrect.left && (x - intrect.left) <= intrect.width && y >= intrect.top && (y - intrect.top) <= intrect.height) {
-				// cout << tile.ID << " ";
-				if (tile.ID != 0) {
-					int ID = tile.ID;
-					int index = getIndexForID(ID);
+		float angle = tilesetEntities[index]->angle = object.getRotation() * M_PI / 180;
 
-					int cols = tilesets[index].getColumnCount();
-					Vector2u coords = getTilesetCoords(cols, ID);
-// /*
-					if (tile.flipFlags % 4 == 2) {
-						for (DiagonalTile& dt : diagonalTileEntities) {
-							if (dt.index == index && dt.coords.x == coords.x && dt.coords.y == coords.y) {
-								dt.entity->x = x * tileSize.x;
-								dt.entity->y = y * tileSize.y;
-								dt.entity->flip = tile.flipFlags;
+		tilesetEntities[index]->x = rect.left + offset.x;
+		tilesetEntities[index]->y = rect.top - rect.height + offset.y;
+		tilesetEntities[index]->show_width = rect.width;
+		tilesetEntities[index]->show_height = rect.height;
+		tilesetEntities[index]->column = coords.x;
+		tilesetEntities[index]->row = coords.y;
+		tilesetEntities[index]->flip = object.getFlipFlags();
+		tilesetEntities[index]->angle = angle;
+		tilesetEntities[index]->setRect();
 
-								window.render(dt.entity);
-							}
-						}
-					}
-					else {
-// */
-						tilesetEntities[index]->x = x * tileSize.x + offset.x;
-						tilesetEntities[index]->y = y * tileSize.y + offset.y;
-						tilesetEntities[index]->column = coords.x;
-						tilesetEntities[index]->row = coords.y;
-						tilesetEntities[index]->flip = tile.flipFlags;
-						tilesetEntities[index]->setRect();
+		window.render(tilesetEntities[index], false, 0, rect.height);
+		// window.drawText(to_string(object.getFlipFlags()), 0, 0, 255, 50, tilesetEntities[index]->x - window.x, tilesetEntities[index]->y - window.y, tileSize.x, tileSize.y);
+		tilesetEntities[index]->show_width = tileSize.x;
+		tilesetEntities[index]->show_height = tileSize.y;
+	}
+}
 
-						window.render(tilesetEntities[index]);
-					}
+void Area::renderTile(RenderWindow& window, const Layer* layer, IntRect& intrect, const TileLayer::Tile& tile, int x, int y) {
+	if (tile.ID != 0) {
+		const Vector2u& tileSize = tmxmap->getTileSize();
+		const Vector2i& offset = layer->getOffset();
+
+		const vector<Tileset>& tilesets = tmxmap->getTilesets();
+
+		int ID = tile.ID;
+		int index = getIndexForID(ID);
+
+		int cols = tilesets[index].getColumnCount();
+		Vector2u coords = getTilesetCoords(cols, ID);
+		if (tile.flipFlags % 4 == 2) {
+			for (DiagonalTile& dt : diagonalTileEntities) {
+				if (dt.index == index && dt.coords.x == coords.x && dt.coords.y == coords.y) {
+					dt.entity->x = x * tileSize.x;
+					dt.entity->y = y * tileSize.y;
+					dt.entity->flip = tile.flipFlags;
+
+					window.render(dt.entity);
 				}
 			}
-			x++;
-			if (x == area.x) {
-				x = 0;
-				y++;
-			}
 		}
-	}
-	else if (layer->getType() == Layer::Type::Object) {
-		ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
+		else {
+			tilesetEntities[index]->x = x * tileSize.x + offset.x;
+			tilesetEntities[index]->y = y * tileSize.y + offset.y;
+			tilesetEntities[index]->column = coords.x;
+			tilesetEntities[index]->row = coords.y;
+			tilesetEntities[index]->flip = tile.flipFlags;
+			tilesetEntities[index]->angle = 0;
+			tilesetEntities[index]->setRect();
 
-		auto objectvector = og.getObjects();
-
-		for (auto object : objectvector) {
-			if (object.getTileID() != 0) {
-				int ID = object.getTileID();
-				int index = getIndexForID(ID);
-
-				int cols = tilesets[index].getColumnCount();
-				Vector2u coords = getTilesetCoords(cols, ID);
-
-				const FloatRect& rect = object.getAABB();
-
-				float angle = tilesetEntities[index]->angle = object.getRotation() * M_PI / 180;
-
-				tilesetEntities[index]->x = rect.left + offset.x;
-				tilesetEntities[index]->y = rect.top - rect.height + offset.y;
-				tilesetEntities[index]->show_width = rect.width;
-				tilesetEntities[index]->show_height = rect.height;
-				tilesetEntities[index]->column = coords.x;
-				tilesetEntities[index]->row = coords.y;
-				tilesetEntities[index]->flip = object.getFlipFlags();
-				tilesetEntities[index]->angle = angle;
-				tilesetEntities[index]->setRect();
-
-				window.render(tilesetEntities[index], false, 0, rect.height);
-				// window.drawText(to_string(object.getFlipFlags()), 0, 0, 255, 50, tilesetEntities[index]->x - window.x, tilesetEntities[index]->y - window.y, tileSize.x, tileSize.y);
-				tilesetEntities[index]->show_width = tileSize.x;
-				tilesetEntities[index]->show_height = tileSize.y;
-			}
-
+			window.render(tilesetEntities[index]);
 		}
 	}
 }
 
-void Area::subRender(const Layer::Ptr& layer, RenderWindow& window, IntRect rect) {
+/**
+ * Tiled tmxmaps have layers, this function renders a layer. 
+ */
+void Area::renderLayer(RenderWindow& window, const Layer* layer, IntRect& intrect) {
 	if (layer->getVisible()) {
-		if (layer->getType() == Layer::Type::Group) {
-			LayerGroup& lg = layer->getLayerAs<LayerGroup>();
-			const vector<Layer::Ptr>& layerception = lg.getLayers();
-			for (const Layer::Ptr& interlayer : layerception) {
-				renderLayer(window, interlayer, rect);
+		const Vector2u& area = tmxmap->getTileCount();
+
+		if (layer->getType() == Layer::Type::Tile) {
+			const TileLayer& tl = layer->getLayerAs<TileLayer>();
+
+			auto tilevector = tl.getTiles();
+			int x = 0;
+			int y = 0;
+
+			// cout << left << endl;
+
+			for (const TileLayer::Tile& tile : tilevector) {
+				if (x >= intrect.left && (x - intrect.left) <= intrect.width && y >= intrect.top && (y - intrect.top) <= intrect.height) {
+					renderTile(window, layer, intrect, tile, x, y);
+				}
+				x++;
+				if (x == area.x) {
+					x = 0;
+					y++;
+				}
 			}
 		}
-		else {
-			renderLayer(window, layer, rect);
+		else if (layer->getType() == Layer::Type::Object) {
+			const ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
+
+			const vector<Object>& objectvector = og.getObjects();
+
+			for (int o = 0; o < objectvector.size(); o++) {
+				if (obj_index < heightObjects.size() && heightObjects[obj_index].first.first == layer && heightObjects[obj_index].first.second == o) {
+					obj_index++;
+				}
+				else {
+					renderObject(window, layer, objectvector.at(o));
+				}
+			}
 		}
 	}
 }
@@ -417,17 +524,21 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 
 	// cout << "Player: " << player << endl;
 
+	// /*
+
+	obj_index = 0;
+
 	for (SpawnZone& sz : spawnzones) {
 		sz.spawnEnemies(&window, player, entities);
 	}
+	// */
 
 	player->act(&window, world, entities);
 
 	// cout << "Spawnzone\n";
 
-	auto tileSize = tmxmap->getTileSize();
-
-	const vector<Layer::Ptr>& layers = tmxmap->getLayers();
+	const Vector2u& area = tmxmap->getTileCount();
+	const Vector2u& tileSize = tmxmap->getTileSize();
 
 	int left = window.x / int(tileSize.x);
 	int top = window.y / int(tileSize.y);
@@ -437,91 +548,88 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 	// IntRect bottomrect = {left, top + height - (height / 2 + 1), width, height / 2 + 1};
 	// IntRect toprect = {left, top, width, height - (height / 2 + 1)};
 
-	vector<int> preRenderDudes;
-	for (GameObject* go : entities) {
-		preRenderDudes.push_back(-1);
-	}
-	vector<int> checkOut;
-
 	SDL_Rect actual = {0, 0, 0, 0};
 	SDL_Rect* intersect = &actual;
 
 	// cout << "Pre sub render\n";
 
+	int hl = 0;
+
 	for (int x = 0; x < playerIndex; x++) {
-		const Layer::Ptr& layer = layers[x];
-		subRender(layer, window, irect);
-	}
-
-	// cout << "Post sub render\n";
-
-	for (int x = playerIndex + 1; x < layers.size() - 1; x++) {
-		const Layer::Ptr& layer = layers[x];
-		const Layer::Ptr& perhaps = layers[x + 1];
-		if (perhaps->getName().find("BGFG") != string::npos) {
-			// cout << "BTG9910\n";
-			ObjectGroup& og = perhaps->getLayerAs<ObjectGroup>();
-			auto objectvector = og.getObjects();
-			bool checked = false;
-			for (int y = 0; y < entities.size(); y++) {
-				GameObject* go = entities[y];
-				for (auto object : objectvector) {
-					if (object.getShape() == Object::Shape::Rectangle) {
-						auto rect = object.getAABB();
-
-						SDL_Rect oobj = {int(rect.left), int(rect.top), int(rect.width), int(rect.height)};
-						SDL_Rect gobj = go->getRect();
-						if (SDL_IntersectRect(&gobj, &oobj, intersect) == SDL_TRUE) {
-							preRenderDudes[y] = x;
-							checked = true;
-							break;
-						}
-					}
-				}
-			}
-			if (checked) {
-				checkOut.push_back(x);
-			}
-			x++;
+		const Layer* layer = layers[x];
+		if (!(hl < heightLayers.size() && heightLayers[hl].first == layer)) {
+			renderLayer(window, layer, irect);
+		}
+		else {
+			hl++;
 		}
 	}
-
-	// cout << "entities.size() " << entities.size() << endl;
-	// cout << "Pre going to battle\n";
 
 	GameObject* toBattle = nullptr;
-	for (int y = 0; y < entities.size(); y++) {
-		GameObject* go = entities[y];
-		if (preRenderDudes[y] == -1) {
-			if (go->draw(&window, world, entities)) {
-				toBattle = go;
+
+	sort(entities.begin(), entities.end(), [](const GameObject* a, const GameObject* b) {
+		return a->y + a->show_height - abs(a->yvel) < b->y + b->show_height - abs(b->yvel);
+	});
+
+	int goIndex = 0;
+	int obIndex = 0;
+
+	int x = 0;
+	int y = 0;
+
+	while (y < area.y + maxHeight) {
+		for (pair<const Layer*, int> layer_height : heightLayers) {
+			int mY = y - layer_height.second - layer_height.first->getOffset().y / tileSize.y; // NOTE OFFSETS DONT WORK YET CUZ I DONT WANNA MAKE EM WORK RN
+			if (mY >= 0 && mY < area.y) {
+				const TileLayer::Tile& tile = layer_height.first->getLayerAs<TileLayer>().getTiles().at(mY * area.x + x);
+				if (x >= irect.left && (x - irect.left) <= irect.width && mY >= irect.top && (mY - irect.top) <= irect.height) {
+					renderTile(window, layer_height.first, irect, tile, x, mY);
+				}
 			}
 		}
-	}
 
-	// cout << "Post going to battle\n";
+		x++;
+		if (x == area.x) {
+			x = 0;
+			y++;
 
-	for (int x : checkOut) {
-		const Layer::Ptr& layer = layers[x];
-		subRender(layer, window, irect);
-		for (int y = 0; y < entities.size(); y++) {
-			GameObject* go = entities[y];
-			if (x == preRenderDudes[y]) {
-				if (go->draw(&window, world, entities)) {
-					toBattle = go;
+			while (true) {
+				bool objectsLeft = obIndex < heightObjectsSorted.size() && getKey(heightObjectsSorted[obIndex]) < (y + 0.1) * tileSize.y;
+				bool gameobjLeft = goIndex < entities.size() && entities[goIndex]->y + entities[goIndex]->show_height - abs(entities[goIndex]->yvel) < (y + 0.1) * tileSize.y;
+
+				if (objectsLeft && gameobjLeft) {
+					objectsLeft = getKey(heightObjectsSorted[obIndex]) < entities[goIndex]->y + entities[goIndex]->show_height - abs(entities[goIndex]->yvel);
+				}
+				
+				if (objectsLeft) {
+					renderObject(window, heightObjectsSorted[obIndex].first.first, heightObjectsSorted[obIndex].first.first->getLayerAs<ObjectGroup>().getObjects().at(heightObjectsSorted[obIndex].first.second));
+					obIndex++;
+				}
+				else if (gameobjLeft) {
+					if (entities[goIndex]->draw(&window, world, entities)) {
+						toBattle = entities[goIndex];
+					}
+					goIndex++;
+				}
+				else {
+					break;
 				}
 			}
 		}
 	}
 
-	// cout << "Pre another subrender???\n";
-
 	for (int x = playerIndex + 1; x < layers.size(); x++) {
-		if (find(checkOut.begin(), checkOut.end(), x) == checkOut.end()) {
-			const Layer::Ptr& layer = layers[x];
-			subRender(layer, window, irect);
+		const Layer* layer = layers[x];
+		if (!(hl < heightLayers.size() && heightLayers[hl].first == layer)) {
+			renderLayer(window, layer, irect);
+		}
+		else {
+			hl++;
 		}
 	}
+
+	assert(hl == heightLayers.size());
+	assert(obj_index == heightObjects.size());
 	// */
 
 	// cout << "Post another subrender???\n";
@@ -615,16 +723,21 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 	// cout << "Area render ender bender fender commender bend her lend mer-men bear end <<<<<<<<<<<<<<<\n";
 	// */
 }
-void Area::placePlayer(Player* player) {
-	const vector<Layer::Ptr>& layers = tmxmap->getLayers();
 
+void Area::placePlayer(Player* player) {
+	placePlayer(player, layers);
+}
+
+
+void Area::placePlayer(Player* player, const vector<Layer*>& layers) {
+	// cout << "placePlayer start\n";
 	for (int x = 0; x < layers.size(); x++) {
-		const Layer::Ptr& layer = layers[x];
+		const Layer* layer = layers[x];
 		if (layer->getName() == "Sprite") {
 			playerIndex = x;
 			auto offset = layer->getOffset();
 			// cout << "nice\n";
-			ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
+			const ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
 
 			auto objectvector = og.getObjects();
 
@@ -642,21 +755,24 @@ void Area::placePlayer(Player* player) {
 			player->y = y + offset.y;
 		}
 	}
+	// cout << "placePlayer end\n";
 }
 
 void Area::collision(RenderWindow& window, Collideable* player) {
-	// cout << "start collide: " << player << endl;
-	const vector<Layer::Ptr>& layers = tmxmap->getLayers();
+	collision(window, player, layers);
+}
 
+void Area::collision(RenderWindow& window, Collideable* player, const vector<Layer*>& layers) {
+	// cout << "start collide: " << player << endl;
 	int iters = 1;
 
 	for (int i = 0; i < iters; i++) {
 		vector<Vector2f> mtvs; // Minimum Translation Vectors
 
-		for (const Layer::Ptr& layer : layers) {
+		for (const Layer* layer : layers) {
 			if (layer->getName().find("Collision") != string::npos) {
 				// cout << "caosl\n";
-				ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
+				const ObjectGroup& og = layer->getLayerAs<ObjectGroup>();
 				auto objectvector = og.getObjects();
 
 				for (auto object : objectvector) {
