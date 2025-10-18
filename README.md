@@ -504,19 +504,9 @@
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
 | string | n | N/A |
-| Stats | s | N/A |
-| vector<Move*> | m | N/A |
-| float | ms | N/A |
-| float | ps | N/A |
-| float | mas | N/A |
-| float | pas | N/A |
-| MOVEMENT_TYPE | movementtype | N/A |
-| int | sr | N/A |
-| int | hr | N/A |
-| bool | h | N/A |
-| string | p | N/A |
-| int | wid | N/A |
-| int | hei | N/A |
+|  | ap<string | N/A |
+| Move*>& | allMoves | N/A |
+| const json& | j | N/A |
 
 **Return Type:**  (N/A)
 
@@ -1073,6 +1063,18 @@
 |  | DL_Rect&) | N/A |
 
 **Return Type:** inline SDL_Texture* (N/A)
+
+
+### loadEnemyTypes
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+| const string& | path | N/A |
+|  | ap<string | N/A |
+| Move*>& | moves | N/A |
+|  | ap<string | N/A |
+| EnemyType*>& | enemyTypes | N/A |
+
+**Return Type:** void (N/A)
 
 
 ### main

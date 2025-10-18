@@ -2,6 +2,8 @@
 
 #include "Stats.hpp"
 #include "Move.hpp"
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 
 enum MOVEMENT_TYPE
 {
@@ -27,11 +29,11 @@ struct EnemyType {
 	float min_face_speed_factor = 0.15f; // Fraction of max speed when nearly sideways
 	float lead_enabled = true; // Enable predictive lead
 	float max_intercept_time = 1.2f; // Cap on predicted time
-	float chaos = 50f; // How much randomness should they have in their movement
+	float chaos = 50; // How much randomness should they have in their movement
 
 	string path;
 	int width;
 	int height;
 
-	EnemyType(string n, Stats s, vector<Move*> m, float ms, float ps, float mas, float pas, MOVEMENT_TYPE movementtype, int sr, int hr, bool h, string p, int wid, int hei);
+	EnemyType(string n, map<string, Move*>& allMoves, const json& j);
 };
