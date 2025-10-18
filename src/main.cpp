@@ -8,6 +8,7 @@
 #include "mingw.thread.h"
 
 #include <queue>
+#include <fstream>
 
 using namespace std;
 
@@ -85,8 +86,8 @@ pair<int, int> operator+(const pair<int, int>& a, const pair<int, int>& b) {
 ostream& operator<<(ostream& os, const KeyFrame& obj)
 {
 	os << "x: " << obj.x << ", y: " << obj.y << ", rf: " << obj.rf << ", frame: " << obj.frame;
-    // write obj to stream
-    return os;
+	// write obj to stream
+	return os;
 }
 
 void spiralPerPixel(Uint32* pixels, Uint32* newPixels, vector<pair<int, int>>& degree45, pair<int, int>& center, SDL_Rect& texture_rect, int z, int r, SDL_PixelFormat* format, int transitionFrames, double val) {
@@ -379,6 +380,16 @@ inline SDL_Texture* threadCircularApplication(RenderWindow& window, Uint32*& new
 	return trueDiagonalTexture;
 }
 
+void loadEnemyTypes(const string& path, map<string, Move*>& moves, map<string, EnemyType*>& enemyTypes) {
+	ifstream file(path);
+	json data;
+	file >> data;
+
+	for (auto& [name, jEnemy] : data.items()) {
+		enemyTypes[name] = new EnemyType(name, moves, jEnemy);
+	}
+}
+
 int main(int argc, char *argv[]) {
 	const int FPS = 60;
 
@@ -394,7 +405,7 @@ int main(int argc, char *argv[]) {
 		cout << "IMG PNG Failure: " << SDL_GetError() << "\n";
 	}
 	if(TTF_Init() == -1) {
-	    cout << "TTF_Init: " << TTF_GetError() << endl;
+		cout << "TTF_Init: " << TTF_GetError() << endl;
 	}
 	if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 8, 2048) < 0) {
 		cout << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << "\n";
@@ -501,16 +512,10 @@ int main(int argc, char *argv[]) {
 	}
 
 	// /*
-	map<string, EnemyType*> enemyTypes = { // UNUSED WASTE OF TIME FIX THIS SHIT
-		{"Tuba Snail", new EnemyType(
-			"Tuba Snail", 
-			Stats(1, 2, 2, 1, 2, 2), 
-			{moves.find("Ram")->second, moves.find("Vibrato")->second}, 
-			3, 2, 0.1, 0.01, ACCELERATING, 200, 500, true, 
-			"res/gfx/Enemies/TubaSnail.png", 7, 1)
-		}
-	};
+	map<string, EnemyType*> enemyTypes;
 	// */
+
+	loadEnemyTypes("res/data/enemies.json", moves, enemyTypes);
 
 	vector<EnemyType*> etVec;
 	for (auto it = enemyTypes.begin(); it != enemyTypes.end(); ++it) {

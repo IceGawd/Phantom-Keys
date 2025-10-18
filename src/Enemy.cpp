@@ -73,10 +73,9 @@ bool Enemy::draw(RenderWindow* window, World* world, vector<GameObject*>& entiti
 
 	// Passive or Active code
 	float desiredSpeed = et->passive_speed;
-	float desiredAngleSpeed = angle_speed;
+	float desiredAngleSpeed = et->turn_kp * angle_speed;
 	if (passive) {
 		desiredSpeed = (speed + et->passive_speed) / 2;
-		desiredAngleSpeed = et->turn_kp * (angle_speed + et->passive_angle_speed) / 2;
 		if (random() < pow(homeDist / et->homeradius, 2)) {
 			// cout << "take me home: " << angleFromCoords(homex - x - show_width / 2, homey - y - show_height / 2) << endl;
 

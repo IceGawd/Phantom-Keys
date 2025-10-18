@@ -14,10 +14,9 @@ OUTDIR=bin/debug/res
 FULL=false
 RELEASE=false
 DOCSGENERATOR=false
-GDBDEBUG=false
 SYNC=false
 
-while getopts ":frdgs" opt; do
+while getopts ":frds" opt; do
 	case $opt in
 		f)
 			echo "FULL COMPILE!"
@@ -30,10 +29,6 @@ while getopts ":frdgs" opt; do
 		d)
 			echo "COMPILING DOCS GENERATOR!"
 			DOCSGENERATOR=true
-			;;
-		g)
-			echo "COMPILING WITH GDB DEBUG MODE!"
-			GDBDEBUG=true
 			;;
 		s)
 			echo "SYNCING!"
@@ -55,9 +50,6 @@ fi
 if $RELEASE; then
 	OBJDIR=obj/release
 	OUTDIR=bin/release/res
-elif $GDBDEBUG; then
-	OBJDIR=obj/gdb
-	OUTDIR=bin/gdb/res
 fi
 
 # Create the output directory if it doesn't exist
@@ -72,10 +64,8 @@ for file in $SRCDIR/*.cpp $SRCDIR/*.c $SRCDIR/detail/*.cpp; do
 			echo "Compiling $file..."
 			if $RELEASE; then
 				g++ -c $file -o $objfile -std=c++17 -O3 -g -m64 -I $INCLUDEDIR -I $SDLINCLUDEDIR
-			elif $GDBDEBUG; then
-				g++ -c $file -o $objfile -std=c++17 -g3 -O0 -fno-omit-frame-pointer -m64 -I $INCLUDEDIR -I $SDLINCLUDEDIR
 			else
-				g++ -c $file -o $objfile -std=c++17 -g -m64 -I $INCLUDEDIR -I $SDLINCLUDEDIR
+				g++ -c $file -o $objfile -std=c++17 -g3 -O0 -fno-omit-frame-pointer -m64 -I $INCLUDEDIR -I $SDLINCLUDEDIR
 			fi
 		else
 			echo "Skipping $file, object file is up to date."
@@ -87,8 +77,6 @@ echo "Creating the main executable..."
 
 if $RELEASE; then
 	g++ obj/release/*.o -o bin/release/main -L C:/SDL2/lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
-elif $GDBDEBUG; then
-	g++ obj/gdb/*.o -o bin/gdb/main -L C:/SDL2/lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 else
 	g++ obj/debug/*.o -o bin/debug/main -L C:/SDL2/lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 fi
@@ -98,7 +86,7 @@ if $SYNC; then
 
 	echo "Syncing resources between '$RESOURCEDIR' and '$OUTDIR'..."
 
-	rsync -ru --delete "$RESOURCEDIR"/ "$OUTDIR"/
+	rsync -ru "$RESOURCEDIR"/ "$OUTDIR"/
 
 	rsync -ru "$OUTDIR"/ "$RESOURCEDIR"/
 

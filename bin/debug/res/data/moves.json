@@ -1,0 +1,18 @@
+{
+	"Ram": {
+		"power": 20,
+		"cost": 0,
+		"physical": true,
+		"contact": false,
+		"priority": 2,
+		"tags": ["BLUDGEONING", "FORWARD"]
+	},
+	"Vibrato": {
+		"power": 20,
+		"cost": 10,
+		"physical": false,
+		"contact": true,
+		"priority": 1,
+		"tags": ["VIBRATING"]
+	}
+}
