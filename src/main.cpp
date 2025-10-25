@@ -272,7 +272,7 @@ int getValue(Enemy* f) {
  * @param {maxGoodness} The maximum amount that can be added to howGoodYouDoIt per note
  * @param {nt} The note type / key that the player is pressing
  */
-void rhythmPress(vector<RhythmNote*>* notes, float* howGoodYouDoIt, float maxGoodness, NoteType nt) {
+void rhythmPress(vector<RhythmNote*>* notes, float* howGoodYouDoIt, float maxGoodness, int nt) {
 	// lol check if correct button pressed
 	// cout << "maxGoodness: " << maxGoodness << endl;
 	// cout << "howGoodYouDoIt: " << *howGoodYouDoIt << endl;
@@ -299,7 +299,7 @@ void rhythmPress(vector<RhythmNote*>* notes, float* howGoodYouDoIt, float maxGoo
  * @param {passingArgument} Contains, in this order, the notes, a pointer to howGoodYouDoIt and maxGoodness
  */
 void rhythmPressUp(vector<void*> passingArgument) {
-	rhythmPress((vector<RhythmNote*>*) passingArgument[0], (float*) passingArgument[1], *((float*) passingArgument[2]), UP);
+	rhythmPress((vector<RhythmNote*>*) passingArgument[0], (float*) passingArgument[1], *((float*) passingArgument[2]), NOTE_TYPE_MAP["UP"]);
 }
 
 /**
@@ -307,7 +307,7 @@ void rhythmPressUp(vector<void*> passingArgument) {
  * @param {passingArgument} Contains, in this order, the notes, a pointer to howGoodYouDoIt and maxGoodness
  */
 void rhythmPressLeft(vector<void*> passingArgument) {
-	rhythmPress((vector<RhythmNote*>*) passingArgument[0], (float*) passingArgument[1], *((float*) passingArgument[2]), LEFT);
+	rhythmPress((vector<RhythmNote*>*) passingArgument[0], (float*) passingArgument[1], *((float*) passingArgument[2]), NOTE_TYPE_MAP["LEFT"]);
 }
 
 /**
@@ -315,7 +315,7 @@ void rhythmPressLeft(vector<void*> passingArgument) {
  * @param {passingArgument} Contains, in this order, the notes, a pointer to howGoodYouDoIt and maxGoodness
  */
 void rhythmPressRight(vector<void*> passingArgument) {
-	rhythmPress((vector<RhythmNote*>*) passingArgument[0], (float*) passingArgument[1], *((float*) passingArgument[2]), RIGHT);
+	rhythmPress((vector<RhythmNote*>*) passingArgument[0], (float*) passingArgument[1], *((float*) passingArgument[2]), NOTE_TYPE_MAP["RIGHT"]);
 }
 
 /**
@@ -323,7 +323,7 @@ void rhythmPressRight(vector<void*> passingArgument) {
  * @param {passingArgument} Contains, in this order, the notes, a pointer to howGoodYouDoIt and maxGoodness
  */
 void rhythmPressDown(vector<void*> passingArgument) {
-	rhythmPress((vector<RhythmNote*>*) passingArgument[0], (float*) passingArgument[1], *((float*) passingArgument[2]), DOWN);
+	rhythmPress((vector<RhythmNote*>*) passingArgument[0], (float*) passingArgument[1], *((float*) passingArgument[2]), NOTE_TYPE_MAP["DOWN"]);
 }
 // */
 
@@ -380,6 +380,60 @@ inline SDL_Texture* threadCircularApplication(RenderWindow& window, Uint32*& new
 	return trueDiagonalTexture;
 }
 
+map<string, Move*> loadMoves(const string& path) {
+	ifstream file(path);
+	if (!file.is_open()) {
+		cerr << "Failed to open " << path << endl;
+		return {};
+	}
+
+	json j;
+	file >> j;
+	map<string, Move*> moves;
+
+	for (auto& [name, data] : j.items()) {
+		float damage = data["damage"];
+		int mana = data["mana"];
+		bool physical = data["physical"];
+		bool select_enemy = data["select_enemy"];
+		int AP = data["AP"];
+
+		vector<int> tags;
+		for (auto& t : data["tags"])
+			tags.push_back(TAG_MAP[t]);
+
+		vector<KeyFrame> keyframes;
+		for (auto& k : data["keyframes"]) {
+			keyframes.push_back(KeyFrame(
+				k["duration"],
+				k["sprite"],
+				k["row"],
+				k["x"],
+				k["y"],
+				REFERENCE_FRAME_MAP[k["referenceFrame"]],
+				INTERPOLATIONS_MAP[k["interpolation"]],
+				k.value("hit", false),
+				k.value("hitFrame", 0)
+			));
+		}
+
+		vector<pair<int, int>> stingerNotes;
+		for (auto& sn : data["stingerNotes"]) {
+			stingerNotes.push_back({sn[0], NOTE_TYPE_MAP[sn[1]]});
+		}
+
+		bool target_enemy_team = data.value("target_enemy_team", true);
+		int hits = data.value("hits", 1);
+
+		moves[name] = new Move(
+			name, damage, mana, physical, select_enemy, AP,
+			tags, keyframes, stingerNotes, target_enemy_team, hits
+		);
+	}
+
+	return moves;
+}
+
 void loadEnemyTypes(const string& path, map<string, Move*>& moves, map<string, EnemyType*>& enemyTypes) {
 	ifstream file(path);
 	json data;
@@ -411,6 +465,8 @@ int main(int argc, char *argv[]) {
 		cout << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << "\n";
 	}
 
+	initializeMaps(); // Not like game maps, enum maps
+
 	RenderWindow window("Phantom Keys");
 
 	map<string, map<char, Mix_Chunk*>> textNoise = {
@@ -423,97 +479,13 @@ int main(int argc, char *argv[]) {
 		{"Vibrato", Mix_LoadWAV("res/Sounds/SFX/STINGERS/JazzLick.wav")}, 
 	};
 
-
-	map<string, Move*> moves = {
-		{"Scratch", new Move("Scratch", 10, 0, true, true, 1, {SLASHING}, 
-			{
-				KeyFrame(45, "overworld", 1, -200, 0, INFRONTENEMY, LINEAR), 
-				KeyFrame(20, "battleidle", 0, -200, 0, INFRONTENEMY, LINEAR), 
-				KeyFrame(10, "overworld", 1, -100, 0, INFRONTENEMY, LOGARITHMIC), 
-				KeyFrame(12, "swords", 0, -100, 0, INFRONTENEMY, LINEAR, true, 9), 
-				KeyFrame(20, "battleidle", 0, -100, 0, INFRONTENEMY, LINEAR), 
-				KeyFrame(35, "overworld", 3, 0, 0, STARTINGCOORDS, LINEAR)
-			}, 
-			{}
-		)}, 
-		{"Ram", new Move("Ram", 20, 0, true, false, 2, {BLUDGEONING, FORWARD}, 
-			{
-				KeyFrame(45, "overworld", 1, -200, 0, INFRONTENEMY, LINEAR), 
-				KeyFrame(20, "battleidle", 0, -200, 0, INFRONTENEMY, LINEAR), 
-				KeyFrame(10, "overworld", 1, -100, 0, INFRONTENEMY, LOGARITHMIC), 
-				KeyFrame(12, "swords", 0, -100, 0, INFRONTENEMY, LINEAR, true, 9), 
-				KeyFrame(20, "battleidle", 0, -100, 0, INFRONTENEMY, LINEAR), 
-				KeyFrame(35, "overworld", 3, 0, 0, STARTINGCOORDS, LINEAR)
-			}, 
-			{}
-		)}, 
-		{"16th Notes", new Move("16th Notes", 30, 25, false, false, 2, {FORCE, FORWARD}, 
-			{
-				KeyFrame(45, "overworld", 1, -200, 0, INFRONTENEMY, LINEAR), 
-				KeyFrame(20, "battleidle", 0, -200, 0, INFRONTENEMY, LINEAR), 
-				KeyFrame(10, "overworld", 1, -100, 0, INFRONTENEMY, LOGARITHMIC), 
-				KeyFrame(12, "swords", 0, -100, 0, INFRONTENEMY, LINEAR, true, 9), 
-				KeyFrame(20, "battleidle", 0, -100, 0, INFRONTENEMY, LINEAR), 
-				KeyFrame(35, "overworld", 3, 0, 0, STARTINGCOORDS, LINEAR)
-			}, 
-			{
-				{0, LEFT}, 
-				{22, LEFT}, 
-				{42, DOWN}, 
-				{62, DOWN}, 
-				{84, UP}, 
-				{98, RIGHT}, 
-				{112, DOWN}, 
-			}
-		, true, 4)}, 
-		{"Vibrato", new Move("Vibrato", 20, 10, false, true, 1, {VIBRATING}, 
-			{
-				KeyFrame(45, "overworld", 1, -200, 0, INFRONTENEMY, LINEAR), 
-				KeyFrame(20, "battleidle", 0, -200, 0, INFRONTENEMY, LINEAR), 
-				KeyFrame(10, "overworld", 1, -100, 0, INFRONTENEMY, LOGARITHMIC), 
-				KeyFrame(12, "swords", 0, -100, 0, INFRONTENEMY, LINEAR, true, 9), 
-				KeyFrame(20, "battleidle", 0, -100, 0, INFRONTENEMY, LINEAR), 
-				KeyFrame(35, "overworld", 3, 0, 0, STARTINGCOORDS, LINEAR)
-			}, 
-			{
-				{0, UP}, 
-				{10, LEFT}, 
-				{20, DOWN}, 
-				{30, RIGHT}, 
-				{60, RIGHT}, 
-				{70, DOWN}, 
-				{80, LEFT}, 
-				{90, UP}, 
-			}
-		)}
-	};
-
-	/*
-		{0, UP}, 
-		{5, UP}, 
-		{10, UP}, 
-		{15, UP}, 
-		{20, DOWN}, 
-		{25, DOWN}, 
-		{30, DOWN}, 
-		{35, DOWN}, 
-		{40, LEFT}, 
-		{45, RIGHT}, 
-		{50, LEFT}, 
-		{55, RIGHT}, 
-		{60, UP}, 
-		{65, LEFT}, 
-		{70, DOWN}, 
-		{75, RIGHT}, 
-	*/
+	map<string, Move*> moves = loadMoves("res/data/moves.json");
 
 	for (auto it = moves.begin(); it != moves.end(); ++it) {
-		it->second->animation.insert(it->second->animation.begin(), KeyFrame(20, "battleidle", 0, 0, 0, STARTINGCOORDS, LINEAR, false));
+		it->second->animation.insert(it->second->animation.begin(), KeyFrame(20, "battleidle", 0, 0, 0, REFERENCE_FRAME_MAP["STARTINGCOORDS"], INTERPOLATIONS_MAP["LINEAR"], false));
 	}
 
-	// /*
 	map<string, EnemyType*> enemyTypes;
-	// */
 
 	loadEnemyTypes("res/data/enemies.json", moves, enemyTypes);
 
@@ -857,7 +829,7 @@ int main(int argc, char *argv[]) {
 					if (notes.empty()) {
 						if (maxGoodness == 0) { // First frame of rhythm stuff, use as initialization
 							rhythmStart = chrono::steady_clock().now();
-							for (pair<int, NoteType> pint : myTurn->moveEntered->stingerNotes) {
+							for (pair<int, int> pint : myTurn->moveEntered->stingerNotes) {
 								// cout << "NOTE MADE\n";
 								notes.push_back(new RhythmNote(&window, pint, &rhythmStart));
 							}
@@ -995,8 +967,9 @@ int main(int argc, char *argv[]) {
 
 			if (window.ts != nullptr) {
 				// cout << "elc\n";
-				window.playerInput = window.ts->draw(window);
+				window.playerInput = window.ts->draw(window); // This is setting whether the player can move or not
 				if (window.playerInput) {
+					window.ts->reset();
 					window.ts = nullptr;
 				}
 			}
@@ -1042,7 +1015,7 @@ int main(int argc, char *argv[]) {
 
 		// cout << 1000 * frameDone.count() << endl;
 		delay = 1000 * ((1.0 / FPS) - frameDone.count());
-		if (delay > 0) {
+		if (delay > 0) { // && !stingerStart
 			SDL_Delay(delay);
 			delay = 0;
 		}

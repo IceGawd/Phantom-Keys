@@ -13,10 +13,10 @@ struct RhythmNote : public GameObject {
 	constexpr static double SPEEDDEFEND = 1.0 * (RenderWindow::WIDTH - NOTEX) / FRAMESADVANCEDEFEND;
 
 	int frame;
-	NoteType nt;
+	int nt;
 	chrono::steady_clock::time_point* start;
 	// int curFrames = 0;
 
-	RhythmNote(RenderWindow* window, pair<int, NoteType> note, chrono::steady_clock::time_point* s);
+	RhythmNote(RenderWindow* window, pair<int, int> note, chrono::steady_clock::time_point* s);
 	virtual bool draw(RenderWindow* window, World* world, vector<GameObject*>& entities);
 };

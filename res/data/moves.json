@@ -1,18 +1,124 @@
+// Double slashes are used for comments
+
+// enum ReferenceFrame {
+// 	GLOBALCOORDS, 			// 0, 0 is the top left of the screen
+// 	STARTINGCOORDS,			// 0, 0 is where the attacker starts from
+// 	ENEMYCOORDS,			// 0, 0 is the position of the enemy
+// 	INFRONTENEMY			// 0, 0 is in front of the enemy
+// };
+
+// Negative y = up
+// Positive y = down
+// Negative x means LEFT for the PARTY and RIGHT for the ENEMIES
+// Positive x means RIGHT for the PARTY and LEFT for the ENEMIES
+// Screen is 1920 x 1080 pixels, so use that for reference.
+
+// enum Interpolation {		// These only apply to the coordinate movements
+// 	CONSTANT, 				// Snap to that location
+// 	LINEAR, 				// Smoothly go to that location
+// 	EXPONENTIAL, 			// Move slow then quick
+// 	LOGARITHMIC, 			// Move quick then slow
+// 	SQUARE_ROOT, 			// Large starting burst of speed
+// 	SQUISHED_CUBE_ROOT, 	// Slow to start, quick in the middle, slow to end
+// 	SQUARE, 				// Large ending burst of speed
+// 	CUBE					// Very little movement at the beginning but accelerates rapidly
+// };
+
 {
-	"Ram": {
-		"power": 20,
-		"cost": 0,
+	"Scratch": {
+		"damage": 10,
+		"mana": 0,
 		"physical": true,
-		"contact": false,
-		"priority": 2,
-		"tags": ["BLUDGEONING", "FORWARD"]
+		"select_enemy": true,
+		"AP": 1,
+		"tags": ["SLASHING"],
+		"keyframes": [
+			{"duration": 45, "sprite": "overworld", "row": 1, "x": -200, "y": 0, "referenceFrame": "INFRONTENEMY", "interpolation": "LINEAR"}, // Walk to 200 units in front of the enemy
+			{"duration": 20, "sprite": "battleidle", "row": 0, "x": -200, "y": 0, "referenceFrame": "INFRONTENEMY", "interpolation": "LINEAR"}, // Stand there for 20 frames
+			{"duration": 10, "sprite": "overworld", "row": 1, "x": -100, "y": 0, "referenceFrame": "INFRONTENEMY", "interpolation": "LOGARITHMIC"}, // Move up to them up to the enemy
+			{"duration": 12, "sprite": "swords", "row": 0, "x": -100, "y": 0, "referenceFrame": "INFRONTENEMY", "interpolation": "LINEAR", "hit": true, "hitFrame": 9}, // Do the attack, hitting on frame 9
+			{"duration": 20, "sprite": "battleidle", "row": 0, "x": -100, "y": 0, "referenceFrame": "INFRONTENEMY", "interpolation": "LINEAR"}, // Stand there for 20 frames afterwards
+			{"duration": 35, "sprite": "overworld", "row": 3, "x": 0, "y": 0, "referenceFrame": "STARTINGCOORDS", "interpolation": "LINEAR"} // Walk back to the starting coordinates
+		],
+		"stingerNotes": [],
+		"target_enemy_team": true,
+		"hits": 1
 	},
-	"Vibrato": {
-		"power": 20,
-		"cost": 10,
+
+	"Ram": {
+		"damage": 20,
+		"mana": 0,
+		"physical": true,
+		"select_enemy": false,
+		"AP": 2,
+		"tags": ["BLUDGEONING", "FORWARD"],
+		"keyframes": [
+			{"duration": 45, "sprite": "overworld", "row": 1, "x": -200, "y": 0, "referenceFrame": "INFRONTENEMY", "interpolation": "LINEAR"},
+			{"duration": 20, "sprite": "battleidle", "row": 0, "x": -200, "y": 0, "referenceFrame": "INFRONTENEMY", "interpolation": "LINEAR"},
+			{"duration": 10, "sprite": "overworld", "row": 1, "x": -100, "y": 0, "referenceFrame": "INFRONTENEMY", "interpolation": "LOGARITHMIC"},
+			{"duration": 12, "sprite": "swords", "row": 0, "x": -100, "y": 0, "referenceFrame": "INFRONTENEMY", "interpolation": "LINEAR", "hit": true, "hitFrame": 9},
+			{"duration": 20, "sprite": "battleidle", "row": 0, "x": -100, "y": 0, "referenceFrame": "INFRONTENEMY", "interpolation": "LINEAR"},
+			{"duration": 35, "sprite": "overworld", "row": 3, "x": 0, "y": 0, "referenceFrame": "STARTINGCOORDS", "interpolation": "LINEAR"}
+		],
+		"stingerNotes": [],
+		"target_enemy_team": true,
+		"hits": 1
+	},
+
+	"16th Notes": {
+		"damage": 30,
+		"mana": 25,
 		"physical": false,
-		"contact": true,
-		"priority": 1,
-		"tags": ["VIBRATING"]
+		"select_enemy": false,
+		"AP": 2,
+		"tags": ["FORCE", "FORWARD"],
+		"keyframes": [
+			{"duration": 45, "sprite": "overworld", "row": 1, "x": -200, "y": 0, "referenceFrame": "INFRONTENEMY", "interpolation": "LINEAR"},
+			{"duration": 20, "sprite": "battleidle", "row": 0, "x": -200, "y": 0, "referenceFrame": "INFRONTENEMY", "interpolation": "LINEAR"},
+			{"duration": 10, "sprite": "overworld", "row": 1, "x": -100, "y": 0, "referenceFrame": "INFRONTENEMY", "interpolation": "LOGARITHMIC"},
+			{"duration": 12, "sprite": "swords", "row": 0, "x": -100, "y": 0, "referenceFrame": "INFRONTENEMY", "interpolation": "LINEAR", "hit": true, "hitFrame": 9},
+			{"duration": 20, "sprite": "battleidle", "row": 0, "x": -100, "y": 0, "referenceFrame": "INFRONTENEMY", "interpolation": "LINEAR"},
+			{"duration": 35, "sprite": "overworld", "row": 3, "x": 0, "y": 0, "referenceFrame": "STARTINGCOORDS", "interpolation": "LINEAR"}
+		],
+		"stingerNotes": [
+			[0, "LEFT"], 
+			[22, "LEFT"], 
+			[42, "DOWN"], 
+			[62, "DOWN"], 
+			[84, "UP"], 
+			[98, "RIGHT"], 
+			[112, "DOWN"]
+		],
+		"target_enemy_team": true,
+		"hits": 1 // TODO: needs to be 4 but hits dont do anything ATM
+	},
+
+	"Vibrato": {
+		"damage": 20,
+		"mana": 10,
+		"physical": false,
+		"select_enemy": true,
+		"AP": 1,
+		"tags": ["VIBRATING"],
+		"keyframes": [
+			{"duration": 45, "sprite": "overworld", "row": 1, "x": -200, "y": 0, "referenceFrame": "INFRONTENEMY", "interpolation": "LINEAR"},
+			{"duration": 20, "sprite": "battleidle", "row": 0, "x": -200, "y": 0, "referenceFrame": "INFRONTENEMY", "interpolation": "LINEAR"},
+			{"duration": 10, "sprite": "overworld", "row": 1, "x": -100, "y": 0, "referenceFrame": "INFRONTENEMY", "interpolation": "LOGARITHMIC"},
+			{"duration": 12, "sprite": "swords", "row": 0, "x": -100, "y": 0, "referenceFrame": "INFRONTENEMY", "interpolation": "LINEAR", "hit": true, "hitFrame": 9},
+			{"duration": 20, "sprite": "battleidle", "row": 0, "x": -100, "y": 0, "referenceFrame": "INFRONTENEMY", "interpolation": "LINEAR"},
+			{"duration": 35, "sprite": "overworld", "row": 3, "x": 0, "y": 0, "referenceFrame": "STARTINGCOORDS", "interpolation": "LINEAR"}
+		],
+		"stingerNotes": [
+			[0, "UP"],
+			[10, "LEFT"],
+			[20, "DOWN"],
+			[30, "RIGHT"],
+			[60, "RIGHT"],
+			[70, "DOWN"],
+			[80, "LEFT"],
+			[90, "UP"]
+		],
+		"target_enemy_team": true,
+		"hits": 1
 	}
 }

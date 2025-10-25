@@ -6,6 +6,9 @@
 
 #include <random>
 #include <vector>
+#include <iostream>
+#include <string>
+#include <unordered_map>
 
 using namespace std;
 
@@ -35,6 +38,7 @@ float atanApprox(vector<void*> vv);
 
 void arrowChange(RenderWindow* window, vector<SDL_Scancode>& keys, bool* direction, void (*foo)(vector<void*>), vector<void*> passingArgument);
 float angleDiff(float angle1, float angle2);
+void initializeMaps();
 
 enum Gamestate {
 	OVERWORLD, 
@@ -54,26 +58,12 @@ enum Turnstate {
 	ENDTURN
 };
 
-enum Tag {
-	PIERCING, 
-	BLUDGEONING, 
-	SLASHING, 
-	UPWARD, 
-	FORWARD, 
-	FIRE, // Maybe call Incendiary?
-	ICE, 
-	FORCE, 
-	ELECTRICITY, 
-	DARK, 
-	LIGHT, 
-	VIBRATING, 
-};
+extern const vector<string> TAGS;
+extern const vector<string> NOTE_TYPES;
+extern const vector<string> REFERENCE_FRAMES;
+extern const vector<string> INTERPOLATIONS;
 
-enum NoteType {
-	UP, 
-	DOWN, 
-	LEFT, 
-	RIGHT, 
-	A, 
-	B
-};
+extern unordered_map<string, int> TAG_MAP;
+extern unordered_map<string, int> NOTE_TYPE_MAP;
+extern unordered_map<string, int> REFERENCE_FRAME_MAP;
+extern unordered_map<string, int> INTERPOLATIONS_MAP;

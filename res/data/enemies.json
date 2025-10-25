@@ -1,6 +1,6 @@
 {
 	"Tuba Snail": {
-		"stats": { "hp": 1, "atk": 2, "def": 2, "spd": 1, "mag": 2, "res": 2 },
+		"stats": { "hp": 1, "atk": 2, "def": 2, "spd": 1, "mag": 2, "res": 2 }, 
 		"moves": ["Ram", "Vibrato"],
 		"max_speed": 3.0,
 		"passive_speed": 2.0,

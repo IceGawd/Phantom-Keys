@@ -56,7 +56,7 @@ bool TextBox::draw(RenderWindow& window) {
 		text[curIndex].y = text[curIndex - 1].y;
 		curIndex++;
 	}
-	bool sp = window.keyboard[SDL_SCANCODE_SPACE];
+	bool sp = window.keyboard[SDL_SCANCODE_SPACE]; // BAD HARDCODED. ALSO TODO: MAKE IT FINISH TEXT
 	bool done = sp && !prevHeld;
 	prevHeld = sp;
 	return done;

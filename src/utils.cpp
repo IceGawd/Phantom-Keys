@@ -3,6 +3,51 @@
 #include "Enemy.hpp"
 #include "RenderWindow.hpp"
 
+const vector<string> TAGS = {
+	"PIERCING",
+	"BLUDGEONING",
+	"SLASHING",
+	"UPWARD",
+	"FORWARD",
+	"FIRE",
+	"ICE",
+	"FORCE",
+	"ELECTRICITY",
+	"DARK",
+	"LIGHT",
+	"VIBRATING"
+};
+
+const vector<string> NOTE_TYPES = {
+	"UP",
+	"DOWN",
+	"LEFT",
+	"RIGHT"
+};
+
+const vector<string> REFERENCE_FRAMES = {
+	"GLOBALCOORDS", 
+	"STARTINGCOORDS",
+	"ENEMYCOORDS",
+	"INFRONTENEMY"
+};
+
+const vector<string> INTERPOLATIONS = {
+	"CONSTANT", 
+	"LINEAR", 
+	"EXPONENTIAL", 
+	"LOGARITHMIC", 
+	"SQUARE_ROOT", 
+	"SQUISHED_CUBE_ROOT", 
+	"SQUARE", 
+	"CUBE"
+};
+
+unordered_map<string, int> TAG_MAP;
+unordered_map<string, int> NOTE_TYPE_MAP;
+unordered_map<string, int> REFERENCE_FRAME_MAP;
+unordered_map<string, int> INTERPOLATIONS_MAP;
+
 /**
  * The random function that is called in the entire code
  * @return A random float from 0.0 to 1.0
@@ -36,9 +81,9 @@ float invNorm(float x) {
 }
 
 float RationalApproximation(float t) {
-    double c[] = {2.515517, 0.802853, 0.010328};
-    double d[] = {1.432788, 0.189269, 0.001308};
-    return t - ((c[2]*t + c[1])*t + c[0]) / (((d[2]*t + d[1])*t + d[0])*t + 1.0);
+	double c[] = {2.515517, 0.802853, 0.010328};
+	double d[] = {1.432788, 0.189269, 0.001308};
+	return t - ((c[2]*t + c[1])*t + c[0]) / (((d[2]*t + d[1])*t + d[0])*t + 1.0);
 }
 
 float weighted(vector<Fightable*> party) {
@@ -153,4 +198,23 @@ void arrowChange(RenderWindow* window, vector<SDL_Scancode>& keys, bool* directi
 
 float angleDiff(float angle1, float angle2) {
 	return min(2 * M_PI - abs(angle1 - angle2), (double) abs(angle1 - angle2));
+}
+
+// Function to populate maps
+void initializeMaps() {
+	for (int i = 0; i < TAGS.size(); ++i) {
+		TAG_MAP[TAGS[i]] = i;
+	}
+
+	for (int i = 0; i < NOTE_TYPES.size(); ++i){
+		NOTE_TYPE_MAP[NOTE_TYPES[i]] = i;
+	}
+
+	for (int i = 0; i < REFERENCE_FRAMES.size(); ++i){
+		REFERENCE_FRAME_MAP[REFERENCE_FRAMES[i]] = i;
+	}
+
+	for (int i = 0; i < INTERPOLATIONS.size(); ++i){
+		INTERPOLATIONS_MAP[INTERPOLATIONS[i]] = i;
+	}
 }

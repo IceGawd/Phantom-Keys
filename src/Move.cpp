@@ -1,7 +1,7 @@
 #include "Move.hpp"
 #include "TextObject.hpp"
 
-Move::Move(string n, float d, int m, bool p, bool se, int a, vector<Tag> t, vector<KeyFrame> k, vector<pair<int, NoteType>> sn, bool tet, int h) : ap(a), name(n), physical(p), damage(d), mana(m), selectEnemy(se), tags(t), animation(k), targetEnemyTeam(tet), hits(h), stingerNotes(sn) {
+Move::Move(string n, float d, int m, bool p, bool se, int a, vector<int> t, vector<KeyFrame> k, vector<pair<int, int>> sn, bool tet, int h) : ap(a), name(n), physical(p), damage(d), mana(m), selectEnemy(se), tags(t), animation(k), targetEnemyTeam(tet), hits(h), stingerNotes(sn) {
 
 }
 

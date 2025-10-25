@@ -643,6 +643,12 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 		window.x = 0;
 		window.y = 0;
 		window.zoom = 1.0;
+
+		if (window.ts != nullptr) {
+			window.ts->reset();
+			window.ts = nullptr;
+		}
+
 		player->changeSpriteSheet("battleidle");
 
 		Enemy* battling = (Enemy*) toBattle;
