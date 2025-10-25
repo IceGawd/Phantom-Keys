@@ -393,10 +393,10 @@
 | bool | p | N/A |
 | bool | se | N/A |
 | int | a | N/A |
-| vector<Tag> | t | N/A |
+| vector<int> | t | N/A |
 | vector<KeyFrame> | k | N/A |
 |  | ector<pair<int | N/A |
-| NoteType>> | sn | N/A |
+| int>> | sn | N/A |
 | vector<Buff> | ta | N/A |
 | bool | tet | N/A |
 | int | h | N/A |
@@ -775,8 +775,8 @@
 | int | ro | N/A |
 | int | xTemp | N/A |
 | int | yTemp | N/A |
-| ReferenceFrame | r | N/A |
-| Interpolation | i | N/A |
+| int | r | N/A |
+| int | i | N/A |
 | bool | d | N/A |
 | int | fd | N/A |
 
@@ -999,7 +999,7 @@
 | vector<RhythmNote*>* | notes | The notes that need to be pressed during the rhythm game section |
 | float* | howGoodYouDoIt | A pointer to a variable that will be used to calculate damage and other things |
 | float | maxGoodness | The maximum amount that can be added to howGoodYouDoIt per note |
-| NoteType | nt | The note type / key that the player is pressing |
+| int | nt | The note type / key that the player is pressing |
 
 **Return Type:** void (N/A)
 
@@ -1065,6 +1065,14 @@
 **Return Type:** inline SDL_Texture* (N/A)
 
 
+### loadMoves
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+| const string& | path | N/A |
+
+**Return Type:** map<string, Move*> (N/A)
+
+
 ### loadEnemyTypes
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
@@ -1097,10 +1105,10 @@
 | bool | p | N/A |
 | bool | se | N/A |
 | int | a | N/A |
-| vector<Tag> | t | N/A |
+| vector<int> | t | N/A |
 | vector<KeyFrame> | k | N/A |
 |  | ector<pair<int | N/A |
-| NoteType>> | sn | N/A |
+| int>> | sn | N/A |
 | bool | tet | N/A |
 | int | h | N/A |
 
@@ -1449,7 +1457,7 @@
 | :------: | :---------------: | :-------------: | 
 | RenderWindow* | window | N/A |
 |  | air<int | N/A |
-| NoteType> | note | N/A |
+| int> | note | N/A |
 | chrono::steady_clock::time_point* | s | N/A |
 
 **Return Type:**  (N/A)
@@ -1929,6 +1937,13 @@
 | float | angle2 | N/A |
 
 **Return Type:** float (N/A)
+
+
+### initializeMaps
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+
+**Return Type:** void (N/A)
 
 
 ## src/World.cpp
