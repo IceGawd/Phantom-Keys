@@ -1069,8 +1069,12 @@
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
 | const string& | path | N/A |
+|  | ap<string | N/A |
+| Move*>& | moves | N/A |
+|  | ap<string | N/A |
+| Mix_Chunk*>& | stingers | N/A |
 
-**Return Type:** map<string, Move*> (N/A)
+**Return Type:** void (N/A)
 
 
 ### loadEnemyTypes
