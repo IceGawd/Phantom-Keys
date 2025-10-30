@@ -380,16 +380,15 @@ inline SDL_Texture* threadCircularApplication(RenderWindow& window, Uint32*& new
 	return trueDiagonalTexture;
 }
 
-map<string, Move*> loadMoves(const string& path) {
+void loadMoves(const string& path, map<string, Move*>& moves, map<string, Mix_Chunk*>& stingers) {
 	ifstream file(path);
 	if (!file.is_open()) {
 		cerr << "Failed to open " << path << endl;
-		return {};
+		return;
 	}
 
 	json j;
 	file >> j;
-	map<string, Move*> moves;
 
 	for (auto& [name, data] : j.items()) {
 		float damage = data["damage"];
@@ -429,9 +428,11 @@ map<string, Move*> loadMoves(const string& path) {
 			name, damage, mana, physical, select_enemy, AP,
 			tags, keyframes, stingerNotes, target_enemy_team, hits
 		);
-	}
 
-	return moves;
+		if (data.contains("music") && !data["music"].is_null() && data["music"].is_string()) {
+			stingers[name] = Mix_LoadWAV(data["music"].get<std::string>().c_str());
+		}
+	}
 }
 
 void loadEnemyTypes(const string& path, map<string, Move*>& moves, map<string, EnemyType*>& enemyTypes) {
@@ -474,12 +475,10 @@ int main(int argc, char *argv[]) {
 		{"Trumpet", getChunks("Trumpet")}, 
 	};
 
-	map<string, Mix_Chunk*> stingers = {
-		{"16th Notes", Mix_LoadWAV("res/Sounds/SFX/STINGERS/LuckCrescendo.wav")}, 
-		{"Vibrato", Mix_LoadWAV("res/Sounds/SFX/STINGERS/JazzLick.wav")}, 
-	};
+	map<string, Mix_Chunk*> stingers;
+	map<string, Move*> moves;
 
-	map<string, Move*> moves = loadMoves("res/data/moves.json");
+	loadMoves("res/data/moves.json", moves, stingers);
 
 	for (auto it = moves.begin(); it != moves.end(); ++it) {
 		it->second->animation.insert(it->second->animation.begin(), KeyFrame(20, "battleidle", 0, 0, 0, REFERENCE_FRAME_MAP["STARTINGCOORDS"], INTERPOLATIONS_MAP["LINEAR"], false));

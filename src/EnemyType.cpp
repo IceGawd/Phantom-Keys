@@ -3,7 +3,7 @@
 EnemyType::EnemyType(string n, map<string, Move*>& allMoves, const json& j) : name(n) {
 	stats = Stats(
 		j["stats"]["hp"], j["stats"]["atk"], j["stats"]["def"],
-		j["stats"]["spd"], j["stats"]["mag"], j["stats"]["res"]
+		j["stats"]["spd"], j["stats"]["mag"], j["stats"]["ap_max"]
 	);
 
 	vector<string> moveNames = j["moves"].get<vector<string>>();

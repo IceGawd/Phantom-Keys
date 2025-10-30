@@ -90,7 +90,8 @@
 			[112, "DOWN"]
 		],
 		"target_enemy_team": true,
-		"hits": 1 // TODO: needs to be 4 but hits dont do anything ATM
+		"hits": 1, // TODO: needs to be 4 but hits dont do anything ATM
+		"music": "res/Sounds/SFX/STINGERS/LuckCrescendo.wav"
 	},
 
 	"Vibrato": {
@@ -119,6 +120,7 @@
 			[90, "UP"]
 		],
 		"target_enemy_team": true,
-		"hits": 1
+		"hits": 1, 
+		"music": "res/Sounds/SFX/STINGERS/JazzLick.wav"
 	}
 }

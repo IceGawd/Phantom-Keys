@@ -647,6 +647,7 @@ void Area::render(RenderWindow& window, Player* player, World* world, vector<Gam
 		if (window.ts != nullptr) {
 			window.ts->reset();
 			window.ts = nullptr;
+			window.playerInput = true;
 		}
 
 		player->changeSpriteSheet("battleidle");
