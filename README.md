@@ -1065,6 +1065,14 @@
 **Return Type:** inline SDL_Texture* (N/A)
 
 
+### loadStingerNotes
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+| json& | data | N/A |
+
+**Return Type:** vector<pair<int, int>> (N/A)
+
+
 ### loadMoves
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
