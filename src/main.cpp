@@ -380,6 +380,44 @@ inline SDL_Texture* threadCircularApplication(RenderWindow& window, Uint32*& new
 	return trueDiagonalTexture;
 }
 
+vector<pair<int, int>> loadStingerNotes(json& data) {
+	vector<pair<int, int>> stingerNotes;
+
+	if (data.contains("stingerNotes")) {
+		ifstream file(data["stingerNotes"]);
+		if (!file.is_open()) {
+			cerr << "Failed to open " << data["stingerNotes"] << endl;
+			return stingerNotes;
+		}
+
+		json j;
+		file >> j;
+
+		for (auto& [notes, sections] : j.items()) {
+			if (notes == "notes") {
+				cout << "Notes!\n";
+				for (auto& section : sections) {
+					for (auto& [sn, sectionNotes] : section.items()) {
+						if (sn == "mustHitSection") {
+							if (!(sectionNotes.get<bool>())) {
+								break;
+							}
+						}
+						if (sn == "sectionNotes") {
+							cout << "Adding!\n";
+							for (auto& note : sectionNotes) {
+								stingerNotes.emplace_back(note[0], note[1]);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return stingerNotes;
+}
+
 void loadMoves(const string& path, map<string, Move*>& moves, map<string, Mix_Chunk*>& stingers) {
 	ifstream file(path);
 	if (!file.is_open()) {
@@ -416,10 +454,7 @@ void loadMoves(const string& path, map<string, Move*>& moves, map<string, Mix_Ch
 			));
 		}
 
-		vector<pair<int, int>> stingerNotes;
-		for (auto& sn : data["stingerNotes"]) {
-			stingerNotes.push_back({sn[0], NOTE_TYPE_MAP[sn[1]]});
-		}
+		vector<pair<int, int>> stingerNotes = loadStingerNotes(data);
 
 		bool target_enemy_team = data.value("target_enemy_team", true);
 		int hits = data.value("hits", 1);
@@ -429,8 +464,8 @@ void loadMoves(const string& path, map<string, Move*>& moves, map<string, Mix_Ch
 			tags, keyframes, stingerNotes, target_enemy_team, hits
 		);
 
-		if (data.contains("music") && !data["music"].is_null() && data["music"].is_string()) {
-			stingers[name] = Mix_LoadWAV(data["music"].get<std::string>().c_str());
+		if (data.contains("music")) {
+			stingers[name] = Mix_LoadWAV(data["music"].get<string>().c_str());
 		}
 	}
 }

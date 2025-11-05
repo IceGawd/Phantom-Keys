@@ -7,12 +7,10 @@ struct RhythmNote : public GameObject {
 	const static int KEYSIZE = 40;
 	const static int NOTEX = 200;
 	const static int FRAMESADVANCESPELL = 60;
-	const static int FRAMESADVANCEDEFEND = 30;
 	const static int NOTEY = 50;
 	constexpr static double SPEEDSPELL = 1.0 * (RenderWindow::WIDTH - NOTEX) / FRAMESADVANCESPELL;
-	constexpr static double SPEEDDEFEND = 1.0 * (RenderWindow::WIDTH - NOTEX) / FRAMESADVANCEDEFEND;
 
-	int frame;
+	int millisecond;
 	int nt;
 	chrono::steady_clock::time_point* start;
 	// int curFrames = 0;

@@ -40,7 +40,6 @@
 			{"duration": 20, "sprite": "battleidle", "row": 0, "x": -100, "y": 0, "referenceFrame": "INFRONTENEMY", "interpolation": "LINEAR"}, // Stand there for 20 frames afterwards
 			{"duration": 35, "sprite": "overworld", "row": 3, "x": 0, "y": 0, "referenceFrame": "STARTINGCOORDS", "interpolation": "LINEAR"} // Walk back to the starting coordinates
 		],
-		"stingerNotes": [],
 		"target_enemy_team": true,
 		"hits": 1
 	},
@@ -60,7 +59,6 @@
 			{"duration": 20, "sprite": "battleidle", "row": 0, "x": -100, "y": 0, "referenceFrame": "INFRONTENEMY", "interpolation": "LINEAR"},
 			{"duration": 35, "sprite": "overworld", "row": 3, "x": 0, "y": 0, "referenceFrame": "STARTINGCOORDS", "interpolation": "LINEAR"}
 		],
-		"stingerNotes": [],
 		"target_enemy_team": true,
 		"hits": 1
 	},
@@ -80,18 +78,10 @@
 			{"duration": 20, "sprite": "battleidle", "row": 0, "x": -100, "y": 0, "referenceFrame": "INFRONTENEMY", "interpolation": "LINEAR"},
 			{"duration": 35, "sprite": "overworld", "row": 3, "x": 0, "y": 0, "referenceFrame": "STARTINGCOORDS", "interpolation": "LINEAR"}
 		],
-		"stingerNotes": [
-			[0, "LEFT"], 
-			[22, "LEFT"], 
-			[42, "DOWN"], 
-			[62, "DOWN"], 
-			[84, "UP"], 
-			[98, "RIGHT"], 
-			[112, "DOWN"]
-		],
+		"stingerNotes": "res/data/stingers/tutorial-easy.json",
 		"target_enemy_team": true,
 		"hits": 1, // TODO: needs to be 4 but hits dont do anything ATM
-		"music": "res/Sounds/SFX/STINGERS/LuckCrescendo.wav"
+		"music": "res/Sounds/SFX/STINGERS/Tutorial_Inst.wav"
 	},
 
 	"Vibrato": {
@@ -109,18 +99,9 @@
 			{"duration": 20, "sprite": "battleidle", "row": 0, "x": -100, "y": 0, "referenceFrame": "INFRONTENEMY", "interpolation": "LINEAR"},
 			{"duration": 35, "sprite": "overworld", "row": 3, "x": 0, "y": 0, "referenceFrame": "STARTINGCOORDS", "interpolation": "LINEAR"}
 		],
-		"stingerNotes": [
-			[0, "UP"],
-			[10, "LEFT"],
-			[20, "DOWN"],
-			[30, "RIGHT"],
-			[60, "RIGHT"],
-			[70, "DOWN"],
-			[80, "LEFT"],
-			[90, "UP"]
-		],
+		"stingerNotes": "res/data/stingers/tutorial-hard.json",
 		"target_enemy_team": true,
 		"hits": 1, 
-		"music": "res/Sounds/SFX/STINGERS/JazzLick.wav"
+		"music": "res/Sounds/SFX/STINGERS/Tutorial_Inst.wav"
 	}
 }

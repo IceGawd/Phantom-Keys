@@ -19,9 +19,9 @@ const vector<string> TAGS = {
 };
 
 const vector<string> NOTE_TYPES = {
-	"UP",
-	"DOWN",
 	"LEFT",
+	"DOWN",
+	"UP",
 	"RIGHT"
 };
 
