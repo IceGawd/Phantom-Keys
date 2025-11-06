@@ -996,6 +996,8 @@
 *Is called whenever a key is pressed during the rhythm section*
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
+| RenderWindow* | window | N/A |
+| vector<GameObject*>& | battleEntities | N/A |
 | vector<RhythmNote*>* | notes | The notes that need to be pressed during the rhythm game section |
 | float* | howGoodYouDoIt | A pointer to a variable that will be used to calculate damage and other things |
 | float | maxGoodness | The maximum amount that can be added to howGoodYouDoIt per note |
@@ -1692,6 +1694,18 @@
 | RenderWindow* | window | N/A |
 | string | t | N/A |
 | Fightable* | gotHit | N/A |
+| SDL_Color | c | N/A |
+
+**Return Type:**  (N/A)
+
+
+### TextObject::TextObject
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
+| RenderWindow* | window | N/A |
+| string | t | N/A |
+| int | spawnx | N/A |
+| int | spawny | N/A |
 | SDL_Color | c | N/A |
 
 **Return Type:**  (N/A)
