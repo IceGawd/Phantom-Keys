@@ -2,6 +2,7 @@
 
 RhythmNote::RhythmNote(RenderWindow* window, pair<int, int> note, chrono::steady_clock::time_point* s) {
 	millisecond = note.first;
+	milliDist = 0;
 	nt = note.second;
 	start = s;
 
@@ -36,7 +37,7 @@ bool RhythmNote::draw(RenderWindow* window, World* world, vector<GameObject*>& e
 	auto end = chrono::steady_clock().now();
 	chrono::duration<double> len = end - *start;
 	// cout << "count: " << len.count() << endl;
-	double milliDist = millisecond + FRAMESADVANCESPELL * 1000 / 60.0 - 1000 * len.count(); // POTENTIAL ERROR: ASSUMES 60 FPS
+	milliDist = millisecond + FRAMESADVANCESPELL * 1000 / 60.0 - 1000 * len.count(); // POTENTIAL ERROR: ASSUMES 60 FPS
 
 	x = NOTEX + milliDist * SPEEDSPELL * 60.0 / 1000;
 

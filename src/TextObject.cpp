@@ -30,6 +30,15 @@ TextObject::TextObject(RenderWindow* window, string t, Fightable* gotHit, SDL_Co
 	centerOn(gotHit);
 }
 
+TextObject::TextObject(RenderWindow* window, string t, int spawnx, int spawny, SDL_Color c) : text(t), color(c) {
+	x = spawnx;
+	y = spawny;
+	yvel = -5;
+
+	setText(window);
+}
+
+
 void TextObject::setText(RenderWindow* window) {
 	SDL_Surface* surfaceMessage = window->getTextSurface(text, 255, 0, 0, 255);
 	setTexture(SDL_CreateTextureFromSurface(window->renderer, surfaceMessage));

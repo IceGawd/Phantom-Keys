@@ -5,6 +5,7 @@
 #include "Selector.hpp"
 #include "HealthBar.hpp"
 #include "RhythmNote.hpp"
+#include "TextObject.hpp"
 #include "mingw.thread.h"
 
 #include <queue>
@@ -272,18 +273,29 @@ int getValue(Enemy* f) {
  * @param {maxGoodness} The maximum amount that can be added to howGoodYouDoIt per note
  * @param {nt} The note type / key that the player is pressing
  */
-void rhythmPress(vector<RhythmNote*>* notes, float* howGoodYouDoIt, float maxGoodness, int nt) {
-	// lol check if correct button pressed
+void rhythmPress(RenderWindow* window, vector<GameObject*>& battleEntities, vector<RhythmNote*>* notes, float* howGoodYouDoIt, float maxGoodness, int nt) {
 	// cout << "maxGoodness: " << maxGoodness << endl;
 	// cout << "howGoodYouDoIt: " << *howGoodYouDoIt << endl;
 
 	for (int x = 0; x < notes->size(); x++) {
 		RhythmNote* rn = notes->at(x);
 		if (rn->nt == nt) {
-			float ratio = 1 - (1.0 * abs(rn->x - RhythmNote::NOTEX) / RhythmNote::KEYSIZE);
+			float ratio = 1 - (1.0 * abs(rn->milliDist) / 75);
 			cout << ratio << endl;
-			// if (abs(notes->at(x)->x - RhythmNote::NOTEX) < RhythmNote::KEYSIZE) {
 			if (ratio > 0) {
+				if (ratio > 0.75) {
+					battleEntities.push_back(new TextObject(window, "PERFECT!", rn->x, rn->y, {255, 200, 0}));
+				}
+				else if (ratio > 0.5) {
+					battleEntities.push_back(new TextObject(window, "Great!", rn->x, rn->y, {150, 150, 150}));
+				}
+				else if (ratio > 0.25) {
+					battleEntities.push_back(new TextObject(window, "Good", rn->x, rn->y, {200, 125, 50}));
+				}
+				else {
+					battleEntities.push_back(new TextObject(window, "okay", rn->x, rn->y, {175, 100, 25}));
+				}
+
 				*howGoodYouDoIt += sqrt(ratio) * maxGoodness;
 				delete notes->at(x);
 				notes->erase(notes->begin() + x);
@@ -299,7 +311,7 @@ void rhythmPress(vector<RhythmNote*>* notes, float* howGoodYouDoIt, float maxGoo
  * @param {passingArgument} Contains, in this order, the notes, a pointer to howGoodYouDoIt and maxGoodness
  */
 void rhythmPressUp(vector<void*> passingArgument) {
-	rhythmPress((vector<RhythmNote*>*) passingArgument[0], (float*) passingArgument[1], *((float*) passingArgument[2]), NOTE_TYPE_MAP["UP"]);
+	rhythmPress((RenderWindow*) passingArgument[0], *((vector<GameObject*>*) passingArgument[1]), (vector<RhythmNote*>*) passingArgument[2], (float*) passingArgument[3], *((float*) passingArgument[4]), NOTE_TYPE_MAP["UP"]);
 }
 
 /**
@@ -307,7 +319,7 @@ void rhythmPressUp(vector<void*> passingArgument) {
  * @param {passingArgument} Contains, in this order, the notes, a pointer to howGoodYouDoIt and maxGoodness
  */
 void rhythmPressLeft(vector<void*> passingArgument) {
-	rhythmPress((vector<RhythmNote*>*) passingArgument[0], (float*) passingArgument[1], *((float*) passingArgument[2]), NOTE_TYPE_MAP["LEFT"]);
+	rhythmPress((RenderWindow*) passingArgument[0], *((vector<GameObject*>*) passingArgument[1]), (vector<RhythmNote*>*) passingArgument[2], (float*) passingArgument[3], *((float*) passingArgument[4]), NOTE_TYPE_MAP["LEFT"]);
 }
 
 /**
@@ -315,7 +327,7 @@ void rhythmPressLeft(vector<void*> passingArgument) {
  * @param {passingArgument} Contains, in this order, the notes, a pointer to howGoodYouDoIt and maxGoodness
  */
 void rhythmPressRight(vector<void*> passingArgument) {
-	rhythmPress((vector<RhythmNote*>*) passingArgument[0], (float*) passingArgument[1], *((float*) passingArgument[2]), NOTE_TYPE_MAP["RIGHT"]);
+	rhythmPress((RenderWindow*) passingArgument[0], *((vector<GameObject*>*) passingArgument[1]), (vector<RhythmNote*>*) passingArgument[2], (float*) passingArgument[3], *((float*) passingArgument[4]), NOTE_TYPE_MAP["RIGHT"]);
 }
 
 /**
@@ -323,7 +335,7 @@ void rhythmPressRight(vector<void*> passingArgument) {
  * @param {passingArgument} Contains, in this order, the notes, a pointer to howGoodYouDoIt and maxGoodness
  */
 void rhythmPressDown(vector<void*> passingArgument) {
-	rhythmPress((vector<RhythmNote*>*) passingArgument[0], (float*) passingArgument[1], *((float*) passingArgument[2]), NOTE_TYPE_MAP["DOWN"]);
+	rhythmPress((RenderWindow*) passingArgument[0], *((vector<GameObject*>*) passingArgument[1]), (vector<RhythmNote*>*) passingArgument[2], (float*) passingArgument[3], *((float*) passingArgument[4]), NOTE_TYPE_MAP["DOWN"]);
 }
 // */
 
@@ -395,7 +407,6 @@ vector<pair<int, int>> loadStingerNotes(json& data) {
 
 		for (auto& [notes, sections] : j.items()) {
 			if (notes == "notes") {
-				cout << "Notes!\n";
 				for (auto& section : sections) {
 					for (auto& [sn, sectionNotes] : section.items()) {
 						if (sn == "mustHitSection") {
@@ -404,7 +415,6 @@ vector<pair<int, int>> loadStingerNotes(json& data) {
 							}
 						}
 						if (sn == "sectionNotes") {
-							cout << "Adding!\n";
 							for (auto& note : sectionNotes) {
 								stingerNotes.emplace_back(note[0], note[1]);
 							}
@@ -888,10 +898,10 @@ int main(int argc, char *argv[]) {
 					// cout << "maxGoodness: " << maxGoodness << endl;
 
 					// /*
-					arrowChange(&window, window.cc.up, &player->input.up, rhythmPressUp, {&notes, &howGoodYouDoIt, &maxGoodness});
-					arrowChange(&window, window.cc.left, &player->input.left, rhythmPressLeft, {&notes, &howGoodYouDoIt, &maxGoodness});
-					arrowChange(&window, window.cc.right, &player->input.right, rhythmPressRight, {&notes, &howGoodYouDoIt, &maxGoodness});
-					arrowChange(&window, window.cc.down, &player->input.down, rhythmPressDown, {&notes, &howGoodYouDoIt, &maxGoodness});
+					arrowChange(&window, window.cc.up, &player->input.up, rhythmPressUp, {&window, &battleEntities, &notes, &howGoodYouDoIt, &maxGoodness});
+					arrowChange(&window, window.cc.left, &player->input.left, rhythmPressLeft, {&window, &battleEntities, &notes, &howGoodYouDoIt, &maxGoodness});
+					arrowChange(&window, window.cc.right, &player->input.right, rhythmPressRight, {&window, &battleEntities, &notes, &howGoodYouDoIt, &maxGoodness});
+					arrowChange(&window, window.cc.down, &player->input.down, rhythmPressDown, {&window, &battleEntities, &notes, &howGoodYouDoIt, &maxGoodness});
 					// 
 
 					for (int x = 0; x < notes.size(); x++) {

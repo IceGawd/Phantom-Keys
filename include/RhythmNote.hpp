@@ -11,6 +11,7 @@ struct RhythmNote : public GameObject {
 	constexpr static double SPEEDSPELL = 1.0 * (RenderWindow::WIDTH - NOTEX) / FRAMESADVANCESPELL;
 
 	int millisecond;
+	double milliDist;
 	int nt;
 	chrono::steady_clock::time_point* start;
 	// int curFrames = 0;
