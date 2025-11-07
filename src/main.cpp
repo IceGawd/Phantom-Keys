@@ -280,7 +280,7 @@ void rhythmPress(RenderWindow* window, vector<GameObject*>& battleEntities, vect
 	for (int x = 0; x < notes->size(); x++) {
 		RhythmNote* rn = notes->at(x);
 		if (rn->nt == nt) {
-			float ratio = 1 - (1.0 * abs(rn->milliDist) / 75);
+			float ratio = 1 - (1.0 * abs(rn->milliDist) / RhythmNote::LENIENCY);
 			cout << ratio << endl;
 			if (ratio > 0) {
 				if (ratio > 0.75) {
@@ -907,6 +907,10 @@ int main(int argc, char *argv[]) {
 					for (int x = 0; x < notes.size(); x++) {
 						RhythmNote* rn = notes.at(x);
 						rn->draw(&window, world, battleEntities);
+						if (rn->milliDist < -RhythmNote::LENIENCY and !rn->missed) {
+							rn->missed = true;
+							battleEntities.push_back(new TextObject(&window, "Miss", RhythmNote::NOTEX, rn->y, {50, 50, 50}));
+						}
 						if (rn->x + RhythmNote::KEYSIZE < 0) {
 							howGoodYouDoIt -= maxGoodness / 2;
 

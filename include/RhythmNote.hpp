@@ -8,8 +8,10 @@ struct RhythmNote : public GameObject {
 	const static int NOTEX = 200;
 	const static int FRAMESADVANCESPELL = 60;
 	const static int NOTEY = 50;
+	const static int LENIENCY = 75;
 	constexpr static double SPEEDSPELL = 1.0 * (RenderWindow::WIDTH - NOTEX) / FRAMESADVANCESPELL;
 
+	bool missed = false;
 	int millisecond;
 	double milliDist;
 	int nt;
