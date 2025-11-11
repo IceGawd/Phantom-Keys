@@ -807,15 +807,6 @@
 
 ## src/LayerGroup.cpp
 ## src/main.cpp
-### atanLookup
-*Unused function that executes an Inverse Tangent via table lookup using binary search. The table used to be stored in RenderWindow*
-| **Type** | **Variable Name** | **Description** | 
-| :------: | :---------------: | :-------------: | 
-| vector<void*> | vv | Vector of RenderWindow in index 0 and float that you are looking for in index 1 |
-
-**Return Type:** float (s atan of vv[1])
-
-
 ### flippedIndex
 *I dont remember what this does, its something for spiral / darkness though*
 | **Type** | **Variable Name** | **Description** | 
@@ -1286,6 +1277,13 @@
 | **Type** | **Variable Name** | **Description** | 
 | :------: | :---------------: | :-------------: | 
 | const char* | title | N/A |
+
+**Return Type:**  (N/A)
+
+
+### RenderWindow::~RenderWindow
+| **Type** | **Variable Name** | **Description** | 
+| :------: | :---------------: | :-------------: | 
 
 **Return Type:**  (N/A)
 
