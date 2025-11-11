@@ -54,6 +54,7 @@ public:
 	float savedZoom = 1.0;
 
 	RenderWindow(const char* title);
+	~RenderWindow();
 	void resizeWindow();
 	SDL_Texture* loadTexture(const char* filePath);
 	void cleanUp();

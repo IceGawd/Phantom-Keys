@@ -1,0 +1,3 @@
+C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir
+C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/edit_cache.dir
+C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/rebuild_cache.dir

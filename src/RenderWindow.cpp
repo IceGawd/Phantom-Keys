@@ -2,7 +2,6 @@
 
 using namespace std;
 
-
 RenderWindow::RenderWindow(const char* title) : window(NULL), renderer(NULL) {
 	window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_FULLSCREEN_DESKTOP );
 
@@ -16,14 +15,11 @@ RenderWindow::RenderWindow(const char* title) : window(NULL), renderer(NULL) {
 
 	keyboard = SDL_GetKeyboardState(NULL);
 	resizeWindow();
+}
 
-	if (atanSheet == nullptr) {
-		atanSheet = new pair<float, float>[255];
-		for (int x = 1; x < 256; x++) {
-			float angle = x * M_PI / 512;
-			atanSheet[x - 1] = {tan(angle), angle};
-		}
-	}
+RenderWindow::~RenderWindow() {
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
 }
 
 void RenderWindow::resizeWindow() {

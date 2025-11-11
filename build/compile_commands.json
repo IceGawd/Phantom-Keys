@@ -1,0 +1,260 @@
+[
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\Area.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\Area.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/Area.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/Area.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\BattleOptions.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\BattleOptions.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/BattleOptions.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/BattleOptions.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\Buff.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\Buff.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/Buff.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/Buff.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\BuffMove.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\BuffMove.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/BuffMove.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/BuffMove.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\BuffType.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\BuffType.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/BuffType.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/BuffType.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\Collideable.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\Collideable.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/Collideable.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/Collideable.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\ControlsConfig.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\ControlsConfig.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/ControlsConfig.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/ControlsConfig.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\Enemy.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\Enemy.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/Enemy.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/Enemy.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\EnemyType.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\EnemyType.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/EnemyType.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/EnemyType.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\Entity.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\Entity.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/Entity.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/Entity.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\Fightable.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\Fightable.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/Fightable.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/Fightable.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\FreeFuncs.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\FreeFuncs.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/FreeFuncs.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/FreeFuncs.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\GameObject.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\GameObject.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/GameObject.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/GameObject.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\HealthBar.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\HealthBar.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/HealthBar.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/HealthBar.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\ImageLayer.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\ImageLayer.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/ImageLayer.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/ImageLayer.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\Interactable.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\Interactable.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/Interactable.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/Interactable.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\KeyFrame.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\KeyFrame.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/KeyFrame.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/KeyFrame.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\LayerGroup.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\LayerGroup.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/LayerGroup.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/LayerGroup.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\Map.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\Map.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/Map.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/Map.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\Move.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\Move.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/Move.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/Move.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\Object.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\Object.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/Object.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/Object.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\ObjectGroup.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\ObjectGroup.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/ObjectGroup.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/ObjectGroup.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\ObjectTypes.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\ObjectTypes.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/ObjectTypes.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/ObjectTypes.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\PartyMember.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\PartyMember.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/PartyMember.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/PartyMember.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\Player.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\Player.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/Player.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/Player.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\Property.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\Property.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/Property.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/Property.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\RenderWindow.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\RenderWindow.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/RenderWindow.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/RenderWindow.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\RhythmNote.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\RhythmNote.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/RhythmNote.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/RhythmNote.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\Selector.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\Selector.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/Selector.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/Selector.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\SpawnZone.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\SpawnZone.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/SpawnZone.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/SpawnZone.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\SpriteSheet.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\SpriteSheet.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/SpriteSheet.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/SpriteSheet.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\Stats.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\Stats.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/Stats.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/Stats.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\TextBox.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\TextBox.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/TextBox.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/TextBox.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\TextObject.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\TextObject.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/TextObject.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/TextObject.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\TextSequence.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\TextSequence.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/TextSequence.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/TextSequence.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\TextSlice.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\TextSlice.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/TextSlice.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/TextSlice.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\TileLayer.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\TileLayer.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/TileLayer.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/TileLayer.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\Tileset.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\Tileset.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/Tileset.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/Tileset.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\World.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\World.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/World.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/World.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\detail\\pugixml.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\detail\\pugixml.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/detail/pugixml.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/detail/pugixml.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\main.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\main.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/main.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/main.cpp.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "gcc -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -O0 -g3 -o CMakeFiles\\main.dir\\src\\miniz.c.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\miniz.c",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/miniz.c",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/miniz.c.obj"
+},
+{
+  "directory": "C:/Users/avigh/Documents/c++/PhantomKeys/build",
+  "command": "g++ -IC:/Users/avigh/Documents/c++/PhantomKeys/include -IC:/SDL2/include -g -std=gnu++17 -O0 -g3 -o CMakeFiles\\main.dir\\src\\utils.cpp.obj -c C:\\Users\\avigh\\Documents\\c++\\PhantomKeys\\src\\utils.cpp",
+  "file": "C:/Users/avigh/Documents/c++/PhantomKeys/src/utils.cpp",
+  "output": "C:/Users/avigh/Documents/c++/PhantomKeys/build/CMakeFiles/main.dir/src/utils.cpp.obj"
+}
+]

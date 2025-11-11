@@ -17,47 +17,6 @@ using namespace std;
 const double DARKEDGE = 0.5;
 
 /**
- * Unused function that executes an Inverse Tangent via table lookup using binary search. The table used to be stored in RenderWindow
- * @param {vv} Vector of RenderWindow in index 0 and float that you are looking for in index 1
- * @returns atan of vv[1]
- */
-float atanLookup(vector<void*> vv) {
-	RenderWindow* window = (RenderWindow*) vv[0];
-	float x = *((float*) vv[1]);
-
-	int index = 127;
-	int size = 128;
-	pair<float, float> prev;
-	bool bigger = false;
-	
-	pair<float, float> check;
-
-	while (size > 0) {
-		prev = check;
-		check = window->atanSheet[index];
-		if (check.first == x) {
-			return check.second;
-		}
-
-		size /= 2;
-		if (check.first > x) {
-			index += size;
-			bigger = false;
-		}
-		else {
-			index -= size;
-			bigger = true;
-		}
-	}
-
-	if (bigger) {
-		swap(prev, check); // Ensures check is bigger
-	}
-	float percent = ((check.first - x) / (check.first - prev.first));
-	return (1 - percent) * check.second + percent * prev.second;
-}
-
-/**
  * I dont remember what this does, its something for spiral / darkness though
  */
 inline pair<int, int> flippedIndex(int num, vector<pair<int, int>>& degree45, int subtract = 0) {
@@ -548,9 +507,6 @@ int main(int argc, char *argv[]) {
 	emptyKeys.push_back(new Entity(RhythmNote::NOTEX, RenderWindow::HEIGHT - 2 * RhythmNote::KEYSIZE - RhythmNote::NOTEY, window.loadTexture("res/gfx/Battle/RhythmUI/lefthole.png"), RhythmNote::KEYSIZE, RhythmNote::KEYSIZE));
 	emptyKeys.push_back(new Entity(RhythmNote::NOTEX, RenderWindow::HEIGHT - 3 * RhythmNote::KEYSIZE - RhythmNote::NOTEY, window.loadTexture("res/gfx/Battle/RhythmUI/righthole.png"), RhythmNote::KEYSIZE, RhythmNote::KEYSIZE));
 	emptyKeys.push_back(new Entity(RhythmNote::NOTEX, RenderWindow::HEIGHT - 4 * RhythmNote::KEYSIZE - RhythmNote::NOTEY, window.loadTexture("res/gfx/Battle/RhythmUI/uphole.png"), RhythmNote::KEYSIZE, RhythmNote::KEYSIZE));
-
-	emptyKeys.push_back(new Entity(RhythmNote::NOTEX - RhythmNote::KEYSIZE, RenderWindow::HEIGHT - 2 * RhythmNote::KEYSIZE - RhythmNote::NOTEY, window.loadTexture("res/gfx/Battle/RhythmUI/downhole.png"), 2 * RhythmNote::KEYSIZE, 2 * RhythmNote::KEYSIZE));
-	emptyKeys.push_back(new Entity(RhythmNote::NOTEX - RhythmNote::KEYSIZE, RenderWindow::HEIGHT - 4 * RhythmNote::KEYSIZE - RhythmNote::NOTEY, window.loadTexture("res/gfx/Battle/RhythmUI/uphole.png"), 2 * RhythmNote::KEYSIZE, 2 * RhythmNote::KEYSIZE));
 
 	overworldEntities.push_back(player); // PLAYER WAS DRAWN IN AREA RENDER (NOW EVERYTHING IS DRAWN THERE)
 	window.playerTeam.push_back(player);
@@ -1074,6 +1030,34 @@ int main(int argc, char *argv[]) {
 
 		// */
 	}
+
+	for (auto& entity : overworldEntities) {
+		delete entity;
+	}
+
+	for (auto& entity : battleEntities) {
+		delete entity;
+	}
+
+	for (auto& key : emptyKeys) {
+		delete key;
+	}
+
+	for (auto& note : notes) {
+		delete note;		
+	}
+
+	delete world;
+
+	delete bo;
+	delete hb;
+	delete selector;
+
+	if (newPixels != nullptr) {
+		delete newPixels;
+	}
+
+	SDL_Quit();
 
 	return 0;
 }

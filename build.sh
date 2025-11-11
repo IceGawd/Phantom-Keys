@@ -34,7 +34,7 @@ while getopts ":frds" opt; do
 			echo "SYNCING!"
 			SYNC=true
 			;;
-		\?)
+		/?)
 			echo "Invalid option: -$OPTARG" >&2
 			exit 1
 			;;
@@ -65,7 +65,7 @@ for file in $SRCDIR/*.cpp $SRCDIR/*.c $SRCDIR/detail/*.cpp; do
 			if $RELEASE; then
 				g++ -c $file -o $objfile -std=c++17 -O3 -g -m64 -I $INCLUDEDIR -I $SDLINCLUDEDIR
 			else
-				g++ -c $file -o $objfile -std=c++17 -g3 -O0 -fno-omit-frame-pointer -m64 -I $INCLUDEDIR -I $SDLINCLUDEDIR
+				g++ -c $file -o $objfile -std=c++17 -g3 -O0 -m64 -I $INCLUDEDIR -I $SDLINCLUDEDIR
 			fi
 		else
 			echo "Skipping $file, object file is up to date."
