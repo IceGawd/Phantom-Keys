@@ -11,10 +11,29 @@ RenderWindow::RenderWindow(const char* title) : window(NULL), renderer(NULL) {
 
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
 	zephyrea = TTF_OpenFont("res/gfx/PixAntiqua.ttf", 36);
 
 	keyboard = SDL_GetKeyboardState(NULL);
 	resizeWindow();
+
+	renderTarget = SDL_CreateTexture(
+		renderer,
+		SDL_PIXELFORMAT_RGBA8888,
+		SDL_TEXTUREACCESS_TARGET,
+		WIDTH,
+		HEIGHT
+	);
+
+	internalTarget = SDL_CreateTexture(
+		renderer,
+		SDL_PIXELFORMAT_RGBA8888,
+		SDL_TEXTUREACCESS_TARGET,
+		INTERNAL_WIDTH,
+		INTERNAL_HEIGHT
+	);
+
+	SDL_SetRenderTarget(renderer, renderTarget);
 }
 
 RenderWindow::~RenderWindow() {
@@ -53,6 +72,7 @@ SDL_Texture* RenderWindow::loadTexture(const char* filePath) {
 }
 
 void RenderWindow::clear() {
+	SDL_SetRenderTarget(renderer, renderTarget);
 	SDL_RenderClear(renderer);
 }
 
@@ -80,7 +100,7 @@ SDL_Rect RenderWindow::getDestRect(Entity* entity, bool stationary) {
 		dest.w = (int) ceil(entity->show_width * zoom);
 		dest.h = (int) ceil(entity->show_height * zoom);
 	}
-	scaleDestRect(dest);
+	// scaleDestRect(dest);
 	return dest;
 }
 
@@ -123,8 +143,8 @@ void RenderWindow::render(Entity* entity, bool stationary, int centerx, int cent
 			center.x *= zoom;
 			center.y *= zoom;
 		}
-		center.x *= scaleMultiplier;
-		center.y *= scaleMultiplier;
+		// center.x *= scaleMultiplier;
+		// center.y *= scaleMultiplier;
 
 		// cout << "angle: " << 180 * entity->angle / M_PI << endl;
 		SDL_RendererFlip flip = SDL_FLIP_NONE;
@@ -155,7 +175,20 @@ void RenderWindow::render(Entity* entity, bool stationary, int centerx, int cent
 }
 
 void RenderWindow::display() {
-	// /*
+	SDL_SetRenderTarget(renderer, internalTarget);
+	SDL_RenderCopy(renderer, renderTarget, nullptr, nullptr);
+
+	SDL_Rect dstRect;
+
+	dstRect.x = xOrigin;
+	dstRect.y = yOrigin;
+	dstRect.w = WIDTH * scaleMultiplier;
+	dstRect.h = HEIGHT * scaleMultiplier;
+
+	SDL_SetRenderTarget(renderer, nullptr);
+	SDL_RenderCopy(renderer, internalTarget, nullptr, &dstRect);
+
+	/*
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	int w;
 	int h;
@@ -179,6 +212,7 @@ void RenderWindow::display() {
 	r1 = {r1x, r1y, w + 1, h};
 	SDL_RenderFillRect(renderer, &r1);
 	// */
+
 	SDL_RenderPresent(renderer);
 }
 
@@ -231,7 +265,7 @@ void RenderWindow::drawScaledTextInBox(string text, unsigned char r, unsigned ch
 
 
 void RenderWindow::textRect(SDL_Surface* surfaceMessage, SDL_Texture* Message, SDL_Rect Message_rect) {
-	scaleDestRect(Message_rect);
+	// scaleDestRect(Message_rect);
 	// (0,0) is on the top left of the window/screen,
 	// think a rect as the text's box,
 	// that way it would be very simple to understand
@@ -269,7 +303,7 @@ SDL_Texture* RenderWindow::getAreaTexture(SDL_Rect& rect, SDL_Texture* source) {
 	SDL_SetRenderTarget(renderer, result);
 	SDL_RenderCopy(renderer, source, &rect, NULL);
 	// the folowing line should reset the target to default(the screen)
-	SDL_SetRenderTarget(renderer, NULL);
+	SDL_SetRenderTarget(renderer, renderTarget);
 	// I also removed the RenderPresent funcion as it is not needed here			
 	return result;
 }

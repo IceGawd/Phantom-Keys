@@ -21,6 +21,8 @@ class RenderWindow {
 public:
 	const static int WIDTH = 1280;
 	const static int HEIGHT = 720;
+	const static int INTERNAL_WIDTH = 640;
+	const static int INTERNAL_HEIGHT = 360;
 	int actualWidth = WIDTH;
 	int actualHeight = HEIGHT;
 	double scaleMultiplier = 1;
@@ -44,6 +46,8 @@ public:
 
 	SDL_Window* window;
 	SDL_Renderer* renderer;
+	SDL_Texture* renderTarget;
+	SDL_Texture* internalTarget;
 	TTF_Font* zephyrea;
 	int x = 0;
 	int y = 0;

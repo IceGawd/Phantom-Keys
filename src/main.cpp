@@ -319,7 +319,7 @@ inline SDL_Texture* threadCircularApplication(RenderWindow& window, Uint32*& new
 	if (newPixels == nullptr) { // DOES NOT WORK WITH WINDOW RESIZE
 		SDL_SetRenderTarget(window.renderer, window_texture);
 		SDL_RenderReadPixels(window.renderer, &texture_rect, SDL_PIXELFORMAT_RGBA8888, pixels, pitch);
-		SDL_SetRenderTarget(window.renderer, NULL);
+		SDL_SetRenderTarget(window.renderer, window.renderTarget);
 		newPixels = new Uint32[texture_rect.w * texture_rect.h];
 		for (int x = 0; x < texture_rect.w * texture_rect.h; x++) {
 			newPixels[x] = pixels[x];

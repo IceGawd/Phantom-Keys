@@ -331,7 +331,7 @@ void Area::diagonalTileFinder(RenderWindow& window, const Layer* layer) {
 					SDL_SetRenderTarget(window.renderer, diagonalTexture);
 					SDL_LockTexture( trueDiagonalTexture, NULL, reinterpret_cast<void**>(&pixels), &pitch );
 					SDL_RenderReadPixels(window.renderer, NULL, SDL_PIXELFORMAT_RGBA8888, pixels, pitch);
-					SDL_SetRenderTarget(window.renderer, NULL);
+					SDL_SetRenderTarget(window.renderer, window.renderTarget);
 
 					SDL_DestroyTexture(diagonalTexture);
 
